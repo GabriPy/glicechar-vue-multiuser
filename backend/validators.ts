@@ -8,7 +8,7 @@ export const loginSchema = z.object({
 export const registerSchema = z.object({
   username: z.string().min(3).max(50),
   password: z.string().min(6),
-  email: z.string().email().optional().or(z.literal('')),
+  email: z.string().transform(v => v === '' ? undefined : v).pipe(z.string().email().optional()),
 });
 
 export const updateAccountSchema = z.object({

@@ -19,8 +19,21 @@ async function handleRegister(skipWarning = false) {
     error.value = 'Completa tutti i campi';
     return;
   }
+  if (username.value.length < 3) {
+    error.value = 'Username deve essere di almeno 3 caratteri';
+    return;
+  }
+  if (password.value.length < 6) {
+    error.value = 'Password deve essere di almeno 6 caratteri';
+    return;
+  }
   if (password.value !== confirmPassword.value) {
     error.value = 'Le password non coincidono';
+    return;
+  }
+
+  if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    error.value = 'Email non valida';
     return;
   }
 

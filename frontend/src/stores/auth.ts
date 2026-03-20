@@ -80,7 +80,12 @@ export const useAuthStore = defineStore('auth', {
         await axios.post(`${API_BASE}/auth/register`, { username, password, email });
         return true;
       } catch (e: any) {
-        this.error = e.response?.data?.error || 'Errore durante la registrazione';
+        if (e.response?.data?.details && Array.isArray(e.response.data.details)) {
+          const detail = e.response.data.details[0];
+          this.error = `${detail.path.join('.')}: ${detail.message}`;
+        } else {
+          this.error = e.response?.data?.error || 'Errore durante la registrazione';
+        }
         return false;
       } finally {
         this.loading = false;
