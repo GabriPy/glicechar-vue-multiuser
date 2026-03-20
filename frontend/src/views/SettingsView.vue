@@ -370,7 +370,17 @@ async function saveSettings() {
   successMessage.value = ''
   
   try {
-    const success = await store.updateSettings(form.value)
+    const success = await store.updateSettings({
+      tir_min: form.value.tir_min,
+      tir_max: form.value.tir_max,
+      red_under: form.value.red_under,
+      red_over: form.value.red_over,
+      rapid_duration: form.value.rapid_duration,
+      slow_duration: form.value.slow_duration,
+      carb_duration: form.value.carb_duration,
+      insulin_sensitivity: form.value.insulin_sensitivity,
+      carb_ratio: form.value.carb_ratio
+    })
     if (success) {
       await auth.updateGluroo({
         link: form.value.gluroo_link,

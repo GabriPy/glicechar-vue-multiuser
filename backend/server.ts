@@ -100,7 +100,8 @@ app.use(morgan((tokens, req, res) => {
   ].join(' ');
 }));
 
-// Rate limiting
+// Rate limiting disabilitato per permettere un uso libero
+/*
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
@@ -109,7 +110,7 @@ const authLimiter = rateLimit({
 
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
-  max: 100,
+  max: 500, // Aumentato da 100 a 500
   message: { error: 'Troppe richieste, rallenta un po\'' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -125,6 +126,7 @@ const strictLimiter = rateLimit({
 app.use('/api/', apiLimiter);
 app.use('/api/auth/login', authLimiter, strictLimiter);
 app.use('/api/auth/register', authLimiter);
+*/
 
 // Middleware di autenticazione
 const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

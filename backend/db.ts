@@ -95,6 +95,8 @@ async function initDB() {
         user_id             INT PRIMARY KEY,
         tir_min             INT DEFAULT 70,
         tir_max             INT DEFAULT 180,
+        red_under           INT DEFAULT 55,
+        red_over            INT DEFAULT 250,
         rapid_duration      INT DEFAULT 3,
         slow_duration       INT DEFAULT 24,
         carb_duration       INT DEFAULT 4,
@@ -103,6 +105,10 @@ async function initDB() {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
+
+    // Migrazione per soglie critiche se non esistono
+    try { await conn.execute(`ALTER TABLE settings ADD COLUMN red_under INT DEFAULT 55 AFTER tir_max`); } catch (e) {}
+    try { await conn.execute(`ALTER TABLE settings ADD COLUMN red_over INT DEFAULT 250 AFTER red_under`); } catch (e) {}
 
     await conn.execute(`
       CREATE TABLE IF NOT EXISTS notes (
@@ -550,13 +556,13 @@ export async function getSettings(userId: number) {
   return rows[0];
 }
 
-export async function updateSettings(userId: number, { tir_min, tir_max, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio }: any) {
+export async function updateSettings(userId: number, { tir_min, tir_max, red_under, red_over, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio }: any) {
   const p = await getPool();
   const [result] = await p.execute<ResultSetHeader>(
     `UPDATE settings 
-     SET tir_min = ?, tir_max = ?, rapid_duration = ?, slow_duration = ?, carb_duration = ?, insulin_sensitivity = ?, carb_ratio = ?
+     SET tir_min = ?, tir_max = ?, red_under = ?, red_over = ?, rapid_duration = ?, slow_duration = ?, carb_duration = ?, insulin_sensitivity = ?, carb_ratio = ?
      WHERE user_id = ?`,
-    [tir_min, tir_max, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio, userId]
+    [tir_min, tir_max, red_under, red_over, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio, userId]
   );
   return result.affectedRows > 0;
 }
