@@ -22,9 +22,17 @@ Il cuore del sistema è l'isolamento totale dei dati tra gli utenti. Ogni tabell
 Il sistema implementa standard di sicurezza moderni per proteggere i dati clinici sensibili:
 
 ### Autenticazione JWT (Two-Token System)
-1.  **Access Token**: Breve durata (15 min), richiesto per ogni operazione API.
-2.  **Refresh Token**: Lunga durata (7 giorni), salvato in modo sicuro per rinnovare l'accesso senza rifare il login.
-3.  **Password Hashing**: Implementazione di `bcryptjs` con 10 salt rounds.
+Il sistema utilizza due diversi segreti (chiavi private) per gestire gli accessi in modo sicuro:
+
+1.  **Access Token (`JWT_SECRET`)**: 
+    - **Durata**: Breve (15 minuti).
+    - **Scopo**: Viene inviato ad ogni richiesta API per identificare l'utente. Se rubato, ha una validità limitata.
+2.  **Refresh Token (`REFRESH_TOKEN_SECRET`)**: 
+    - **Durata**: Lunga (7 giorni).
+    - **Scopo**: Viene usato dal frontend per richiedere un nuovo Access Token quando quello vecchio scade, senza costringere l'utente a rifare il login (password). Viene salvato nel DB per permettere la revoca della sessione (es. al Logout).
+
+### Password Hashing
+Utilizzo di `bcryptjs` con 10 salt rounds per garantire che, anche in caso di furto del database, le password degli utenti rimangano illeggibili.
 
 ### Validazione Input (Zod)
 Tutte le richieste API (POST/PUT) passano attraverso schemi di validazione **Zod** (`backend/validators.ts`). Questo garantisce che i dati siano correttamente formattati, prevenendo injection e errori di runtime.

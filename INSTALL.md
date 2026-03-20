@@ -67,6 +67,8 @@ PORT=3002
 POLL_INTERVAL_SECONDS=15
 ```
 
+> **Importante**: Le stringhe `JWT_SECRET` e `JWT_REFRESH_SECRET` sono le chiavi private del tuo server. Generane di lunghe e casuali (almeno 32 caratteri) per proteggere i dati degli utenti. Se le cambi, tutti gli utenti verranno disconnessi.
+
 ---
 
 ## 5. Avvio del Sistema
