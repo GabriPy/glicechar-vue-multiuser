@@ -11,10 +11,10 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendPasswordResetEmail(email: string, token: string) {
-  const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
+  const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3002'}/reset-password?token=${token}`;
   
   const mailOptions = {
-    from: `"GliceChart" <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_FROM || `"GliceChart" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'Recupero Password - GliceChart',
     html: `

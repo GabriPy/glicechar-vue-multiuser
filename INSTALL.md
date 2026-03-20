@@ -64,6 +64,7 @@ EMAIL_PASS=tua_app_password
 
 # Server
 PORT=3002
+FRONTEND_URL=http://localhost:3002
 POLL_INTERVAL_SECONDS=15
 ```
 
