@@ -1,15 +1,17 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Header -->
-    <div class="card bg-base-200 shadow-sm border border-base-content/10">
-      <div class="card-body p-6">
-        <div class="flex items-center gap-4">
+    <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+      <div class="card-body p-4 md:p-6 relative">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-secondary/5 blur-3xl rounded-full"></div>
+        
+        <div class="flex items-center gap-4 relative z-10">
           <div class="p-3 bg-secondary/10 rounded-2xl">
             <i class="fi fi-sr-chart-line-up text-secondary text-2xl leading-none"></i>
           </div>
           <div>
-            <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic">{{ $t('prediction.title') }}</h1>
-            <p class="text-xs font-black opacity-30 uppercase tracking-[0.2em] mt-2">{{ $t('prediction.subtitle') }}</p>
+            <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic text-primary">Glice<span class="text-base-content">Forecast</span></h1>
+            <p class="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-2">{{ $t('prediction.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -22,15 +24,17 @@
     </div>
 
     <!-- Main Chart -->
-    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
       <div class="lg:col-span-2">
-        <div class="card bg-base-200 shadow-sm border border-base-content/10 h-[450px]">
-          <div class="card-body p-6">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-xs font-black uppercase tracking-widest opacity-40">{{ $t('prediction.chart_title') }}</span>
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 h-[450px] overflow-hidden">
+          <div class="card-body p-6 relative">
+            <div class="absolute -top-10 -left-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ $t('prediction.chart_title') }}</span>
               <div class="badge badge-secondary badge-outline font-black text-[10px] uppercase tracking-widest">{{ $t('prediction.live_forecast') }}</div>
             </div>
-            <div class="relative flex-1 h-full">
+            <div class="relative flex-1 h-full z-10">
               <Line v-if="chartData" :data="chartData" :options="chartOptions" />
             </div>
           </div>
@@ -40,17 +44,19 @@
       <!-- Info Panel -->
       <div class="flex flex-col gap-6">
         <!-- Target Prediction -->
-        <div class="card shadow-sm border border-base-content/10 overflow-hidden" :class="riskColorClass">
-          <div class="card-body p-6 items-center text-center">
-            <span class="text-xs font-black uppercase tracking-[0.2em] opacity-60">{{ $t('prediction.estimate_60m') }}</span>
-            <div class="flex items-baseline gap-2 mt-2">
+        <div class="card shadow-xl border border-base-content/5 overflow-hidden" :class="riskColorClass">
+          <div class="card-body p-6 items-center text-center relative">
+            <div class="absolute inset-0 bg-base-content/10 opacity-10"></div>
+            
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 relative z-10">{{ $t('prediction.estimate_60m') }}</span>
+            <div class="flex items-baseline gap-2 mt-2 relative z-10">
               <span class="text-7xl font-black tracking-tighter italic">
                 {{ store.prediction?.t60 || '--' }}
               </span>
               <span class="text-base font-bold opacity-60 uppercase">{{ $t('common.mgdl') }}</span>
             </div>
 
-            <div class="mt-4 grid grid-cols-3 gap-2 w-full border-t border-current/10 pt-4">
+            <div class="mt-4 grid grid-cols-3 gap-2 w-full border-t border-current/10 pt-4 relative z-10">
               <div class="flex flex-col">
                 <span class="text-[10px] font-black uppercase opacity-50 text-current">15m</span>
                 <span class="text-xl font-black italic leading-none">{{ store.prediction?.t15 || '--' }}</span>
@@ -65,8 +71,8 @@
               </div>
             </div>
 
-            <div class="mt-4 w-full">
-              <div class="badge w-full py-4 font-black text-xs uppercase tracking-widest border-none" :class="riskBadgeClass">
+            <div class="mt-4 w-full relative z-10">
+              <div class="badge w-full py-4 font-black text-[10px] uppercase tracking-widest border-none shadow-lg shadow-black/10" :class="riskBadgeClass">
                 {{ $t('prediction.risk') }}: {{ riskLabelText }}
               </div>
             </div>
@@ -74,40 +80,42 @@
         </div>
 
         <!-- How it works -->
-        <div class="card bg-base-200 shadow-sm border border-base-content/10 flex-1">
-          <div class="card-body p-6 gap-4">
-            <span class="text-xs font-black uppercase tracking-widest opacity-40">{{ $t('prediction.current_state') }}</span>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between bg-base-300/30 p-3 rounded-2xl">
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 flex-1 overflow-hidden">
+          <div class="card-body p-6 gap-4 relative flex flex-col h-full">
+            <div class="absolute -bottom-10 -right-10 w-24 h-24 bg-primary/5 blur-3xl rounded-full"></div>
+            
+            <span class="text-[10px] font-black uppercase tracking-widest opacity-40 relative z-10">{{ $t('prediction.current_state') }}</span>
+            <div class="space-y-3 relative z-10">
+              <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-2xl border border-base-content/5">
                 <div class="flex items-center gap-3">
                   <div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
-                  <span class="text-xs font-black uppercase opacity-60">{{ $t('prediction.avg_5m') }}</span>
+                  <span class="text-[10px] font-black uppercase opacity-60">{{ $t('prediction.avg_5m') }}</span>
                 </div>
-                <span class="text-sm font-black">{{ store.prediction?.current }} {{ $t('common.mgdl') }}</span>
+                <span class="text-sm font-black uppercase tracking-tighter">{{ store.prediction?.current }} {{ $t('common.mgdl') }}</span>
               </div>
-              <div class="flex items-center justify-between bg-base-300/30 p-3 rounded-2xl">
+              <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-2xl border border-base-content/5">
                 <div class="flex items-center gap-3">
                   <div class="w-2.5 h-2.5 rounded-full" :class="trendIconColor"></div>
-                  <span class="text-xs font-black uppercase opacity-60">{{ $t('prediction.speed_roc') }}</span>
+                  <span class="text-[10px] font-black uppercase opacity-60">{{ $t('prediction.speed_roc') }}</span>
                 </div>
-                <span class="text-sm font-black">{{ store.prediction?.roc }} mg/m</span>
+                <span class="text-sm font-black uppercase tracking-tighter">{{ store.prediction?.roc }} mg/m</span>
               </div>
-              <div class="flex items-center justify-between bg-base-300/30 p-3 rounded-2xl">
+              <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-2xl border border-base-content/5">
                 <div class="flex items-center gap-3">
                   <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                  <span class="text-xs font-black uppercase opacity-60">{{ $t('prediction.active_iob') }}</span>
+                  <span class="text-[10px] font-black uppercase opacity-60">{{ $t('prediction.active_iob') }}</span>
                 </div>
-                <span class="text-sm font-black">{{ store.iob.toFixed(1) }} {{ $t('common.units') }}</span>
+                <span class="text-sm font-black uppercase tracking-tighter">{{ store.iob.toFixed(1) }} {{ $t('common.units') }}</span>
               </div>
-              <div class="flex items-center justify-between bg-base-300/30 p-3 rounded-2xl">
+              <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-2xl border border-base-content/5">
                 <div class="flex items-center gap-3">
                   <div class="w-2.5 h-2.5 rounded-full bg-accent"></div>
-                  <span class="text-xs font-black uppercase opacity-60">{{ $t('prediction.active_cob') }}</span>
+                  <span class="text-[10px] font-black uppercase opacity-60">{{ $t('prediction.active_cob') }}</span>
                 </div>
-                <span class="text-sm font-black">{{ Math.round(store.cob) }} {{ $t('common.grams') }}</span>
+                <span class="text-sm font-black uppercase tracking-tighter">{{ Math.round(store.cob) }} g</span>
               </div>
             </div>
-            <p class="text-[11px] opacity-40 italic mt-auto leading-relaxed">
+            <p class="text-[11px] opacity-40 italic mt-auto leading-relaxed relative z-10">
               {{ $t('prediction.disclaimer') }}
             </p>
           </div>

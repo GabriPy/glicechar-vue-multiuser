@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Header -->
-    <div class="card bg-base-200 shadow-sm border border-base-content/10">
-      <div class="card-body p-4 md:p-6">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+      <div class="card-body p-4 md:p-6 relative">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-secondary/5 blur-3xl rounded-full"></div>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
           <div class="flex items-center gap-3">
             <div class="p-2.5 bg-secondary/10 rounded-2xl">
               <i class="fi fi-sr-apps-sort text-secondary text-xl"></i>
@@ -15,7 +17,7 @@
           </div>
 
           <!-- Selector -->
-          <div class="flex items-center gap-2 bg-base-300/50 p-1.5 rounded-2xl border border-base-content/5">
+          <div class="flex items-center gap-2 bg-base-200 p-1.5 rounded-2xl border border-base-content/5">
             <button
               v-for="opt in periods"
               :key="opt.value"
@@ -34,9 +36,11 @@
       <!-- Stats Comparison -->
       <div class="lg:col-span-1 flex flex-col gap-6">
         <!-- Period A (Current) -->
-        <div class="card bg-base-200 shadow-xl border border-base-content/5">
-          <div class="card-body p-5 gap-4">
-            <div class="flex items-center justify-between">
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+          <div class="card-body p-5 gap-4 relative">
+            <div class="absolute -top-10 -left-10 w-24 h-24 bg-primary/5 blur-3xl rounded-full"></div>
+            
+            <div class="flex items-center justify-between relative z-10">
               <div class="flex items-center gap-2">
                 <div class="w-2 h-2 rounded-full bg-primary"></div>
                 <span class="text-[10px] font-black uppercase tracking-widest opacity-50">{{ $t('comparison.current_period') }}</span>
@@ -44,12 +48,12 @@
               <span class="text-[9px] font-bold opacity-30 italic">{{ periodALabel }}</span>
             </div>
             
-            <div v-if="statsA" class="grid grid-cols-2 gap-3">
-              <div class="bg-base-300/30 p-3 rounded-xl border border-base-content/5">
+            <div v-if="statsA" class="grid grid-cols-2 gap-3 relative z-10">
+              <div class="bg-base-200/50 p-3 rounded-xl border border-base-content/5">
                 <div class="text-[8px] font-black uppercase opacity-40">{{ $t('home.avg') }}</div>
                 <div class="text-xl font-black">{{ statsA.avg }} <span class="text-[8px] opacity-30">{{ $t('common.mgdl') }}</span></div>
               </div>
-              <div class="bg-base-300/30 p-3 rounded-xl border border-base-content/5">
+              <div class="bg-base-200/50 p-3 rounded-xl border border-base-content/5">
                 <div class="text-[8px] font-black uppercase opacity-40">{{ $t('home.tir') }}</div>
                 <div class="text-xl font-black text-success">{{ statsA.tir }}%</div>
               </div>
@@ -58,9 +62,11 @@
         </div>
 
         <!-- Period B (Previous) -->
-        <div class="card bg-base-200 shadow-xl border border-base-content/5">
-          <div class="card-body p-5 gap-4">
-            <div class="flex items-center justify-between">
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+          <div class="card-body p-5 gap-4 relative">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-base-content/5 blur-3xl rounded-full"></div>
+            
+            <div class="flex items-center justify-between relative z-10">
               <div class="flex items-center gap-2">
                 <div class="w-2 h-2 rounded-full bg-base-content/20"></div>
                 <span class="text-[10px] font-black uppercase tracking-widest opacity-50">{{ $t('comparison.previous_period') }}</span>
@@ -68,12 +74,12 @@
               <span class="text-[9px] font-bold opacity-30 italic">{{ periodBLabel }}</span>
             </div>
             
-            <div v-if="statsB" class="grid grid-cols-2 gap-3">
-              <div class="bg-base-300/30 p-3 rounded-xl border border-base-content/5">
+            <div v-if="statsB" class="grid grid-cols-2 gap-3 relative z-10">
+              <div class="bg-base-200/50 p-3 rounded-xl border border-base-content/5">
                 <div class="text-[8px] font-black uppercase opacity-40">{{ $t('home.avg') }}</div>
                 <div class="text-xl font-black">{{ statsB.avg }} <span class="text-[8px] opacity-30">{{ $t('common.mgdl') }}</span></div>
               </div>
-              <div class="bg-base-300/30 p-3 rounded-xl border border-base-content/5">
+              <div class="bg-base-200/50 p-3 rounded-xl border border-base-content/5">
                 <div class="text-[8px] font-black uppercase opacity-40">{{ $t('home.tir') }}</div>
                 <div class="text-xl font-black text-success">{{ statsB.tir }}%</div>
               </div>
@@ -131,7 +137,8 @@
 import { ref, onMounted, computed, watch, onUnmounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '../stores/auth'
-import { useGlucoseStore, Reading } from '../stores/glucose'
+import { useGlucoseStore } from '../stores/glucose'
+import type { Reading } from '../stores/glucose'
 import Chart from 'chart.js/auto'
 
 const auth = useAuthStore()

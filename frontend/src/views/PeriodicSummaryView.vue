@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Header Card -->
-    <div class="card bg-base-200 shadow-xl border border-base-content/5">
-      <div class="card-body p-4 md:p-6">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+      <div class="card-body p-4 md:p-6 relative">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
           <div class="flex items-center gap-3">
             <div class="p-2.5 bg-primary/10 rounded-2xl">
               <i class="fi fi-sr-chart-pie-alt text-primary text-xl"></i>
@@ -16,7 +18,7 @@
 
           <div class="flex items-center gap-2">
             <!-- Range Selector -->
-            <div class="flex items-center gap-2 bg-base-300/50 p-1.5 rounded-2xl border border-base-content/5">
+            <div class="flex items-center gap-2 bg-base-200 p-1.5 rounded-2xl border border-base-content/5">
               <button
                 v-for="d in ranges"
                 :key="d"
@@ -58,22 +60,24 @@
         <span class="loading loading-dots loading-md text-primary"></span>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
         <!-- Sintesi Glicemica Card -->
-        <div class="card bg-base-200 shadow-xl border border-base-content/5">
-          <div class="card-body p-6 gap-5">
-            <div class="flex items-center gap-2">
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+          <div class="card-body p-6 gap-5 relative">
+            <div class="absolute -top-10 -left-10 w-24 h-24 bg-success/5 blur-3xl rounded-full"></div>
+            
+            <div class="flex items-center gap-2 relative z-10">
               <i class="fi fi-sr-stats text-success"></i>
-              <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('summary.glucose_summary') }}</span>
+              <span class="text-[10px] font-black uppercase tracking-widest opacity-50">{{ $t('summary.glucose_summary') }}</span>
             </div>
 
-            <div v-if="!hasData && !loading" class="py-10 text-center opacity-30">
+            <div v-if="!hasData && !loading" class="py-10 text-center opacity-30 relative z-10">
               <div class="text-[10px] font-black uppercase tracking-widest">{{ $t('summary.no_data') }}</div>
             </div>
 
             <template v-else>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="bg-base-300/30 rounded-2xl p-4 border border-base-content/5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
+                <div class="bg-base-200/50 rounded-2xl p-4 border border-base-content/5">
                   <div class="text-[9px] font-black uppercase tracking-widest opacity-40">{{ $t('summary.avg_glucose') }}</div>
                   <div class="mt-1 flex items-end gap-2">
                     <div class="text-3xl font-black tracking-tight">{{ avg }}</div>
@@ -81,7 +85,7 @@
                   </div>
                 </div>
 
-                <div class="bg-base-300/30 rounded-2xl p-4 border border-base-content/5">
+                <div class="bg-base-200/50 rounded-2xl p-4 border border-base-content/5">
                   <div class="text-[9px] font-black uppercase tracking-widest opacity-40">{{ $t('summary.variability') }}</div>
                   <div class="mt-1 flex items-end justify-between gap-2">
                     <div class="flex items-end gap-2">

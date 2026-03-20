@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { useGlucoseStore } from './glucose';
 
 const API_BASE = (import.meta as any).env.VITE_API_BASE || '/api';
 
@@ -162,6 +163,10 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+        
+        // Pulisce anche i dati glicemici per evitare che rimangano in memoria
+        const glucoseStore = useGlucoseStore();
+        glucoseStore.clearAll();
       }
     },
 
@@ -198,7 +203,7 @@ export const useAuthStore = defineStore('auth', {
           const ok = await this.refreshAccessToken();
           if (ok) return await this.updateGluroo(gluroo);
         }
-        this.error = e.response?.data?.error || 'Errore aggiornamento Gluroo';
+        this.error = e.response?.data?.error || 'Errore salvataggio credenziali Gluroo';
         return false;
       }
     }

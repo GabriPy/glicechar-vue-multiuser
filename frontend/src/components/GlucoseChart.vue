@@ -1,55 +1,57 @@
 <template>
-  <div class="card bg-base-200 shadow-sm border border-base-content/10 h-full">
-    <div class="card-body gap-4">
+  <div class="card bg-base-100 shadow-xl border border-base-content/5 h-full overflow-hidden">
+    <div class="card-body p-4 md:p-6 gap-4 relative">
+      <!-- Decor -->
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
 
       <!-- Header -->
-      <div class="flex items-center justify-between flex-wrap gap-2">
-        <span class="text-xs uppercase tracking-widest opacity-50">{{ title }}</span>
-        <div v-if="!isHistory" class="join">
+      <div class="flex items-center justify-between flex-wrap gap-2 relative z-10">
+        <span class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ title }}</span>
+        <div v-if="!isHistory" class="bg-base-200 p-1 rounded-xl border border-base-content/5 flex items-center gap-1">
           <button
             v-for="opt in ranges" :key="opt.v"
-            class="join-item btn btn-xs"
-            :class="store.selectedRange === opt.v ? 'btn-primary' : 'btn-ghost opacity-60'"
+            class="btn btn-ghost btn-xs px-3 font-black uppercase text-[9px] tracking-widest rounded-lg"
+            :class="store.selectedRange === opt.v ? 'bg-primary text-primary-content shadow-md shadow-primary/20' : 'opacity-60 hover:opacity-100'"
             @click="store.setRange(opt.v)"
           >{{ opt.l }}</button>
         </div>
       </div>
 
       <!-- Nessun dato (mostra solo se non siamo in fullDay/Calendario) -->
-      <div v-if="!displayReadings.length && !loading && !fullDay" class="flex justify-center items-center py-16 opacity-30 text-sm">
-        Nessun dato
+      <div v-if="!displayReadings.length && !loading && !fullDay" class="flex justify-center items-center py-16 opacity-30 text-[10px] font-black uppercase tracking-widest relative z-10">
+        {{ $t('summary.no_data') }}
       </div>
 
       <!-- Grafico (Sempre visibile se fullDay, altrimenti se ci sono dati o caricamento) -->
-      <div v-else class="relative h-[300px] w-full">
+      <div v-else class="relative h-[300px] w-full z-10">
         <!-- Overlay caricamento per evitare flicker -->
-        <div v-if="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-base-200/50 backdrop-blur-[1px] transition-all rounded-xl">
+        <div v-if="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-base-100/50 backdrop-blur-[1px] transition-all rounded-xl">
           <span class="loading loading-spinner loading-md text-primary"></span>
         </div>
         <Line :data="chartData" :options="chartOptions" />
       </div>
 
       <!-- Legenda Insuline e Carboidrati -->
-      <div class="flex flex-wrap items-center justify-center gap-6 mt-2">
+      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-2 relative z-10 border-t border-base-content/5 pt-4">
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 rounded-sm bg-[#6366f1] opacity-30"></div>
-          <span class="text-[9px] font-black uppercase tracking-widest opacity-40">Azione Rapida</span>
+          <div class="w-2.5 h-2.5 rounded-sm bg-[#6366f1] opacity-40"></div>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Rapida</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 rounded-sm bg-[#ec4899] opacity-30"></div>
-          <span class="text-[9px] font-black uppercase tracking-widest opacity-40">Azione Lenta</span>
+          <div class="w-2.5 h-2.5 rounded-sm bg-[#ec4899] opacity-40"></div>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Lenta</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 rounded-full bg-[#d97706]"></div>
-          <span class="text-[9px] font-black uppercase tracking-widest opacity-40">Carboidrati (CHO)</span>
+          <div class="w-2.5 h-2.5 rounded-full bg-[#d97706]"></div>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">CHO</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 rounded-full bg-[#0ea5e9]"></div>
-          <span class="text-[9px] font-black uppercase tracking-widest opacity-40">Note</span>
+          <div class="w-2.5 h-2.5 rounded-full bg-[#0ea5e9]"></div>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Note</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-3 h-3 rounded-sm bg-[#94a3b8] opacity-30"></div>
-          <span class="text-[9px] font-black uppercase tracking-widest opacity-40">Gap Dati</span>
+          <div class="w-2.5 h-2.5 rounded-sm bg-[#94a3b8] opacity-20"></div>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Gap</span>
         </div>
       </div>
 

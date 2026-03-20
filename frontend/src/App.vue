@@ -1,7 +1,6 @@
 <template>
   <!-- Layout per utenti autenticati -->
-  <div v-if="auth.isAuthenticated" class="drawer lg:drawer-open min-h-screen bg-base-100 selection:bg-primary selection:text-white"
-    :data-theme="currentTheme">
+  <div v-if="auth.isAuthenticated" class="drawer lg:drawer-open min-h-screen bg-base-100 selection:bg-primary selection:text-white">
     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
 
     <div class="drawer-content flex flex-col min-w-0">
@@ -132,7 +131,7 @@
   </div>
 
   <!-- Layout per utenti non autenticati (Login/Register) -->
-  <div v-else :data-theme="currentTheme">
+  <div v-else>
     <router-view />
   </div>
 </template>

@@ -50,6 +50,16 @@ const messages = {
       sync_error: 'Dati non disponibili',
       sync_error_desc: 'Credenziali Gluroo non configurate o errate.'
     },
+    login: {
+      subtitle: 'Accedi al tuo profilo multiutente',
+      username: 'Username',
+      username_placeholder: 'Il tuo username',
+      password: 'Password',
+      submit: 'Accedi',
+      forgot_password: 'Hai dimenticato la password?',
+      no_account: 'Non hai un account?',
+      register: 'Registrati'
+    },
     comparison: {
       title: 'Confronto Periodi',
       subtitle: 'Analisi Comparativa Overlay',
@@ -291,6 +301,16 @@ const messages = {
       max: 'Maximum',
       sync_error: 'Data unavailable',
       sync_error_desc: 'Gluroo credentials not configured or incorrect.'
+    },
+    login: {
+      subtitle: 'Access your multi-user profile',
+      username: 'Username',
+      username_placeholder: 'Your username',
+      password: 'Password',
+      submit: 'Login',
+      forgot_password: 'Forgot password?',
+      no_account: "Don't have an account?",
+      register: 'Register'
     },
     comparison: {
       title: 'Period Comparison',

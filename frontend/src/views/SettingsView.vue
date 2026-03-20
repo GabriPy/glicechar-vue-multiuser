@@ -17,48 +17,51 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Gestione Account -->
-      <div class="card bg-base-200 shadow-xl border border-base-content/5 md:col-span-2">
-        <div class="card-body p-6 gap-4">
-          <div class="flex items-center gap-2 mb-2">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 md:col-span-2 overflow-hidden">
+        <div class="card-body p-6 gap-4 relative">
+          <!-- Decor interno -->
+          <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+          
+          <div class="flex items-center gap-2 mb-2 relative z-10">
             <i class="fi fi-sr-user-gear text-primary"></i>
-            <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('settings.account_data') }}</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('settings.account_data') }}</span>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.username') }}</span>
               </label>
-              <input type="text" v-model="accountForm.username" class="input font-black" />
+              <input type="text" v-model="accountForm.username" class="input input-bordered font-black text-sm" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.email') }}</span>
               </label>
-              <input type="email" v-model="accountForm.email" class="input font-black" :placeholder="auth.user?.email || 'tua@email.it'" />
+              <input type="email" v-model="accountForm.email" class="input input-bordered font-black text-sm" :placeholder="auth.user?.email || 'tua@email.it'" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.old_password') }}</span>
               </label>
-              <input type="password" v-model="accountForm.oldPassword" class="input font-black" placeholder="••••••••" />
+              <input type="password" v-model="accountForm.oldPassword" class="input input-bordered font-black text-sm" placeholder="••••••••" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.new_password') }}</span>
               </label>
-              <input type="password" v-model="accountForm.password" class="input font-black" placeholder="••••••••" />
+              <input type="password" v-model="accountForm.password" class="input input-bordered font-black text-sm" placeholder="••••••••" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.confirm_new_password') }}</span>
               </label>
-              <input type="password" v-model="accountForm.confirmPassword" class="input font-black" placeholder="••••••••" />
+              <input type="password" v-model="accountForm.confirmPassword" class="input input-bordered font-black text-sm" placeholder="••••••••" />
             </div>
           </div>
           
-          <div class="flex justify-end mt-2">
-            <button @click="saveAccount" :disabled="loading" class="btn btn-primary btn-sm px-8 font-black uppercase tracking-widest">
+          <div class="flex justify-end mt-2 relative z-10">
+            <button @click="saveAccount" :disabled="loading" class="btn btn-primary btn-sm px-8 font-black uppercase tracking-widest shadow-lg shadow-primary/20">
               {{ $t('settings.update_account') }}
             </button>
           </div>
@@ -66,102 +69,110 @@
       </div>
 
       <!-- Target Time In Range -->
-      <div class="card bg-base-200 shadow-xl border border-base-content/5">
-        <div class="card-body p-6 gap-4">
-          <div class="flex items-center gap-2 mb-2">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+        <div class="card-body p-6 gap-4 relative">
+          <div class="absolute -top-10 -left-10 w-32 h-32 bg-success/5 blur-3xl rounded-full"></div>
+          
+          <div class="flex items-center gap-2 mb-2 relative z-10">
             <i class="fi fi-sr-target text-success"></i>
-            <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('settings.tir_title') }}</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('settings.tir_title') }}</span>
           </div>
           
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 relative z-10">
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.tir_min') }}</span>
               </label>
-              <input type="number" v-model.number="form.tir_min" class="input font-black" />
+              <input type="number" v-model.number="form.tir_min" class="input input-bordered font-black text-sm" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.tir_max') }}</span>
               </label>
-              <input type="number" v-model.number="form.tir_max" class="input font-black" />
+              <input type="number" v-model.number="form.tir_max" class="input input-bordered font-black text-sm" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Soglie Critiche (Rosse) -->
-      <div class="card bg-base-200 shadow-sm border border-base-content/10">
-        <div class="card-body p-6 gap-4">
-          <div class="flex items-center gap-2 mb-2">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+        <div class="card-body p-6 gap-4 relative">
+          <div class="absolute -top-10 -right-10 w-32 h-32 bg-error/5 blur-3xl rounded-full"></div>
+          
+          <div class="flex items-center gap-2 mb-2 relative z-10">
             <i class="fi fi-sr-shield-exclamation text-error"></i>
-            <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('settings.critical_thresholds') }}</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('settings.critical_thresholds') }}</span>
           </div>
           
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 relative z-10">
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.critical_under') }}</span>
               </label>
-              <input type="number" v-model.number="form.red_under" class="input font-black border-error/30" />
+              <input type="number" v-model.number="form.red_under" class="input input-bordered font-black text-sm border-error/30" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.critical_over') }}</span>
               </label>
-              <input type="number" v-model.number="form.red_over" class="input font-black border-error/30" />
+              <input type="number" v-model.number="form.red_over" class="input input-bordered font-black text-sm border-error/30" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Durata Azione Insulina e Carboidrati -->
-      <div class="card bg-base-200 shadow-xl border border-base-content/5">
-        <div class="card-body p-6 gap-4">
-          <div class="flex items-center gap-2 mb-2">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+        <div class="card-body p-6 gap-4 relative">
+          <div class="absolute -top-10 -left-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+          
+          <div class="flex items-center gap-2 mb-2 relative z-10">
             <i class="fi fi-sr-clock text-primary"></i>
-            <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('settings.action_duration') }}</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('settings.action_duration') }}</span>
           </div>
           
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 relative z-10">
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.rapid_insulin') }}</span>
               </label>
-              <input type="number" v-model.number="form.rapid_duration" class="input font-black" />
+              <input type="number" v-model.number="form.rapid_duration" class="input input-bordered font-black text-sm" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.slow_insulin') }}</span>
               </label>
-              <input type="number" v-model.number="form.slow_duration" class="input font-black" />
+              <input type="number" v-model.number="form.slow_duration" class="input input-bordered font-black text-sm" />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.carb_absorption') }}</span>
               </label>
-              <input type="number" v-model.number="form.carb_duration" class="input font-black border-accent/30" />
+              <input type="number" v-model.number="form.carb_duration" class="input input-bordered font-black text-sm border-accent/30" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Parametri Predizione -->
-      <div class="card bg-base-200 shadow-sm border border-base-content/10">
-        <div class="card-body p-6 gap-4">
-          <div class="flex items-center gap-2 mb-2">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+        <div class="card-body p-6 gap-4 relative">
+          <div class="absolute -top-10 -right-10 w-32 h-32 bg-secondary/5 blur-3xl rounded-full"></div>
+          
+          <div class="flex items-center gap-2 mb-2 relative z-10">
             <i class="fi fi-sr-calculator text-secondary"></i>
-            <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('settings.prediction_params') }}</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('settings.prediction_params') }}</span>
           </div>
           
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 relative z-10">
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.insulin_sensitivity') }}</span>
               </label>
               <div class="flex items-center gap-2">
-                <input type="number" v-model.number="form.insulin_sensitivity" class="input font-black flex-1" />
-                <span class="text-[10px] font-bold opacity-30">{{ $t('settings.isf_unit') }}</span>
+                <input type="number" v-model.number="form.insulin_sensitivity" class="input input-bordered font-black text-sm flex-1" />
+                <span class="text-[10px] font-black uppercase opacity-30">{{ $t('settings.isf_unit') }}</span>
               </div>
             </div>
             <div class="form-control">
@@ -169,8 +180,8 @@
                 <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.carb_ratio') }}</span>
               </label>
               <div class="flex items-center gap-2">
-                <input type="number" v-model.number="form.carb_ratio" class="input font-black flex-1" />
-                <span class="text-[10px] font-bold opacity-30">{{ $t('settings.cr_unit') }}</span>
+                <input type="number" v-model.number="form.carb_ratio" class="input input-bordered font-black text-sm flex-1" />
+                <span class="text-[10px] font-black uppercase opacity-30">{{ $t('settings.cr_unit') }}</span>
               </div>
             </div>
           </div>
@@ -178,36 +189,38 @@
       </div>
 
       <!-- Configurazione Gluroo -->
-      <div class="card bg-base-200 shadow-xl border border-base-content/5 md:col-span-2">
-        <div class="card-body p-6 gap-4">
-          <div class="flex items-center gap-2 mb-2">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 md:col-span-2 overflow-hidden">
+        <div class="card-body p-6 gap-4 relative">
+          <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/5 blur-3xl rounded-full"></div>
+          
+          <div class="flex items-center gap-2 mb-2 relative z-10">
             <i class="fi fi-sr-cloud-share text-primary"></i>
-            <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('settings.gluroo_config') }}</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('settings.gluroo_config') }}</span>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">Gluroo Link</span>
               </label>
-              <input type="text" v-model="form.gluroo_link" class="input font-black" placeholder="https://..." />
+              <input type="text" v-model="form.gluroo_link" class="input input-bordered font-black text-sm" placeholder="https://..." />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">SHA Token</span>
               </label>
-              <input type="password" v-model="form.gluroo_token" class="input font-black" placeholder="Il tuo token..." />
+              <input type="password" v-model="form.gluroo_token" class="input input-bordered font-black text-sm" placeholder="Il tuo token..." />
             </div>
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-[10px] font-black uppercase opacity-40">SHA Header</span>
               </label>
-              <input type="password" v-model="form.gluroo_header" class="input font-black" placeholder="Il tuo header..." />
+              <input type="password" v-model="form.gluroo_header" class="input input-bordered font-black text-sm" placeholder="Il tuo header..." />
             </div>
           </div>
           
-          <div class="flex justify-end mt-2">
-            <button @click="saveSettings" :disabled="loading" class="btn btn-primary btn-sm px-8 font-black uppercase tracking-widest">
+          <div class="flex justify-end mt-2 relative z-10">
+            <button @click="saveSettings" :disabled="loading" class="btn btn-primary btn-sm px-8 font-black uppercase tracking-widest shadow-lg shadow-primary/20">
               {{ $t('settings.save_settings') }}
             </button>
           </div>
@@ -290,7 +303,10 @@ const accountForm = ref({
 })
 
 onMounted(async () => {
-  await store.fetchSettings()
+  await Promise.all([
+    store.fetchSettings(),
+    auth.fetchMe()
+  ])
   updateFormFromStore()
 })
 
@@ -326,6 +342,7 @@ async function saveAccount() {
     accountForm.value.oldPassword = ''
     accountForm.value.password = ''
     accountForm.value.confirmPassword = ''
+    updateFormFromStore() // Ricarica i dati (inclusa la mail) dopo il salvataggio
     saved.value = true
     setTimeout(() => saved.value = false, 3000)
   } else {
@@ -335,24 +352,30 @@ async function saveAccount() {
 }
 
 function updateFormFromStore() {
-  form.value.tir_min = store.settings.tir_min
-  form.value.tir_max = store.settings.tir_max
-  form.value.red_under = store.settings.red_under
-  form.value.red_over = store.settings.red_over
-  form.value.rapid_duration = store.settings.rapid_duration
-  form.value.slow_duration = store.settings.slow_duration
-  form.value.carb_duration = store.settings.carb_duration
-  form.value.insulin_sensitivity = store.settings.insulin_sensitivity
-  form.value.carb_ratio = store.settings.carb_ratio
+  if (store.settings) {
+    form.value.tir_min = store.settings.tir_min
+    form.value.tir_max = store.settings.tir_max
+    form.value.red_under = store.settings.red_under
+    form.value.red_over = store.settings.red_over
+    form.value.rapid_duration = store.settings.rapid_duration
+    form.value.slow_duration = store.settings.slow_duration
+    form.value.carb_duration = store.settings.carb_duration
+    form.value.insulin_sensitivity = store.settings.insulin_sensitivity
+    form.value.carb_ratio = store.settings.carb_ratio
+  }
   
   // Dati Gluroo dall'auth store
-  form.value.gluroo_token = auth.user?.gluroo?.token || ''
-  form.value.gluroo_header = auth.user?.gluroo?.header || ''
-  form.value.gluroo_link = auth.user?.gluroo?.link || ''
+  if (auth.user?.gluroo) {
+    form.value.gluroo_token = auth.user.gluroo.token || ''
+    form.value.gluroo_header = auth.user.gluroo.header || ''
+    form.value.gluroo_link = auth.user.gluroo.link || ''
+  }
 
   // Dati Account
-  accountForm.value.username = auth.user?.username || ''
-  accountForm.value.email = auth.user?.email || ''
+  if (auth.user) {
+    accountForm.value.username = auth.user.username || ''
+    accountForm.value.email = auth.user.email || ''
+  }
 }
 
 async function resetToDefaults() {
@@ -382,15 +405,20 @@ async function saveSettings() {
       carb_ratio: form.value.carb_ratio
     })
     if (success) {
-      await auth.updateGluroo({
+      const glurooSuccess = await auth.updateGluroo({
         link: form.value.gluroo_link,
         token: form.value.gluroo_token,
         header: form.value.gluroo_header
       })
-      successMessage.value = t('settings.settings_saved')
-      updateFormFromStore()
-      saved.value = true
-      setTimeout(() => saved.value = false, 3000)
+      
+      if (glurooSuccess) {
+        successMessage.value = t('settings.settings_saved')
+        updateFormFromStore()
+        saved.value = true
+        setTimeout(() => saved.value = false, 3000)
+      } else {
+        errorMessage.value = auth.error || 'Errore salvataggio credenziali Gluroo'
+      }
     }
   } catch (e) {
     errorMessage.value = t('settings.save_error')

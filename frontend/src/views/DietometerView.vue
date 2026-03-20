@@ -1,8 +1,10 @@
 <template>
   <div class="flex flex-col gap-6">
-    <div class="card bg-base-200 shadow-xl border border-base-content/5">
-      <div class="card-body p-4 md:p-6">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+      <div class="card-body p-4 md:p-6 relative">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-accent/5 blur-3xl rounded-full"></div>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
           <div class="flex items-center gap-3">
             <div class="p-2.5 bg-accent/10 rounded-2xl">
               <i class="fi fi-sr-wheat text-accent text-xl"></i>
@@ -20,7 +22,7 @@
               <input
                 v-model="searchQuery"
                 type="text"
-                class="input input-sm bg-base-300/60 rounded-xl font-black tracking-widest text-[10px] w-full pl-9 h-10 border-none focus:outline-none"
+                class="input input-sm bg-base-200/60 rounded-xl font-black tracking-widest text-[10px] w-full pl-9 h-10 border-none focus:outline-none"
                 :placeholder="$t('dietometer.search_placeholder')"
               />
             </div>
@@ -51,14 +53,16 @@
       </div>
     </div>
 
-    <div v-if="showAddFood" class="card bg-base-200 shadow-xl border border-base-content/5">
-      <div class="card-body p-6 gap-4">
-        <div class="flex items-center justify-between gap-4">
+    <div v-if="showAddFood" class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+      <div class="card-body p-6 gap-4 relative">
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+        
+        <div class="flex items-center justify-between gap-4 relative z-10">
           <div class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('dietometer.new_food') }}</div>
           <button class="btn btn-ghost btn-xs font-black uppercase tracking-widest" @click="showAddFood = false">{{ $t('dietometer.close') }}</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <!-- Nome -->
             <div class="flex flex-col gap-1.5">
@@ -66,7 +70,7 @@
               <input
                 v-model="newFood.name"
                 type="text"
-                class="input input-sm bg-base-300/60 rounded-xl font-black tracking-widest text-[10px] uppercase h-10 border-none focus:outline-none w-full"
+                class="input input-sm bg-base-200/60 rounded-xl font-black tracking-widest text-[10px] uppercase h-10 border-none focus:outline-none w-full"
                 placeholder="ES. PASTA..."
               />
             </div>
@@ -78,7 +82,7 @@
                 type="number"
                 min="0"
                 max="100"
-                class="input input-sm bg-base-300/60 rounded-xl font-black tracking-widest text-[10px] uppercase h-10 border-none focus:outline-none w-full no-spinner"
+                class="input input-sm bg-base-200/60 rounded-xl font-black tracking-widest text-[10px] uppercase h-10 border-none focus:outline-none w-full no-spinner"
                 placeholder="ES. 70..."
               />
             </div>
@@ -87,7 +91,7 @@
           <!-- Selettore Categoria (Stile Button Group) -->
           <div class="flex flex-col gap-1.5">
             <div class="text-[8px] font-black uppercase tracking-widest opacity-30 ml-1">{{ $t('dietometer.category') }}</div>
-            <div class="grid grid-cols-4 gap-1 p-1 bg-base-300/60 rounded-xl h-10 items-center">
+            <div class="grid grid-cols-4 gap-1 p-1 bg-base-200/60 rounded-xl h-10 items-center">
               <button 
                 v-for="cat in categories" 
                 :key="cat"

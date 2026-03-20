@@ -375,6 +375,9 @@ export const useGlucoseStore = defineStore('glucose', () => {
   })
 
   const hasSyncError = computed(() => {
+    // Se l'utente non è autenticato, non mostriamo errori di sync
+    if (!auth.isAuthenticated) return false;
+
     // Se non ci sono credenziali impostate
     const noCreds = !auth.user?.gluroo?.link || !auth.user?.gluroo?.token || !auth.user?.gluroo?.header;
     // Se c'è un errore nell'ultimo sync riportato dal backend
@@ -391,7 +394,11 @@ export const useGlucoseStore = defineStore('glucose', () => {
       current.value = data
       error.value = null
     } catch (e: any) {
-      error.value = e.response?.data?.error || 'Impossibile caricare dato attuale'
+      if (e.response?.status === 404) {
+        current.value = null;
+      } else {
+        error.value = e.response?.data?.error || 'Impossibile caricare dato attuale'
+      }
     }
   }
 
@@ -645,6 +652,19 @@ export const useGlucoseStore = defineStore('glucose', () => {
     }
   }
 
+  function clearAll() {
+    current.value = null
+    readings.value = []
+    allInsulin.value = []
+    allCarbs.value = []
+    notes.value = []
+    error.value = null
+    historyReadings.value = []
+    historyInsulin.value = []
+    historyCarbs.value = []
+    historyNotes.value = []
+  }
+
   return {
     current, readings, insulinRecords, carbRecords, notes, selectedRange, carbDraftAmount, loading, chartLoading, error, lastUpdated,
     settings,
@@ -656,6 +676,6 @@ export const useGlucoseStore = defineStore('glucose', () => {
     addCarb, removeCarb, editCarb,
     addNote, removeNote, editNote,
     fetchHistory, fetchLongHistory, fetchSettings, updateSettings, resetSettings, getStatusColor,
-    getDietFoods, addDietFood
+    getDietFoods, addDietFood, clearAll
   }
 })

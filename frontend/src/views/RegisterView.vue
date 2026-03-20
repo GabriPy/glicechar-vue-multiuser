@@ -55,53 +55,61 @@ async function handleRegister(skipWarning = false) {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-base-200 px-4">
-    <div class="max-w-md w-full space-y-8 bg-base-100 p-8 rounded-2xl shadow-xl relative">
+  <div class="min-h-screen flex items-center justify-center bg-base-200 px-4 relative overflow-hidden">
+    <!-- Background Decor -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
+      <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full"></div>
+      <div class="absolute top-[40%] -right-[10%] w-[30%] h-[50%] bg-secondary/10 blur-[100px] rounded-full"></div>
+    </div>
+
+    <div class="max-w-md w-full space-y-8 bg-base-100 p-8 rounded-2xl shadow-xl relative z-10 border border-base-content/5">
       <div class="text-center">
-        <h2 class="mt-6 text-3xl font-extrabold text-primary italic uppercase tracking-tight">Glice<span class="text-base-content">Chart</span></h2>
-        <p class="mt-2 text-sm text-base-content/70">Registrazione Multiutente</p>
+        <h2 class="mt-6 text-3xl font-black uppercase tracking-tight text-primary italic">Glice<span class="text-base-content">Chart</span></h2>
+        <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Registrazione Multiutente</p>
       </div>
       
       <form class="mt-8 space-y-4" @submit.prevent="handleRegister(false)">
-        <div class="space-y-1">
+        <div class="form-control">
           <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Username</span></label>
-          <input v-model="username" type="text" required class="input input-bordered w-full font-bold" placeholder="Il tuo username" />
+          <input v-model="username" type="text" required class="input input-bordered w-full font-black" placeholder="Il tuo username" />
         </div>
 
-        <div class="space-y-1">
+        <div class="form-control">
           <label class="label py-1">
             <span class="label-text text-[10px] font-black uppercase opacity-40">Email (Consigliata)</span>
           </label>
-          <input v-model="email" type="email" class="input input-bordered w-full font-bold" placeholder="tua@email.it" />
+          <input v-model="email" type="email" class="input input-bordered w-full font-black" placeholder="tua@email.it" />
           <p class="text-[9px] opacity-40 italic px-1">Necessaria per il recupero password</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-1">
+          <div class="form-control">
             <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Password</span></label>
-            <input v-model="password" type="password" required class="input input-bordered w-full font-bold" placeholder="••••••••" />
+            <input v-model="password" type="password" required class="input input-bordered w-full font-black" placeholder="••••••••" />
           </div>
-          <div class="space-y-1">
+          <div class="form-control">
             <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Conferma</span></label>
-            <input v-model="confirmPassword" type="password" required class="input input-bordered w-full font-bold" placeholder="••••••••" />
+            <input v-model="confirmPassword" type="password" required class="input input-bordered w-full font-black" placeholder="••••••••" />
           </div>
         </div>
 
-        <div v-if="error" class="alert alert-error text-xs py-2 font-bold">
+        <div v-if="error" class="alert alert-error text-[10px] font-black uppercase tracking-wider py-2">
           <i class="fi fi-sr-exclamation"></i>
           <span>{{ error }}</span>
         </div>
 
         <div class="pt-4">
-          <button type="submit" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest">
+          <button type="submit" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
             <span v-if="loading" class="loading loading-spinner"></span>
             Crea Account
           </button>
         </div>
         
-        <div class="text-center text-xs pt-2">
-          <span class="opacity-50">Hai già un account? </span>
-          <router-link to="/login" class="link link-primary font-black uppercase tracking-tighter">Accedi qui</router-link>
+        <div class="text-center pt-2">
+          <div class="text-[10px] font-bold">
+            <span class="opacity-40 uppercase tracking-widest">Hai già un account? </span>
+            <router-link to="/login" class="link link-primary font-black uppercase tracking-widest">Accedi qui</router-link>
+          </div>
         </div>
       </form>
 

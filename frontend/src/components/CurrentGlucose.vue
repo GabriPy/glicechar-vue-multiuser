@@ -1,8 +1,8 @@
 <template>
-  <div class="card bg-base-200 shadow-sm border border-base-content/10 h-full relative overflow-hidden group">
+  <div class="card bg-base-100 shadow-xl border border-base-content/5 h-full relative overflow-hidden group">
     <!-- Glow di sfondo dinamico -->
     <div 
-      class="absolute inset-0 opacity-[0.03] blur-3xl transition-colors duration-1000"
+      class="absolute inset-0 opacity-[0.05] blur-3xl transition-colors duration-1000"
       :class="store.glucoseColor.replace('text-', 'bg-')"
     ></div>
 

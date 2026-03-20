@@ -1,20 +1,31 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.EMAIL_PORT || '587'),
-  secure: process.env.EMAIL_SECURE === 'true',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const transporter = (process.env.EMAIL_HOST && process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_PASS !== 'tua_password_email') 
+  ? nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: parseInt(process.env.EMAIL_PORT || '587'),
+      secure: process.env.EMAIL_SECURE === 'true',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    })
+  : nodemailer.createTransport({
+      sendmail: true,
+      newline: 'unix',
+      path: '/usr/sbin/sendmail' // Percorso standard su Linux
+    });
 
 export async function sendPasswordResetEmail(email: string, token: string) {
   const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3002'}/reset-password?token=${token}`;
   
+  // Se non c'è SMTP e non siamo su Linux (per sendmail), diamo un avviso ma proviamo comunque
+  if (!process.env.EMAIL_HOST && process.platform === 'win32') {
+    console.warn('ATTENZIONE: Invio email diretto non supportato su Windows senza SMTP configurato.');
+  }
+
   const mailOptions = {
-    from: process.env.EMAIL_FROM || `"GliceChart" <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_FROM || `"GliceChart" <noreply@mglicechart.ghibiri.it>`,
     to: email,
     subject: 'Recupero Password - GliceChart',
     html: `

@@ -58,7 +58,12 @@ export const settingsSchema = z.object({
 export const glurooSchema = z.object({
   token: z.string().min(1),
   header: z.string().min(1),
-  link: z.string().url(),
+  link: z.string().min(1).transform(v => {
+    if (!v.startsWith('http://') && !v.startsWith('https://')) {
+      return `https://${v}`;
+    }
+    return v;
+  }).pipe(z.string().url()),
 });
 
 export const foodSchema = z.object({

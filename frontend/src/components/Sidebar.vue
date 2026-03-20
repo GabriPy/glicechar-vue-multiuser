@@ -1,16 +1,17 @@
 <template>
-  <aside class="w-64 h-full bg-base-200 border-r border-base-content/5 flex flex-col z-[100]">
+  <aside class="w-64 h-full bg-base-100 border-r border-base-content/5 flex flex-col z-[100] relative overflow-hidden">
+    <!-- Decor Background -->
+    <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/5 blur-3xl rounded-full pointer-events-none"></div>
+    
     <!-- Logo -->
-    <div class="p-6 mb-4">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-primary/10 rounded-xl">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-primary">
-            <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75ZM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v9.375c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 0 1-1.875-1.875V8.625ZM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v4.875c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 0 1 3 18v-4.875Z" />
-          </svg>
+    <div class="p-8 mb-4 relative z-10">
+      <div class="flex flex-col">
+        <h1 class="text-2xl font-black uppercase tracking-tighter italic leading-none">Glice<span class="text-primary">Chart</span></h1>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="px-1.5 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest rounded-md">Multiuser</span>
+          <span class="text-[8px] font-black opacity-20 uppercase tracking-[0.2em]">{{ APP_VERSION_LABEL }}</span>
         </div>
-        <span class="text-lg font-black tracking-tight uppercase italic">Glice<span class="text-primary">Chart-multiuser</span></span>
       </div>
-      <div class="mt-1 text-[8px] font-black opacity-20 uppercase tracking-[0.2em]">Dashboard {{ APP_VERSION_LABEL }}</div>
     </div>
 
     <!-- Navigazione -->
@@ -121,35 +122,35 @@
     </nav>
 
     <!-- Language Selector & Footer -->
-    <div class="p-4 mt-auto border-t border-base-content/5 space-y-4">
-      <div class="flex items-center justify-around bg-base-300/30 p-2 rounded-xl">
+    <div class="p-6 mt-auto border-t border-base-content/5 space-y-4 relative z-10">
+      <div class="flex items-center justify-around bg-base-200/50 p-1 rounded-xl border border-base-content/5">
         <button 
           @click="changeLang('it')" 
-          class="btn btn-ghost btn-xs font-black"
-          :class="{ 'text-primary underline': $i18n.locale === 'it' }"
+          class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] flex-1 rounded-lg"
+          :class="{ 'bg-primary text-primary-content shadow-sm': $i18n.locale === 'it', 'opacity-40': $i18n.locale !== 'it' }"
         >IT</button>
         <button 
           @click="changeLang('en')" 
-          class="btn btn-ghost btn-xs font-black"
-          :class="{ 'text-primary underline': $i18n.locale === 'en' }"
+          class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] flex-1 rounded-lg"
+          :class="{ 'bg-primary text-primary-content shadow-sm': $i18n.locale === 'en', 'opacity-40': $i18n.locale !== 'en' }"
         >EN</button>
       </div>
 
-      <div v-if="auth.user" class="p-4 bg-base-300/50 rounded-2xl flex flex-col gap-3">
+      <div v-if="auth.user" class="p-4 bg-base-200/50 rounded-2xl flex flex-col gap-3 border border-base-content/5">
         <div class="flex items-center gap-3">
           <div class="avatar avatar-placeholder">
-            <div class="bg-primary text-primary-content rounded-xl w-8 h-8">
+            <div class="bg-primary/10 text-primary rounded-xl w-8 h-8 border border-primary/20">
               <span class="text-xs font-black uppercase">{{ auth.user.username.charAt(0) }}</span>
             </div>
           </div>
           <div class="flex flex-col overflow-hidden">
-            <span class="text-[10px] font-black uppercase tracking-tight truncate">{{ auth.user.username }}</span>
-            <span v-if="auth.user.isAdmin" class="text-[7px] font-black uppercase text-primary tracking-widest">Administrator</span>
-            <span v-else class="text-[7px] font-black uppercase opacity-40 tracking-widest">User</span>
+            <span class="text-[10px] font-black uppercase tracking-tight truncate leading-none">{{ auth.user.username }}</span>
+            <span v-if="auth.user.isAdmin" class="text-[7px] font-black uppercase text-primary tracking-widest mt-1">Administrator</span>
+            <span v-else class="text-[7px] font-black uppercase opacity-40 tracking-widest mt-1">Standard User</span>
           </div>
         </div>
-        <button @click="handleLogout" class="btn btn-ghost btn-xs w-full font-black uppercase tracking-widest opacity-40 hover:opacity-100 hover:text-error">
-          <i class="fi fi-sr-exit mr-2"></i>
+        <button @click="handleLogout" class="btn btn-ghost btn-xs w-full font-black uppercase tracking-widest opacity-40 hover:opacity-100 hover:text-error transition-all">
+          <i class="fi fi-sr-exit mr-2 text-[10px]"></i>
           {{ $t('nav.logout') }}
         </button>
       </div>

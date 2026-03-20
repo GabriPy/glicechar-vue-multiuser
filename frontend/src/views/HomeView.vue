@@ -47,11 +47,82 @@
         </div>
       </div>
 
-      <!-- Riga 3: Statistiche (TIR, Media, ecc.) -->
-      <div class="w-full">
-        <DailyStats />
+      <!-- Statistiche Rapide -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+        <!-- Media -->
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-primary/30 transition-all">
+          <div class="card-body p-5 relative">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-primary/5 blur-3xl rounded-full group-hover:bg-primary/10 transition-colors"></div>
+            <div class="flex items-center justify-between relative z-10">
+              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ $t('home.avg') }}</span>
+              <div class="p-2 bg-primary/10 rounded-xl text-primary">
+                <i class="fi fi-sr-stats"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-black tracking-tighter italic">{{ store.stats?.avg || '--' }}</span>
+              <span class="text-[10px] font-bold opacity-30 uppercase">{{ $t('common.mgdl') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIR -->
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-success/30 transition-all">
+          <div class="card-body p-5 relative">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-success/5 blur-3xl rounded-full group-hover:bg-success/10 transition-colors"></div>
+            <div class="flex items-center justify-between relative z-10">
+              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ $t('home.tir') }}</span>
+              <div class="p-2 bg-success/10 rounded-xl text-success">
+                <i class="fi fi-sr-target"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-black tracking-tighter italic">{{ store.stats?.tir || '--' }}</span>
+              <span class="text-[10px] font-bold opacity-30 uppercase">%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- IOB -->
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-secondary/30 transition-all">
+          <div class="card-body p-5 relative">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-secondary/5 blur-3xl rounded-full group-hover:bg-secondary/10 transition-colors"></div>
+            <div class="flex items-center justify-between relative z-10">
+              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">IOB ({{ $t('home.active_insulin') }})</span>
+              <div class="p-2 bg-secondary/10 rounded-xl text-secondary">
+                <i class="fi fi-sr-syringe"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-black tracking-tighter italic">{{ store.iob.toFixed(1) }}</span>
+              <span class="text-[10px] font-bold opacity-30 uppercase">{{ $t('common.units') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- COB -->
+        <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-accent/30 transition-all">
+          <div class="card-body p-5 relative">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-accent/5 blur-3xl rounded-full group-hover:bg-accent/10 transition-colors"></div>
+            <div class="flex items-center justify-between relative z-10">
+              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">COB ({{ $t('home.active_carbs') }})</span>
+              <div class="p-2 bg-accent/10 rounded-xl text-accent">
+                <i class="fi fi-sr-wheat"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-black tracking-tighter italic">{{ store.cob.toFixed(0) }}</span>
+              <span class="text-[10px] font-bold opacity-30 uppercase">g</span>
+            </div>
+          </div>
       </div>
-    </template>
+    </div>
+
+    <!-- Statistiche Dettagliate -->
+    <div class="w-full relative z-10">
+      <DailyStats />
+    </div>
+  </template>
   </div>
 </template>
 

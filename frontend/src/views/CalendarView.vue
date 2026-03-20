@@ -2,9 +2,12 @@
   <div class="flex flex-col gap-6">
     
     <!-- Header / Calendario -->
-    <div class="card bg-base-200 shadow-sm border border-base-content/10">
-      <div class="card-body p-4 md:p-6">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+      <div class="card-body p-4 md:p-6 relative">
+        <!-- Decor -->
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
           <div class="flex items-center gap-3">
             <div class="p-2.5 bg-primary/10 rounded-2xl">
               <i class="fi fi-sr-calendar text-primary text-xl"></i>
@@ -15,7 +18,7 @@
             </div>
           </div>
           
-          <div class="flex items-center gap-2 bg-base-300/50 p-1.5 rounded-2xl border border-base-content/5">
+          <div class="flex items-center gap-2 bg-base-200 p-1.5 rounded-2xl border border-base-content/5">
             <button @click="changeDate(-1)" class="btn btn-ghost btn-xs btn-circle font-black">
               <i class="fi fi-sr-angle-left"></i>
             </button>
@@ -53,7 +56,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       
       <!-- Card Insuline -->
-      <div class="card bg-base-200 shadow-sm border border-base-content/10 overflow-hidden">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
         <div class="card-body p-0">
           <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-primary/5">
             <div class="flex items-center gap-2">
@@ -67,7 +70,7 @@
           
           <div class="p-4 max-h-[250px] overflow-y-auto scrollbar-hide">
             <div v-if="store.historyLoading" class="flex flex-col gap-3">
-              <div v-for="n in 3" :key="n" class="h-16 bg-base-300/30 rounded-2xl animate-pulse"></div>
+              <div v-for="n in 3" :key="n" class="h-16 bg-base-200/30 rounded-2xl animate-pulse"></div>
             </div>
             <div v-else class="space-y-2">
               <div v-if="!store.historyInsulin.length" class="py-8 text-center opacity-20">
@@ -76,7 +79,7 @@
               <div 
                 v-for="ins in sortedHistoryInsulin" 
                 :key="ins.id"
-                class="bg-base-300/30 p-3 rounded-2xl flex items-center justify-between border border-transparent hover:border-base-content/5 transition-all group"
+                class="bg-base-200/50 p-3 rounded-2xl flex items-center justify-between border border-transparent hover:border-base-content/5 transition-all group"
               >
                 <div class="flex items-center gap-4">
                   <div 
@@ -86,7 +89,7 @@
                   <div class="flex flex-col">
                     <div class="flex items-center gap-2 leading-none">
                       <span class="text-sm font-black tracking-tight">{{ ins.units.toString().replace(',', '.') }}{{ $t('common.units') }}</span>
-                      <span class="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-base-300 opacity-60">
+                      <span class="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-base-200 opacity-60">
                         {{ ins.type === 'rapid' ? $t('calendar.rapid') : $t('calendar.slow') }}
                       </span>
                     </div>
@@ -109,46 +112,49 @@
       </div>
 
       <!-- Card Carboidrati -->
-      <div class="card bg-base-200 shadow-sm border border-base-content/10 overflow-hidden">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
         <div class="card-body p-0">
-          <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-secondary/5">
+          <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-accent/5">
             <div class="flex items-center gap-2">
               <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.carbs') }}</span>
-              <span class="px-2 py-0.5 rounded-md bg-secondary/10 text-[9px] font-black text-secondary">{{ store.historyCarbs.length }}</span>
+              <span class="px-2 py-0.5 rounded-md bg-accent/10 text-[9px] font-black text-accent">{{ store.historyCarbs.length }}</span>
             </div>
-            <button @click="startAdd('carb')" class="btn btn-ghost btn-xs btn-circle text-secondary">
+            <button @click="startAdd('carb')" class="btn btn-ghost btn-xs btn-circle text-accent">
               <i class="fi fi-sr-plus-small text-lg"></i>
             </button>
           </div>
           
           <div class="p-4 max-h-[250px] overflow-y-auto scrollbar-hide">
             <div v-if="store.historyLoading" class="flex flex-col gap-3">
-              <div v-for="n in 3" :key="n" class="h-16 bg-base-300/30 rounded-2xl animate-pulse"></div>
+              <div v-for="n in 3" :key="n" class="h-16 bg-base-200/30 rounded-2xl animate-pulse"></div>
             </div>
             <div v-else class="space-y-2">
               <div v-if="!store.historyCarbs.length" class="py-8 text-center opacity-20">
                 <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_data') }}</span>
               </div>
               <div 
-                v-for="carb in sortedHistoryCarbs" 
-                :key="carb.id"
-                class="bg-base-300/30 p-3 rounded-2xl flex items-center justify-between border border-transparent hover:border-base-content/5 transition-all group"
+                v-for="c in sortedHistoryCarbs" 
+                :key="c.id"
+                class="bg-base-200/50 p-3 rounded-2xl flex items-center justify-between border border-transparent hover:border-base-content/5 transition-all group"
               >
                 <div class="flex items-center gap-4">
-                  <div class="w-1 h-8 rounded-full bg-secondary"></div>
+                  <div class="w-1 h-8 rounded-full bg-accent"></div>
                   <div class="flex flex-col">
                     <div class="flex items-center gap-2 leading-none">
-                      <span class="text-sm font-black tracking-tight">{{ carb.amount }}{{ $t('common.grams') }}</span>
+                      <span class="text-sm font-black tracking-tight">{{ c.amount }}g</span>
+                      <span class="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-base-200 opacity-60">
+                        {{ $t('calendar.carbs_short') }}
+                      </span>
                     </div>
-                    <span class="text-[9px] font-black opacity-30 uppercase tracking-wider mt-1">{{ formatTime(carb.timestamp) }}</span>
+                    <span class="text-[9px] font-black opacity-30 uppercase tracking-wider mt-1">{{ formatTime(c.timestamp) }}</span>
                   </div>
                 </div>
-
+                
                 <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button @click="startEdit('carb', carb)" class="btn btn-ghost btn-xs btn-circle text-info">
+                  <button @click="startEdit('carb', c)" class="btn btn-ghost btn-xs btn-circle text-info">
                     <i class="fi fi-sr-pencil text-[10px]"></i>
                   </button>
-                  <button @click="handleDelete('carb', carb.id)" class="btn btn-ghost btn-xs btn-circle text-error">
+                  <button @click="handleDelete('carb', c.id)" class="btn btn-ghost btn-xs btn-circle text-error">
                     <i class="fi fi-sr-trash text-[10px]"></i>
                   </button>
                 </div>
@@ -159,43 +165,43 @@
       </div>
 
       <!-- Card Note -->
-      <div class="card bg-base-200 shadow-sm border border-base-content/10 overflow-hidden">
+      <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
         <div class="card-body p-0">
-          <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-accent/5">
+          <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-secondary/5">
             <div class="flex items-center gap-2">
               <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.notes') }}</span>
-              <span class="px-2 py-0.5 rounded-md bg-accent/10 text-[9px] font-black text-accent">{{ store.historyNotes.length }}</span>
+              <span class="px-2 py-0.5 rounded-md bg-secondary/10 text-[9px] font-black text-secondary">{{ store.historyNotes.length }}</span>
             </div>
-            <button @click="startAdd('note')" class="btn btn-ghost btn-xs btn-circle text-accent">
+            <button @click="startAdd('note')" class="btn btn-ghost btn-xs btn-circle text-secondary">
               <i class="fi fi-sr-plus-small text-lg"></i>
             </button>
           </div>
           
           <div class="p-4 max-h-[250px] overflow-y-auto scrollbar-hide">
             <div v-if="store.historyLoading" class="flex flex-col gap-3">
-              <div v-for="n in 3" :key="n" class="h-16 bg-base-300/30 rounded-2xl animate-pulse"></div>
+              <div v-for="n in 3" :key="n" class="h-16 bg-base-200/30 rounded-2xl animate-pulse"></div>
             </div>
             <div v-else class="space-y-2">
               <div v-if="!store.historyNotes.length" class="py-8 text-center opacity-20">
                 <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_data') }}</span>
               </div>
               <div 
-                v-for="note in sortedHistoryNotes" 
-                :key="note.id"
-                class="bg-base-300/30 p-3 rounded-2xl flex flex-col gap-2 border border-transparent hover:border-base-content/5 transition-all group"
+                v-for="n in sortedHistoryNotes" 
+                :key="n.id"
+                class="bg-base-200/50 p-3 rounded-2xl flex flex-col gap-2 border border-transparent hover:border-base-content/5 transition-all group"
               >
-                <div class="flex items-start justify-between">
-                  <span class="text-[9px] font-black opacity-30 uppercase tracking-wider">{{ formatTime(note.timestamp) }}</span>
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-black opacity-30 uppercase tracking-wider">{{ formatTime(n.timestamp) }}</span>
                   <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button @click="startEdit('note', note)" class="btn btn-ghost btn-xs btn-circle text-info">
+                    <button @click="startEdit('note', n)" class="btn btn-ghost btn-xs btn-circle text-info">
                       <i class="fi fi-sr-pencil text-[10px]"></i>
                     </button>
-                    <button @click="handleDelete('note', note.id)" class="btn btn-ghost btn-xs btn-circle text-error">
+                    <button @click="handleDelete('note', n.id)" class="btn btn-ghost btn-xs btn-circle text-error">
                       <i class="fi fi-sr-trash text-[10px]"></i>
                     </button>
                   </div>
                 </div>
-                <p class="text-xs font-bold leading-relaxed opacity-80">{{ note.text }}</p>
+                <p class="text-xs font-bold leading-relaxed opacity-80">{{ n.text }}</p>
               </div>
             </div>
           </div>

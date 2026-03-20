@@ -1,14 +1,16 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Header -->
-    <div class="card bg-base-200 shadow-sm border border-base-content/10">
-      <div class="card-body p-6">
-        <div class="flex items-center gap-4">
+    <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
+      <div class="card-body p-4 md:p-6 relative">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-accent/5 blur-3xl rounded-full"></div>
+        
+        <div class="flex items-center gap-4 relative z-10">
           <div class="p-3 bg-accent/10 rounded-2xl">
             <i class="fi fi-sr-brain text-accent text-2xl leading-none"></i>
           </div>
           <div>
-            <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic">{{ $t('patterns.title') }}</h1>
+            <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic text-primary">Glice<span class="text-base-content">AI</span></h1>
             <p class="text-xs font-black opacity-30 uppercase tracking-[0.2em] mt-2">{{ $t('patterns.subtitle') }}</p>
           </div>
         </div>
@@ -33,21 +35,24 @@
     <!-- Patterns List -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       
-      <div v-for="p in store.patterns" :key="p.id" class="card bg-base-200 shadow-xl border border-base-content/5 overflow-hidden">
-        <div class="card-body p-6 gap-4">
-          <div class="flex items-center justify-between">
+      <div v-for="p in store.patterns" :key="p.id" class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group">
+        <div class="card-body p-6 gap-4 relative">
+          <!-- Hover Decor -->
+          <div class="absolute inset-0 bg-base-content/[0.02] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+          
+          <div class="flex items-center justify-between relative z-10">
             <div class="flex items-center gap-2">
               <i class="fi" :class="[p.icon, `text-${p.color}`]"></i>
-              <span class="text-xs font-black uppercase tracking-widest opacity-60 italic">{{ $t('patterns.detected') }}</span>
+              <span class="text-[10px] font-black uppercase tracking-widest opacity-60 italic">{{ $t('patterns.detected') }}</span>
             </div>
             <div v-if="p.confidence > 80" class="badge badge-accent badge-outline font-black text-[10px] uppercase tracking-widest">{{ $t('patterns.high_priority') }}</div>
           </div>
-          <h2 class="text-2xl font-black italic tracking-tight leading-none">{{ p.title }}</h2>
-          <p class="text-base opacity-80 leading-relaxed">
+          <h2 class="text-2xl font-black italic tracking-tight leading-none relative z-10">{{ p.title }}</h2>
+          <p class="text-sm opacity-80 leading-relaxed relative z-10 font-medium">
             {{ p.description }}
           </p>
-          <div class="bg-base-300/30 p-4 rounded-2xl flex flex-col gap-3">
-            <div class="flex items-center justify-between text-xs font-black uppercase opacity-40">
+          <div class="bg-base-200/50 p-4 rounded-2xl flex flex-col gap-3 relative z-10 border border-base-content/5">
+            <div class="flex items-center justify-between text-[10px] font-black uppercase opacity-40">
               <span>{{ $t('patterns.reliability') }}</span>
               <span>{{ p.confidence }}%</span>
             </div>
@@ -61,11 +66,17 @@
     </div>
 
     <!-- Data Quality Alert -->
-    <div class="alert bg-base-200 border-base-content/10 shadow-sm p-6 mt-auto">
-      <i class="fi fi-sr-database text-primary text-2xl"></i>
-      <div>
-        <h3 class="font-black uppercase tracking-tight text-sm italic">{{ $t('patterns.data_analyzed') }}</h3>
-        <p class="text-xs opacity-40 uppercase tracking-widest mt-1">{{ $t('patterns.data_analyzed_desc') }}</p>
+    <div class="alert bg-base-100 border border-base-content/5 shadow-xl p-6 mt-auto overflow-hidden relative">
+      <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+      
+      <div class="flex items-center gap-4 relative z-10">
+        <div class="p-2.5 bg-primary/10 rounded-xl">
+          <i class="fi fi-sr-database text-primary text-xl"></i>
+        </div>
+        <div>
+          <h3 class="font-black uppercase tracking-tight text-sm italic">{{ $t('patterns.data_analyzed') }}</h3>
+          <p class="text-[10px] opacity-40 uppercase tracking-widest mt-1">{{ $t('patterns.data_analyzed_desc') }}</p>
+        </div>
       </div>
     </div>
   </div>
