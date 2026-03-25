@@ -138,6 +138,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useGlucoseStore } from './stores/glucose'
 import { useAuthStore } from './stores/auth'
 import Sidebar from './components/Sidebar.vue'
@@ -145,6 +146,7 @@ import { APP_VERSION_LABEL } from './appVersion'
 
 const store = useGlucoseStore()
 const auth = useAuthStore()
+const router = useRouter()
 
 const currentTheme = ref(localStorage.getItem('theme') || 'night')
 const themes = [
@@ -166,10 +168,13 @@ onMounted(async () => {
   }
 })
 
-// Watcher per ricaricare i dati quando l'utente effettua il login
+// Watcher per gestire login e logout
 watch(() => auth.isAuthenticated, async (newVal) => {
   if (newVal) {
     await store.fetchAll()
+  } else {
+    // Se l'utente non è più autenticato, lo riportiamo al login
+    router.push('/login')
   }
 })
 

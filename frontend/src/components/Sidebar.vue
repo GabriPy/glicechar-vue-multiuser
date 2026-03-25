@@ -171,8 +171,8 @@ const { locale } = useI18n()
 
 defineEmits(['close-drawer'])
 
-function handleLogout() {
-  auth.logout()
+async function handleLogout() {
+  await auth.logout()
   router.push('/login')
 }
 
