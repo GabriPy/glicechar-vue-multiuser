@@ -25,8 +25,8 @@ Il sistema implementa standard di sicurezza moderni per proteggere i dati clinic
 1.  **Access Token (`JWT_SECRET`)**: Breve durata (15 min) per l'identificazione di ogni richiesta.
 2.  **Refresh Token (`REFRESH_TOKEN_SECRET`)**: Lunga durata (30 giorni) per mantenere l'utente loggato in modo sicuro.
 
-### Email Recovery (PHP Bridge)
-Per garantire la massima compatibilità con i server web e superare i limiti di SMTP esterni, la v1.1 Premium utilizza un bridge PHP leggero (`mail.php`) per l'invio delle email di recupero password.
+### Email Recovery (Native Bridge)
+Per garantire la massima semplicità e superare i limiti di SMTP esterni, la v1.2.0 utilizza il trasporto `sendmail` integrato in Node.js, che comunica direttamente con il sistema di posta locale del server (lo stesso metodo usato dalla funzione `mail()` di PHP).
 
 ---
 

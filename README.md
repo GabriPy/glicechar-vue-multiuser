@@ -10,7 +10,7 @@ I dati vengono sincronizzati automaticamente da **Gluroo** (o altre fonti tramit
 ## ✨ Caratteristiche Principali (v1.2.0)
 
 - **🎨 Design Unified**: Interfaccia ridisegnata con estetica moderna, effetti "glassmorphism", bagliori soffusi (`blur-3xl`) e coerenza cromatica basata su temi DaisyUI 5 (Cupcake, Dark, ecc.).
-- **👥 Architettura Multiutente**: Registrazione, login sicuro (JWT + Refresh Tokens), recupero password via **PHP Mailer** e isolamento completo dei dati tra gli utenti.
+- **👥 Architettura Multiutente**: Registrazione, login sicuro (JWT + Refresh Tokens), recupero password via **Local Mailer (sendmail)** e isolamento completo dei dati tra gli utenti.
 - **🛡️ Pannello Admin**: Gestione utenti centralizzata per gli amministratori (abilitazione, eliminazione, permessi).
 - **🚀 Predizione Glicemia v2.2**: Algoritmo matematico avanzato (ROC + Smoothing) con supporto per soglie critiche personalizzabili (`red_under`, `red_over`).
 - **📊 Analisi Comparativa**: Vista "Confronto Periodi" con overlay grafico per monitorare i progressi orari tra diverse settimane.
@@ -30,7 +30,7 @@ Il progetto utilizza uno stack moderno e rigorosamente tipizzato:
     - Esecuzione rapida con `tsx`.
     - Autenticazione con **JWT** e gestione sessioni via **Refresh Tokens**.
     - Validazione rigorosa dei dati con **Zod**.
-    - **PHP Mailer Bridge**: Invio email tramite script PHP leggero per massima compatibilità con i server web.
+    - **Native Mailer**: Invio email tramite il sistema locale (Postfix/Sendmail) o SMTP, integrato direttamente nel backend Node.js.
 2.  **Database (MySQL)**: 
     - Isolamento dei dati tramite `user_id` su tutte le tabelle.
     - Schema ottimizzato con supporto per migrazioni automatiche (soglie critiche).

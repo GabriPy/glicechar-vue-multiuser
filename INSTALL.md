@@ -57,9 +57,13 @@ DB_NAME=glicechart-multiutente
 JWT_SECRET=genera_una_stringa_casuale_lunga
 REFRESH_TOKEN_SECRET=genera_un_altra_stringa_casuale_lunga
 
-# Email (PHP Mailer Bridge - Consigliato)
-PHP_MAILER_URL=https://tuodominio.it/mail.php
-PHP_MAILER_SECRET=glicechart_secret_mail_key
+# Email (Local Mailer - Consigliato su Linux)
+# Se lasci EMAIL_HOST vuoto, userà il comando 'sendmail' locale.
+EMAIL_HOST=
+EMAIL_PORT=587
+EMAIL_USER=
+EMAIL_PASS=
+EMAIL_FROM="GliceChart" <noreply@mglicechart.ghibiri.it>
 
 # Server
 PORT=3002
@@ -69,11 +73,9 @@ POLL_INTERVAL_SECONDS=15
 
 ---
 
-## 5. Configurazione PHP Mailer (Invio Email)
+## 5. Configurazione Invio Email (Linux)
 
-1.  Carica il file `backend/mail.php` nella cartella pubblica del tuo server web (es: `public_html`).
-2.  Assicurati che la variabile `$SECRET_KEY` in `mail.php` coincida con `PHP_MAILER_SECRET` nel tuo file `.env`.
-3.  Imposta l'URL completo del file in `PHP_MAILER_URL`.
+Il sistema è preconfigurato per usare il mailer locale del server (Postfix/Sendmail). Non devi fare nulla se il tuo server Linux è già in grado di inviare email. Se invece vuoi usare un servizio esterno (Gmail, Outlook, ecc.), compila i campi `EMAIL_HOST`, `EMAIL_USER` e `EMAIL_PASS` nel file `.env`.
 
 ---
 

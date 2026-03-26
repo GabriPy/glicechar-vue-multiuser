@@ -7,8 +7,7 @@ Tutti i cambiamenti significativi dalla transizione alla versione multiutente.
 ## [v1.2.0] - 2026-03-26
 
 ### 📧 Mailer & Recovery (New)
-- **PHP Mailer Bridge**: Introduzione di un sistema di invio email tramite script PHP (`mail.php`) per superare i limiti di SMTP esterni e migliorare la compatibilità con i server web.
-- **Nodemailer Removal**: Semplificazione del backend rimuovendo la dipendenza pesante di Nodemailer a favore di chiamate API leggere verso PHP.
+- **Native Node Mailer**: Introduzione di un sistema di invio email integrato direttamente nel backend che utilizza il comando `sendmail` locale (lo stesso metodo usato da PHP). Questo elimina la necessità di script esterni o SMTP complicati.
 
 ### 🎨 Design & UI (Visual Overhaul)
 - **Unified UI**: Riprogettazione completa di tutte le viste con un'estetica moderna e coerente.
