@@ -1,4 +1,4 @@
-# 💉 GliceChart multiuser-v1.0
+# 💉 GliceChart v1.2.0
 
 **Monitor glicemia multiutente professionale**, sviluppato in **TypeScript** con architettura **ES Modules (ESM)**.  
 Una piattaforma completa per il monitoraggio della glicemia in tempo reale, con gestione avanzata di insulina, carboidrati, note e analisi predittiva, progettata per supportare **più utenti simultanei** con isolamento totale dei dati.
@@ -7,11 +7,12 @@ I dati vengono sincronizzati automaticamente da **Gluroo** (o altre fonti tramit
 
 ---
 
-## ✨ Caratteristiche Principali
+## ✨ Caratteristiche Principali (v1.2.0)
 
-- **👥 Architettura Multiutente**: Registrazione, login sicuro (JWT + Refresh Tokens), recupero password via email e isolamento completo dei dati tra gli utenti.
+- **🎨 Design Unified**: Interfaccia ridisegnata con estetica moderna, effetti "glassmorphism", bagliori soffusi (`blur-3xl`) e coerenza cromatica basata su temi DaisyUI 5 (Cupcake, Dark, ecc.).
+- **👥 Architettura Multiutente**: Registrazione, login sicuro (JWT + Refresh Tokens), recupero password via **PHP Mailer** e isolamento completo dei dati tra gli utenti.
 - **🛡️ Pannello Admin**: Gestione utenti centralizzata per gli amministratori (abilitazione, eliminazione, permessi).
-- **🚀 Predizione Glicemia v2.0**: Algoritmo matematico avanzato (ROC + Smoothing) che stima l'andamento a 15/30/60 minuti basandosi su trend, IOB, COB, ISF e Carb Ratio.
+- **🚀 Predizione Glicemia v2.2**: Algoritmo matematico avanzato (ROC + Smoothing) con supporto per soglie critiche personalizzabili (`red_under`, `red_over`).
 - **📊 Analisi Comparativa**: Vista "Confronto Periodi" con overlay grafico per monitorare i progressi orari tra diverse settimane.
 - **🧠 Pattern Smart Dinamici**: Analisi automatica dello storico che identifica schemi ricorrenti e correlazioni con le note (es. "Effetto Pizza").
 - **📅 Calendario Glicemico 24h**: Analisi storica giornaliera con asse orario fisso, lista insuline, carboidrati e note.
@@ -29,10 +30,10 @@ Il progetto utilizza uno stack moderno e rigorosamente tipizzato:
     - Esecuzione rapida con `tsx`.
     - Autenticazione con **JWT** e gestione sessioni via **Refresh Tokens**.
     - Validazione rigorosa dei dati con **Zod**.
-    - Supporto email tramite **Nodemailer** per il recupero password.
+    - **PHP Mailer Bridge**: Invio email tramite script PHP leggero per massima compatibilità con i server web.
 2.  **Database (MySQL)**: 
     - Isolamento dei dati tramite `user_id` su tutte le tabelle.
-    - Schema ottimizzato per performance elevate.
+    - Schema ottimizzato con supporto per migrazioni automatiche (soglie critiche).
 3.  **Frontend (Vue 3 + Vite)**:
     - Gestione stato globale con **Pinia**.
     - Grafici interattivi con **Chart.js**.
@@ -47,7 +48,8 @@ glicechart-multiuser/
 ├── backend/            # TypeScript API & Sincronizzazione
 │   ├── server.ts       # Entry point Express (ESM)
 │   ├── db.ts           # Gestione MySQL e isolamento user_id
-│   ├── mailer.ts       # Configurazione invio email (Nodemailer)
+│   ├── mailer.ts       # Bridge per invio email (PHP)
+│   ├── mail.php        # Script PHP per l'invio fisico delle email
 │   ├── validators.ts   # Schemi Zod per validazione input
 │   └── .env            # Configurazioni server, DB e Email
 │

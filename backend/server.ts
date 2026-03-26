@@ -306,7 +306,15 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       const token = crypto.randomBytes(32).toString('hex');
       const expires = new Date(Date.now() + 3600000); // 1 ora
       await setUserResetToken(user.id, token, expires);
-      await sendPasswordResetEmail(email, token);
+      
+      try {
+        await sendPasswordResetEmail(email, token);
+        console.log(getTime() + pc.green('✔ ') + pc.bold(`[${user.username}] `) + pc.dim('Email di reset inviata con successo'));
+      } catch (mailError: any) {
+        console.error(getTime() + pc.red('✖ ') + pc.bold(`[${user.username}] `) + pc.dim('Invio email di reset fallito: ') + mailError.message);
+        // In questo caso particolare potremmo voler restituire l'errore all'utente
+        // ma per ora manteniamo la risposta generica per sicurezza
+      }
     }
     
     res.json({ ok: true, message: 'Se l\'email è presente nei nostri sistemi, riceverai le istruzioni tra poco.' });
@@ -770,7 +778,7 @@ async function syncAllUsers() {
 // ── Avvio ─────────────────────────────────────────────────────────────────────
 
 async function start() {
-  console.log(pc.cyan(pc.bold('\n  🚀 GliceChart-multiuser ')) + pc.dim('v5.0.0\n'));
+  console.log(pc.cyan(pc.bold('\n  🚀 GliceChart ')) + pc.dim('v1.2.0\n'));
   
   await getPool();
 

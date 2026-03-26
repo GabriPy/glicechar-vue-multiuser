@@ -1,4 +1,4 @@
-# 🛠️ Guida all'Installazione multiuser-v1.0
+# 🛠️ Guida all'Installazione v1.2.0
 
 Segui questi passaggi per installare e configurare **GliceChart-multiuser** sul tuo server locale o remoto.
 
@@ -9,6 +9,7 @@ Assicurati di avere installato:
 - **MySQL 8.0** o superiore.
 - **NPM** o **Yarn**.
 - **PM2** e **tsx** installati globalmente: `npm install -g pm2 tsx`.
+- **PHP 7.4+** sul server web per l'invio delle email (opzionale ma consigliato).
 
 ---
 
@@ -54,25 +55,29 @@ DB_NAME=glicechart-multiutente
 
 # Sicurezza (JWT)
 JWT_SECRET=genera_una_stringa_casuale_lunga
-JWT_REFRESH_SECRET=genera_un_altra_stringa_casuale_lunga
+REFRESH_TOKEN_SECRET=genera_un_altra_stringa_casuale_lunga
 
-# Email (Nodemailer - Necessario per recupero password)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=tua@email.com
-EMAIL_PASS=tua_app_password
+# Email (PHP Mailer Bridge - Consigliato)
+PHP_MAILER_URL=https://tuodominio.it/mail.php
+PHP_MAILER_SECRET=glicechart_secret_mail_key
 
 # Server
 PORT=3002
-FRONTEND_URL=http://localhost:3002
+FRONTEND_URL=https://mglicechart.ghibiri.it
 POLL_INTERVAL_SECONDS=15
 ```
 
-> **Importante**: Le stringhe `JWT_SECRET` e `JWT_REFRESH_SECRET` sono le chiavi private del tuo server. Generane di lunghe e casuali (almeno 32 caratteri) per proteggere i dati degli utenti. Se le cambi, tutti gli utenti verranno disconnessi.
+---
+
+## 5. Configurazione PHP Mailer (Invio Email)
+
+1.  Carica il file `backend/mail.php` nella cartella pubblica del tuo server web (es: `public_html`).
+2.  Assicurati che la variabile `$SECRET_KEY` in `mail.php` coincida con `PHP_MAILER_SECRET` nel tuo file `.env`.
+3.  Imposta l'URL completo del file in `PHP_MAILER_URL`.
 
 ---
 
-## 5. Avvio del Sistema
+## 6. Avvio del Sistema
 
 ### Sviluppo
 Backend (con hot-reload): `cd backend && npm run dev`  
@@ -93,22 +98,8 @@ pm2 start tsx --name "glicechart-backend" -- server.ts
 
 ---
 
-## 6. Primo Accesso e Privilegi Admin
+## 7. Primo Accesso e Privilegi Admin
 
 1.  Apri il browser su `http://tuo-ip:3002`.
 2.  Vai alla pagina di **Registrazione** e crea il tuo account.
-3.  Per abilitare i privilegi amministrativi, modifica manualmente il database (per sicurezza, non esiste auto-admin):
-    ```sql
-    UPDATE users SET isAdmin = 1 WHERE username = 'tuo_username';
-    ```
-4.  Da questo momento potrai accedere alla sezione **"Gestione Utenti"** per abilitare o gestire gli altri iscritti.
-
----
-
-## 7. Configurazione Gluroo
-
-Ogni utente deve configurare le proprie credenziali in **"Impostazioni"**:
-- **Gluroo URL**: `https://nome.ns.gluroo.com`.
-- **SHA Token** e **SHA Header** forniti da Gluroo.
-
-Il sistema sincronizzerà i dati ogni 15 secondi automaticamente.
+3.  Per abilitare i privilegi amministrativi, modifica manualmente il database (campo `isAdmin = 1` nella tabella `users`).

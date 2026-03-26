@@ -1,6 +1,29 @@
-# 📓 Changelog multiuser-v1.0
+# 📓 Changelog v1.2.0
 
 Tutti i cambiamenti significativi dalla transizione alla versione multiutente.
+
+---
+
+## [v1.2.0] - 2026-03-26
+
+### 📧 Mailer & Recovery (New)
+- **PHP Mailer Bridge**: Introduzione di un sistema di invio email tramite script PHP (`mail.php`) per superare i limiti di SMTP esterni e migliorare la compatibilità con i server web.
+- **Nodemailer Removal**: Semplificazione del backend rimuovendo la dipendenza pesante di Nodemailer a favore di chiamate API leggere verso PHP.
+
+### 🎨 Design & UI (Visual Overhaul)
+- **Unified UI**: Riprogettazione completa di tutte le viste con un'estetica moderna e coerente.
+- **Glassmorphism & Glow Effects**: Implementazione di effetti di trasparenza e bagliori soffusi (`blur-3xl`) per un look futuristico.
+- **Tema Dinamico**: Gestione centralizzata del tema basata su DaisyUI 5, sincronizzata tra tutte le pagine.
+
+### ⚙️ Impostazioni & Personalizzazione
+- **Soglie Critiche**: Aggiunta del supporto per limiti `red_under` (ipoglicemia grave) e `red_over` (iperglicemia grave) personalizzabili.
+- **Auto-Sync Migration**: Il database ora gestisce automaticamente l'aggiunta di nuove colonne e l'inizializzazione dei dati mancanti.
+- **Robustezza Salvataggio**: Nuovo sistema `INSERT ... ON DUPLICATE KEY UPDATE` per garantire che le impostazioni vengano salvate anche per utenti migrati da versioni precedenti.
+
+### 🛠️ Correzioni & Stabilità
+- **Logout Immediato**: Corretto il bug che mostrava avvisi di "credenziali mancanti" durante la disconnessione; ora il reindirizzamento al login è istantaneo e pulito.
+- **Zod Validation**: Rafforzata la validazione degli account (email opzionale) e delle impostazioni cliniche.
+- **Logging Avanzato**: Implementato un sistema di log colorato nel backend per monitorare in tempo reale il successo o il fallimento di ogni operazione critica (Sync, Mail, DB).
 
 ---
 
@@ -15,25 +38,9 @@ Tutti i cambiamenti significativi dalla transizione alla versione multiutente.
     - Integrazione **JWT** e **Refresh Tokens** per sessioni persistenti.
     - Validazione degli input tramite **Zod** in tutti gli endpoint API.
     - Hashing password con **bcryptjs**.
-    - Verifica della vecchia password obbligatoria per il cambio password.
 - **Admin Dashboard**: Nuova vista per amministratori per gestire l'abilitazione e l'eliminazione degli utenti.
-
-### 📊 Analisi & Funzioni Cliniche
-- **Confronto Periodi**: Nuova vista con overlay grafico per comparare l'andamento orario di diversi periodi.
-- **Predizione Glicemia v2.0**: Algoritmo predittivo basato su ROC, IOB, COB e Smoothing del sensore.
-- **Pattern Smart**: Rilevamento automatico di schemi orari e correlazioni con le note.
-- **Dietometro i18n**: Database alimenti con slider per calcolo CHO istantaneo.
-
-### 🌍 Internazionalizzazione (i18n)
-- Supporto completo per **Italiano** e **Inglese**.
-- Localizzazione automatica di date, grafici e report PDF.
-
-### 🎨 UI/UX
-- **daisyUI 5 & Tailwind CSS 4**: Aggiornamento alla versione più recente del framework CSS.
-- **Responsive Design**: Ottimizzazione per ogni tipo di schermo (Desktop, Tablet, Mobile).
-- **Log Backend**: Output del terminale colorato (`picocolors`) con timestamp per un monitoraggio facilitato.
 
 ---
 
 ## Note
-Il progetto **GliceChart multiuser-v1.0** rappresenta una riscrittura professionale della versione single-user originale, focalizzata su sicurezza, scalabilità e facilità d'uso condivisa.
+Il progetto **GliceChart multiuser-v1.1-premium** rappresenta l'eccellenza nella gestione multiutente della glicemia, unendo un'interfaccia di alta classe a una robustezza tecnica senza compromessi.
