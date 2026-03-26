@@ -633,9 +633,18 @@ app.put('/api/settings', authenticateToken, async (req: AuthenticatedRequest, re
   try {
     const data = settingsSchema.parse(req.body);
     const ok = await updateSettings(req.user.id, data);
+    if (!ok) {
+      console.log(getTime() + pc.red('✖ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Salvataggio impostazioni fallito (nessuna riga aggiornata)'));
+    } else {
+      console.log(getTime() + pc.green('✔ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Impostazioni salvate con successo'));
+    }
     res.json({ ok });
   } catch (e: any) {
-    if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi', details: e.errors });
+    if (e.name === 'ZodError') {
+      console.log(getTime() + pc.yellow('⚠ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Errore validazione impostazioni: ') + JSON.stringify(e.errors));
+      return res.status(400).json({ error: 'Dati non validi', details: e.errors });
+    }
+    console.error(getTime() + pc.red('✖ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Errore interno salvataggio impostazioni: ') + e.message);
     res.status(500).json({ error: e.message });
   }
 });
@@ -645,16 +654,23 @@ app.put('/api/user/gluroo', authenticateToken, async (req: AuthenticatedRequest,
     const data = glurooSchema.parse(req.body);
     const ok = await updateUserGluroo(req.user.id, data);
     if (ok) {
+      console.log(getTime() + pc.green('✔ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Credenziali Gluroo salvate'));
       // Forza una sincronizzazione immediata per questo utente
       const user = await getUserById(req.user.id);
       if (user) {
         console.log(getTime() + pc.cyan(`🔄 [${user.username}] `) + pc.dim('Sincronizzazione forzata dopo aggiornamento credenziali...'));
         syncUserReadings(user); 
       }
+    } else {
+      console.log(getTime() + pc.red('✖ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Salvataggio credenziali Gluroo fallito'));
     }
     res.json({ ok });
   } catch (e: any) {
-    if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi', details: e.errors });
+    if (e.name === 'ZodError') {
+      console.log(getTime() + pc.yellow('⚠ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Errore validazione Gluroo: ') + JSON.stringify(e.errors));
+      return res.status(400).json({ error: 'Dati non validi', details: e.errors });
+    }
+    console.error(getTime() + pc.red('✖ ') + pc.bold(`[${req.user.username}] `) + pc.dim('Errore interno salvataggio Gluroo: ') + e.message);
     res.status(500).json({ error: e.message });
   }
 });

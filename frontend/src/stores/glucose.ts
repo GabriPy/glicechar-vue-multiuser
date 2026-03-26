@@ -517,8 +517,10 @@ export const useGlucoseStore = defineStore('glucose', () => {
       await api().put('/api/settings', newSettings)
       settings.value = { ...newSettings }
       error.value = null
-    } catch {
-      error.value = 'Errore salvataggio impostazioni'
+      return true
+    } catch (e: any) {
+      error.value = e.response?.data?.error || 'Errore salvataggio impostazioni'
+      return false
     } finally {
       loading.value = false
     }

@@ -107,8 +107,16 @@ async function initDB() {
     `);
 
     // Migrazione per soglie critiche se non esistono
-    try { await conn.execute(`ALTER TABLE settings ADD COLUMN red_under INT DEFAULT 55 AFTER tir_max`); } catch (e) {}
-    try { await conn.execute(`ALTER TABLE settings ADD COLUMN red_over INT DEFAULT 250 AFTER red_under`); } catch (e) {}
+    console.log(pc.dim('🔍 Controllo schema database...'));
+    try { 
+      await conn.execute(`ALTER TABLE settings ADD COLUMN red_under INT DEFAULT 55 AFTER tir_max`);
+      console.log(pc.green('✅ Colonna red_under aggiunta'));
+    } catch (e) { /* Già esistente */ }
+    
+    try { 
+      await conn.execute(`ALTER TABLE settings ADD COLUMN red_over INT DEFAULT 250 AFTER red_under`);
+      console.log(pc.green('✅ Colonna red_over aggiunta'));
+    } catch (e) { /* Già esistente */ }
 
     await conn.execute(`
       CREATE TABLE IF NOT EXISTS notes (
@@ -553,16 +561,42 @@ export async function insertDietFood(userId: number, { name, carbs_per_100g, cat
 export async function getSettings(userId: number) {
   const p = await getPool();
   const [rows] = await p.execute<RowDataPacket[]>(`SELECT * FROM settings WHERE user_id = ?`, [userId]);
+  
+  if (rows.length === 0) {
+    // Ritorna valori di default se l'utente non ha impostazioni
+    return {
+      user_id: userId,
+      tir_min: 70,
+      tir_max: 180,
+      red_under: 55,
+      red_over: 250,
+      rapid_duration: 3,
+      slow_duration: 24,
+      carb_duration: 4,
+      insulin_sensitivity: 60,
+      carb_ratio: 15
+    };
+  }
   return rows[0];
 }
 
 export async function updateSettings(userId: number, { tir_min, tir_max, red_under, red_over, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio }: any) {
   const p = await getPool();
+  // Usa INSERT ... ON DUPLICATE KEY UPDATE per assicurarsi che il record esista
   const [result] = await p.execute<ResultSetHeader>(
-    `UPDATE settings 
-     SET tir_min = ?, tir_max = ?, red_under = ?, red_over = ?, rapid_duration = ?, slow_duration = ?, carb_duration = ?, insulin_sensitivity = ?, carb_ratio = ?
-     WHERE user_id = ?`,
-    [tir_min, tir_max, red_under, red_over, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio, userId]
+    `INSERT INTO settings (user_id, tir_min, tir_max, red_under, red_over, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE 
+     tir_min = VALUES(tir_min),
+     tir_max = VALUES(tir_max),
+     red_under = VALUES(red_under),
+     red_over = VALUES(red_over),
+     rapid_duration = VALUES(rapid_duration),
+     slow_duration = VALUES(slow_duration),
+     carb_duration = VALUES(carb_duration),
+     insulin_sensitivity = VALUES(insulin_sensitivity),
+     carb_ratio = VALUES(carb_ratio)`,
+    [userId, tir_min, tir_max, red_under, red_over, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio]
   );
   return result.affectedRows > 0;
 }

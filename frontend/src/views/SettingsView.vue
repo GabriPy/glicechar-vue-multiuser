@@ -413,6 +413,7 @@ async function saveSettings() {
     }
 
     // 2. Salva le credenziali Gluroo
+    console.log('Salvataggio Gluroo in corso...')
     const glurooSuccess = await auth.updateGluroo({
       link: form.value.gluroo_link,
       token: form.value.gluroo_token,
@@ -420,12 +421,15 @@ async function saveSettings() {
     })
     
     if (glurooSuccess) {
+      console.log('Salvataggio completato con successo')
       successMessage.value = t('settings.settings_saved')
-      await store.fetchSettings() // Ricarica per sicurezza
+      await store.fetchSettings() 
+      await auth.fetchMe() // Ricarica anche l'utente per le credenziali Gluroo
       updateFormFromStore()
       saved.value = true
       setTimeout(() => saved.value = false, 3000)
     } else {
+      console.error('Errore salvataggio Gluroo:', auth.error)
       errorMessage.value = auth.error || 'Errore salvataggio credenziali Gluroo'
     }
   } catch (e) {
