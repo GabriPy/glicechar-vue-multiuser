@@ -391,8 +391,9 @@ async function saveSettings() {
   loading.value = true
   errorMessage.value = ''
   successMessage.value = ''
-  
+
   try {
+    // 1. Salva le impostazioni TIR/Rapporti
     const success = await store.updateSettings({
       tir_min: form.value.tir_min,
       tir_max: form.value.tir_max,
@@ -404,24 +405,31 @@ async function saveSettings() {
       insulin_sensitivity: form.value.insulin_sensitivity,
       carb_ratio: form.value.carb_ratio
     })
-    if (success) {
-      const glurooSuccess = await auth.updateGluroo({
-        link: form.value.gluroo_link,
-        token: form.value.gluroo_token,
-        header: form.value.gluroo_header
-      })
-      
-      if (glurooSuccess) {
-        successMessage.value = t('settings.settings_saved')
-        updateFormFromStore()
-        saved.value = true
-        setTimeout(() => saved.value = false, 3000)
-      } else {
-        errorMessage.value = auth.error || 'Errore salvataggio credenziali Gluroo'
-      }
+    
+    if (!success) {
+      errorMessage.value = store.error || 'Errore salvataggio impostazioni'
+      loading.value = false
+      return
+    }
+
+    // 2. Salva le credenziali Gluroo
+    const glurooSuccess = await auth.updateGluroo({
+      link: form.value.gluroo_link,
+      token: form.value.gluroo_token,
+      header: form.value.gluroo_header
+    })
+    
+    if (glurooSuccess) {
+      successMessage.value = t('settings.settings_saved')
+      await store.fetchSettings() // Ricarica per sicurezza
+      updateFormFromStore()
+      saved.value = true
+      setTimeout(() => saved.value = false, 3000)
+    } else {
+      errorMessage.value = auth.error || 'Errore salvataggio credenziali Gluroo'
     }
   } catch (e) {
-    errorMessage.value = t('settings.save_error')
+    errorMessage.value = 'Errore imprevisto durante il salvataggio'
   } finally {
     loading.value = false
   }

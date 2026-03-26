@@ -644,6 +644,14 @@ app.put('/api/user/gluroo', authenticateToken, async (req: AuthenticatedRequest,
   try {
     const data = glurooSchema.parse(req.body);
     const ok = await updateUserGluroo(req.user.id, data);
+    if (ok) {
+      // Forza una sincronizzazione immediata per questo utente
+      const user = await getUserById(req.user.id);
+      if (user) {
+        console.log(getTime() + pc.cyan(`🔄 [${user.username}] `) + pc.dim('Sincronizzazione forzata dopo aggiornamento credenziali...'));
+        syncUserReadings(user); 
+      }
+    }
     res.json({ ok });
   } catch (e: any) {
     if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi', details: e.errors });

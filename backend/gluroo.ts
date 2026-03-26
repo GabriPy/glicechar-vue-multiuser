@@ -38,28 +38,37 @@ export async function fetchLatestReadings(token: string, secret: string, baseUrl
   if (!token || !secret || !baseUrl) throw new Error('Credenziali Gluroo mancanti');
 
   const normalizedUrl = baseUrl.replace(/\/+$/, '');
+  const apiUrl = `${normalizedUrl}/api/v1/entries/sgv.json`;
 
-  const { data } = await axios.get(`${normalizedUrl}/api/v1/entries/sgv.json`, {
-    params:  { count: 288 },
-    headers: {
-      'api-secret':    secret,
-      'Authorization': `Bearer ${token}`,
-      'Accept':        'application/json',
-    },
-    timeout: 10000,
-  });
+  try {
+    const { data } = await axios.get(apiUrl, {
+      params:  { count: 288 },
+      headers: {
+        'api-secret':    secret,
+        'Authorization': `Bearer ${token}`,
+        'Accept':        'application/json',
+      },
+      timeout: 10000,
+    });
 
-  if (!Array.isArray(data)) throw new Error('Risposta API non valida');
+    if (!Array.isArray(data)) throw new Error('Risposta API non valida: atteso un array');
 
-  return data.map(e => {
-    const rawTrend = e.trend !== undefined ? e.trend : e.direction;
-    return {
-      timestamp: e.dateString
-        ? new Date(e.dateString).toISOString()
-        : new Date(e.date).toISOString(),
-      glucose:   Math.round(e.sgv || e.glucose || 0),
-      trend:     normalizeTrend(rawTrend),
-      raw_trend: String(rawTrend !== undefined ? rawTrend : ''),
-    };
-  });
+    return data.map(e => {
+      const rawTrend = e.trend !== undefined ? e.trend : e.direction;
+      return {
+        timestamp: e.dateString
+          ? new Date(e.dateString).toISOString()
+          : new Date(e.date).toISOString(),
+        glucose:   Math.round(e.sgv || e.glucose || 0),
+        trend:     normalizeTrend(rawTrend),
+        raw_trend: String(rawTrend !== undefined ? rawTrend : ''),
+      };
+    });
+  } catch (e: any) {
+    if (e.response) {
+      // Errore restituito da Gluroo (es. 401, 404)
+      throw new Error(`Gluroo API Error (${e.response.status}): ${JSON.stringify(e.response.data)}`);
+    }
+    throw e;
+  }
 }
