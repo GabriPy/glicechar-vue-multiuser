@@ -1,30 +1,12 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 /**
- * Configurazione del trasportatore.
- * Se sono presenti le variabili SMTP nel .env le usa, 
- * altrimenti prova a usare 'sendmail' locale (come fa PHP mail()).
- */
-const transporter = (process.env.EMAIL_HOST && process.env.EMAIL_USER && process.env.EMAIL_PASS) 
-  ? nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || '587'),
-      secure: process.env.EMAIL_SECURE === 'true',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    })
-  : nodemailer.createTransport({
-      sendmail: true,
-      newline: 'unix',
-      path: '/usr/sbin/sendmail' // Percorso standard su Linux (Postfix/Exim/Sendmail)
-    });
-
-/**
- * Invia una email di ripristino password utilizzando il mailer locale del server.
+ * Invia una email di ripristino password utilizzando Resend API.
  */
 export async function sendPasswordResetEmail(email: string, token: string) {
+  // Inizializza Resend all'interno della funzione per assicurarsi che dotenv abbia caricato le variabili
+  const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+  
   const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3002'}/reset-password?token=${token}`;
   const subject   = 'Recupero Password - GliceChart';
   const html      = `
@@ -41,24 +23,33 @@ export async function sendPasswordResetEmail(email: string, token: string) {
       </div>
     `;
 
+  if (!resend) {
+    console.error(`[Mailer] ERRORE: RESEND_API_KEY non configurata nel .env`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[DEBUG] Token di reset per ${email}: ${token}`);
+      console.log(`[DEBUG] Link: ${resetLink}`);
+    }
+    throw new Error('Servizio email non configurato');
+  }
+
   try {
-    const from = process.env.EMAIL_FROM || `"GliceChart" <noreply@mglicechart.ghibiri.it>`;
-    console.log(`[Mailer] Invio email di reset a: ${email} (via ${transporter.options.hasOwnProperty('sendmail') ? 'sendmail locale' : 'SMTP'})`);
+    const from = process.env.EMAIL_FROM || "GliceChart <onboarding@resend.dev>";
+    console.log(`[Mailer] Invio email di reset a: ${email} via Resend API`);
     
-    await transporter.sendMail({
+    const { data, error } = await resend.emails.send({
       from,
-      to: email,
+      to: [email],
       subject,
       html
     });
+
+    if (error) {
+      throw new Error(error.message);
+    }
     
-    console.log(`[Mailer] Email inviata con successo`);
+    console.log(`[Mailer] Email inviata con successo (ID: ${data?.id})`);
   } catch (e: any) {
     console.error(`[Mailer] Errore invio email: ${e.message}`);
-    // Se fallisce l'invio fisico, logghiamo il token per permettere il reset manuale in emergenza
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`[DEBUG] Token di reset per ${email}: ${token}`);
-    }
     throw new Error(`Errore invio email: ${e.message}`);
   }
 }
