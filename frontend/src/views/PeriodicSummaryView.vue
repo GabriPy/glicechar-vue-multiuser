@@ -392,12 +392,14 @@ function exportPDF() {
   
   const doc = new jsPDF() as any
   const pageWidth = doc.internal.pageSize.getWidth()
-  const lang = i18n.global.locale.value === 'it' ? 'it-IT' : 'en-US'
+  
+  const currentLocale = t('common.mgdl').includes('mg/dL') ? 'it' : 'en'
+  const lang = currentLocale === 'it' ? 'it-IT' : 'en-US'
   
   // Header
   doc.setFontSize(22)
   doc.setTextColor(30, 41, 59)
-  doc.text('GliceChart-multiuser', 14, 20)
+  doc.text('GliceChart', 14, 20)
   
   doc.setFontSize(14)
   doc.setTextColor(100, 116, 139)

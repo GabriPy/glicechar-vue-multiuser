@@ -127,12 +127,12 @@
         <button 
           @click="changeLang('it')" 
           class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] flex-1 rounded-lg"
-          :class="{ 'bg-primary text-primary-content shadow-sm': $i18n.locale === 'it', 'opacity-40': $i18n.locale !== 'it' }"
+          :class="{ 'bg-primary text-primary-content shadow-sm': locale === 'it', 'opacity-40': locale !== 'it' }"
         >IT</button>
         <button 
           @click="changeLang('en')" 
           class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] flex-1 rounded-lg"
-          :class="{ 'bg-primary text-primary-content shadow-sm': $i18n.locale === 'en', 'opacity-40': $i18n.locale !== 'en' }"
+          :class="{ 'bg-primary text-primary-content shadow-sm': locale === 'en', 'opacity-40': locale !== 'en' }"
         >EN</button>
       </div>
 

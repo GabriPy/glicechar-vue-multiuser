@@ -18,7 +18,9 @@ const messages = {
       excellent: 'Ottima',
       good: 'Buona',
       intermediate: 'Intermedia',
-      high: 'Alta'
+      high: 'Alta',
+      active_insulin: 'Active Insulin',
+      active_carbs: 'Active Carbs'
     },
     nav: {
       home: 'Dashboard',
@@ -47,6 +49,8 @@ const messages = {
       avg: 'Media',
       min: 'Minimo',
       max: 'Massimo',
+      active_insulin: 'Insulina Attiva',
+      active_carbs: 'Carboidrati Attivi',
       sync_error: 'Dati non disponibili',
       sync_error_desc: 'Credenziali Gluroo non configurate o errate.'
     },
@@ -271,7 +275,9 @@ const messages = {
       excellent: 'Excellent',
       good: 'Good',
       intermediate: 'Intermediate',
-      high: 'High'
+      high: 'High',
+      active_insulin: 'Active Insulin',
+      active_carbs: 'Active Carbs'
     },
     nav: {
       home: 'Dashboard',
@@ -300,6 +306,8 @@ const messages = {
       avg: 'Average',
       min: 'Minimum',
       max: 'Maximum',
+      active_insulin: 'Active Insulin',
+      active_carbs: 'Active Carbs',
       sync_error: 'Data unavailable',
       sync_error_desc: 'Gluroo credentials not configured or incorrect.'
     },
