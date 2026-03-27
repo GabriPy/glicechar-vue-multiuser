@@ -1,15 +1,15 @@
-import { Resend } from 'resend';
+import axios from 'axios';
 
 /**
  * Invia una email di ripristino password utilizzando i Template di Resend.
+ * Utilizziamo axios per una chiamata API diretta, garantendo la compatibilità con i template.
  */
 export async function sendPasswordResetEmail(email: string, token: string, username: string = '') {
-  // Inizializza Resend all'interno della funzione per assicurarsi che dotenv abbia caricato le variabili
-  const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+  const apiKey = process.env.RESEND_API_KEY;
   const templateId = process.env.RESEND_TEMPLATE_ID;
   const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3002'}/reset-password?token=${token}`;
 
-  if (!resend || !templateId) {
+  if (!apiKey || !templateId) {
     console.error(`[Mailer] ERRORE: Configurazione Resend incompleta (API Key o Template ID mancanti nel .env)`);
     if (process.env.NODE_ENV !== 'production') {
       console.log(`[DEBUG] Token di reset per ${email}: ${token}`);
@@ -21,9 +21,10 @@ export async function sendPasswordResetEmail(email: string, token: string, usern
   try {
     const from = process.env.EMAIL_FROM || "GliceChart <onboarding@resend.dev>";
     
-    console.log(`[Mailer] Invio email di reset a: ${email} via Resend (Template: ${templateId})`);
+    console.log(`[Mailer] Invio email di reset a: ${email} via Resend API (Template: ${templateId})`);
     
-    const { data, error } = await resend.emails.send({
+    // Chiamata API diretta a Resend per garantire la corretta gestione del template
+    await axios.post('https://api.resend.com/emails', {
       from,
       to: [email],
       subject: 'Recupero Password - GliceChart',
@@ -34,15 +35,17 @@ export async function sendPasswordResetEmail(email: string, token: string, usern
           reset_link: resetLink,
         }
       }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
     });
 
-    if (error) {
-      throw new Error(error.message);
-    }
-    
-    console.log(`[Mailer] Email inviata con successo (ID: ${data?.id})`);
+    console.log(`[Mailer] Email inviata con successo tramite Resend Template API`);
   } catch (e: any) {
-    console.error(`[Mailer] Errore invio email: ${e.message}`);
-    throw new Error(`Errore invio email: ${e.message}`);
+    const errorDetail = e.response?.data;
+    console.error(`[Mailer] Errore Resend API:`, JSON.stringify(errorDetail || e.message));
+    throw new Error(`Errore invio email: ${errorDetail?.message || e.message}`);
   }
 }
