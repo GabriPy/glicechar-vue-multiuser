@@ -308,7 +308,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       await setUserResetToken(user.id, token, expires);
       
       try {
-        await sendPasswordResetEmail(email, token);
+        await sendPasswordResetEmail(email, token, user.username);
         console.log(getTime() + pc.green('✔ ') + pc.bold(`[${user.username}] `) + pc.dim('Email di reset inviata con successo'));
       } catch (mailError: any) {
         console.error(getTime() + pc.red('✖ ') + pc.bold(`[${user.username}] `) + pc.dim('Invio email di reset fallito: ') + mailError.message);
