@@ -6,7 +6,7 @@ import axios from 'axios';
  */
 export async function sendPasswordResetEmail(email: string, token: string, username: string = '') {
   const apiKey = process.env.RESEND_API_KEY;
-  const templateId = process.env.RESEND_TEMPLATE_ID;
+  const templateId = process.env.RESEND_PASSWORDRECOVERY_TEMPLATE_ID;
   const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3002'}/reset-password?token=${token}`;
 
   if (!apiKey || !templateId) {
@@ -47,5 +47,46 @@ export async function sendPasswordResetEmail(email: string, token: string, usern
     const errorDetail = e.response?.data;
     console.error(`[Mailer] Errore Resend API:`, JSON.stringify(errorDetail || e.message));
     throw new Error(`Errore invio email: ${errorDetail?.message || e.message}`);
+  }
+}
+
+/**
+ * Invia una email di benvenuto a un nuovo utente registrato.
+ */
+export async function sendWelcomeEmail(email: string, username: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const templateId = process.env.RESEND_WELCOME_TEMPLATE_ID;
+
+  if (!apiKey || !templateId) {
+    console.warn(`[Mailer] ATTENZIONE: Configurazione email di benvenuto incompleta (API Key o Welcome Template ID mancanti)`);
+    return;
+  }
+
+  try {
+    const from = process.env.EMAIL_FROM || "GliceChart <onboarding@resend.dev>";
+    
+    console.log(`[Mailer] Invio email di benvenuto a: ${email} (Template: ${templateId})`);
+    
+    await axios.post('https://api.resend.com/emails', {
+      from,
+      to: [email],
+      subject: 'Benvenuto su GliceChart!',
+      template: {
+        id: templateId,
+        variables: {
+          username: username,
+        }
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log(`[Mailer] Email di benvenuto inviata con successo`);
+  } catch (e: any) {
+    const errorDetail = e.response?.data;
+    console.error(`[Mailer] Errore invio email benvenuto:`, JSON.stringify(errorDetail || e.message));
   }
 }

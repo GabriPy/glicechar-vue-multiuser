@@ -241,7 +241,7 @@ export async function updateUserAccount(userId: number, { username, email, passw
   const params: any[] = [username, email || null];
 
   if (password) {
-    query += `, password = ?`;
+    query += `, password = ?, reset_token = NULL, reset_expires = NULL`;
     params.push(password);
   }
 
@@ -249,6 +249,12 @@ export async function updateUserAccount(userId: number, { username, email, passw
   params.push(userId);
 
   const [result] = await p.execute<ResultSetHeader>(query, params);
+
+  // Se la password è stata cambiata, invalidiamo anche i refresh tokens (sicurezza extra)
+  if (password && result.affectedRows > 0) {
+    await p.execute(`DELETE FROM refresh_tokens WHERE user_id = ?`, [userId]);
+  }
+
   return result.affectedRows > 0;
 }
 
@@ -271,10 +277,13 @@ export async function getUserByResetToken(token: string) {
 
 export async function resetUserPassword(userId: number, hashedPassword: any) {
   const p = await getPool();
+  // Aggiorna password e invalida il reset token
   await p.execute(
     `UPDATE users SET password = ?, reset_token = NULL, reset_expires = NULL WHERE id = ?`,
     [hashedPassword, userId]
   );
+  // Invalida anche tutte le sessioni attive (refresh tokens) per sicurezza
+  await p.execute(`DELETE FROM refresh_tokens WHERE user_id = ?`, [userId]);
 }
 
 export async function getAllUsersWithGluroo() {
@@ -604,7 +613,7 @@ export async function updateSettings(userId: number, { tir_min, tir_max, red_und
 export async function getAllUsers() {
   const p = await getPool();
   const [rows] = await p.execute<RowDataPacket[]>(
-    `SELECT id, username, isAdmin, gluroo_token, gluroo_header, gluroo_link, last_sync_error, created_at FROM users ORDER BY id ASC`
+    `SELECT id, username, email, isAdmin, gluroo_token, gluroo_header, gluroo_link, last_sync_error, created_at FROM users ORDER BY id ASC`
   );
   return rows;
 }

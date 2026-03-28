@@ -41,7 +41,7 @@ async function handleSubmit() {
         <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Inserisci la tua email per ricevere il link di ripristino</p>
       </div>
       
-      <form v-if="!message" class="mt-8 space-y-6" @submit.prevent="handleSubmit">
+      <div v-if="!message" class="mt-8 space-y-6" @keyup.enter="handleSubmit">
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Email dell'account</span></label>
           <input v-model="email" type="email" required class="input input-bordered w-full font-black" placeholder="tua@email.it" />
@@ -53,7 +53,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <button type="submit" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
+          <button type="button" @click="handleSubmit" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
             <span v-if="loading" class="loading loading-spinner"></span>
             Invia Link di Recupero
           </button>
@@ -64,10 +64,10 @@ async function handleSubmit() {
             Torna al Login
           </router-link>
         </div>
-      </form>
+      </div>
 
       <div v-else class="text-center space-y-6 py-4">
-        <div class="w-16 h-16 bg-success/20 text-success rounded-full flex items-center justify-center mx-auto">
+        <div class="w-16 h-16 bg-success/20 text-success rounded-3xl flex items-center justify-center mx-auto">
           <i class="fi fi-sr-check-circle text-3xl"></i>
         </div>
         <p class="text-sm font-black uppercase tracking-tight opacity-70">{{ message }}</p>

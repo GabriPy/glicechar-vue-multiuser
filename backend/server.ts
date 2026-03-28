@@ -61,7 +61,7 @@ import {
   updateSettings
 } from './db.js';
 import { fetchLatestReadings } from './gluroo.js';
-import { sendPasswordResetEmail } from './mailer.js';
+import { sendPasswordResetEmail, sendWelcomeEmail } from './mailer.js';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 
@@ -191,6 +191,11 @@ app.post('/api/auth/register', async (req, res) => {
       email: data.email,
       isAdmin: isAdminUser 
     });
+    
+    // Invia email di benvenuto (senza attendere, per non rallentare la registrazione)
+    if (data.email) {
+      sendWelcomeEmail(data.email, data.username);
+    }
     
     res.json({ ok: true, userId, isAdmin: isAdminUser });
   } catch (e: any) {

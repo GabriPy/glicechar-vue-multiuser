@@ -7,8 +7,8 @@
         
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-secondary/10 rounded-2xl">
-              <i class="fi fi-sr-apps-sort text-secondary text-xl"></i>
+            <div class="w-12 h-12 bg-secondary/10 rounded-2xl text-secondary flex items-center justify-center text-xl">
+              <i class="fi fi-sr-apps-sort"></i>
             </div>
             <div>
               <h2 class="text-lg font-black uppercase tracking-tight leading-none">{{ $t('comparison.title') }}</h2>

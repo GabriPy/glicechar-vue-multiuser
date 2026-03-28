@@ -6,8 +6,8 @@
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-secondary/5 blur-3xl rounded-full"></div>
         
         <div class="flex items-center gap-4 relative z-10">
-          <div class="p-3 bg-secondary/10 rounded-2xl">
-            <i class="fi fi-sr-chart-line-up text-secondary text-2xl leading-none"></i>
+          <div class="w-12 h-12 bg-secondary/10 rounded-2xl text-secondary flex items-center justify-center text-2xl">
+            <i class="fi fi-sr-chart-line-up"></i>
           </div>
           <div>
             <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic text-primary">Glice<span class="text-base-content">Forecast</span></h1>

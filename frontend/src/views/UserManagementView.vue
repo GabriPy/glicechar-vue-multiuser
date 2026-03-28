@@ -64,8 +64,8 @@ onMounted(fetchUsers)
         
         <div class="flex items-center justify-between relative z-10">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-primary/10 rounded-2xl">
-              <i class="fi fi-sr-users-gear text-primary text-xl"></i>
+            <div class="w-12 h-12 bg-primary/10 rounded-2xl text-primary flex items-center justify-center text-xl">
+              <i class="fi fi-sr-users-gear"></i>
             </div>
             <div>
               <h2 class="text-lg font-black uppercase tracking-tight leading-none">Gestione Utenti</h2>
@@ -135,14 +135,19 @@ onMounted(fetchUsers)
 
           <!-- Azioni -->
           <div class="flex items-center gap-2 relative z-10 border-t md:border-t-0 border-base-content/5 pt-4 md:pt-0">
-            <button @click="handleToggleAdmin(user)" 
-              class="btn btn-ghost btn-sm font-black uppercase text-[9px] tracking-widest hover:bg-primary/10 hover:text-primary">
+            <button 
+              @click="handleToggleAdmin(user)" 
+              :disabled="user.id === auth.user?.id"
+              class="btn btn-ghost btn-sm font-black uppercase text-[9px] tracking-widest hover:bg-primary/10 hover:text-primary disabled:opacity-20"
+              :title="user.id === auth.user?.id ? 'Non puoi rimuovere i tuoi privilegi admin' : ''">
               {{ user.isAdmin ? 'Rimuovi Admin' : 'Rendi Admin' }}
             </button>
             <div class="divider divider-horizontal mx-0 opacity-10 hidden md:flex"></div>
-            <button @click="handleDeleteUser(user)" 
-              class="btn btn-ghost btn-sm btn-circle text-error/40 hover:text-error hover:bg-error/10"
-              title="Elimina Utente">
+            <button 
+              @click="handleDeleteUser(user)" 
+              :disabled="user.id === auth.user?.id"
+              class="btn btn-ghost btn-sm btn-circle text-error/40 hover:text-error hover:bg-error/10 disabled:opacity-10"
+              :title="user.id === auth.user?.id ? 'Non puoi eliminare il tuo account da qui' : 'Elimina Utente'">
               <i class="fi fi-sr-trash"></i>
             </button>
           </div>

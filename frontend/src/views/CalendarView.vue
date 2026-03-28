@@ -9,8 +9,8 @@
         
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-primary/10 rounded-2xl">
-              <i class="fi fi-sr-calendar text-primary text-xl"></i>
+            <div class="w-12 h-12 bg-primary/10 rounded-2xl text-primary flex items-center justify-center text-xl">
+              <i class="fi fi-sr-calendar"></i>
             </div>
             <div>
               <h2 class="text-lg font-black uppercase tracking-tight leading-none">{{ $t('calendar.title') }}</h2>

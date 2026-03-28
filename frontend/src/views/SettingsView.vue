@@ -4,8 +4,8 @@
     <div class="card bg-base-200 shadow-sm border border-base-content/10">
       <div class="card-body p-4 md:p-6">
         <div class="flex items-center gap-3">
-          <div class="p-2.5 bg-primary/10 rounded-2xl">
-            <i class="fi fi-sr-settings text-primary text-xl"></i>
+          <div class="w-12 h-12 bg-primary/10 rounded-2xl text-primary flex items-center justify-center text-xl">
+            <i class="fi fi-sr-settings"></i>
           </div>
           <div>
             <h2 class="text-lg font-black uppercase tracking-tight leading-none">Impostazioni</h2>

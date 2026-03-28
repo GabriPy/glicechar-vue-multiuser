@@ -18,11 +18,32 @@ input[type=number] {
 }
 
 body { 
-  font-family: 'DM Sans', sans-serif; 
-  font-size: 16px; /* Base size */
+  font-family: 'Plus Jakarta Sans', sans-serif; 
+  font-size: 16px; 
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.font-mono-num { font-family: 'DM Mono', monospace; }
+
+.font-mono-num { font-family: 'JetBrains Mono', monospace; }
+
+/* Global text colors improvement */
+.text-base-content {
+  color: oklch(var(--bc) / 0.9);
+}
+
+.text-muted {
+  color: oklch(var(--bc) / 0.5);
+}
+
+/* Card Improvements */
+.card {
+  @apply rounded-3xl;
+}
+
+.card-title {
+  @apply font-extrabold tracking-tight;
+}
 
 .trend-arrow { transition: transform 0.5s cubic-bezier(.34,1.56,.64,1); }
 

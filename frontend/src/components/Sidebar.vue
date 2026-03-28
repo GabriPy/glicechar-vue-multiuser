@@ -15,99 +15,139 @@
     </div>
 
     <!-- Navigazione -->
-    <nav class="flex-1 px-4 space-y-2">
-      <router-link 
-        to="/" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-bolt text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.home') }}</span>
-      </router-link>
+    <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar pb-6">
+      <!-- DASHBOARD -->
+      <div class="mb-4">
+        <router-link 
+          to="/" 
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
+          :class="$route.path === '/' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+          @click="$emit('close-drawer')"
+        >
+          <i class="fi fi-sr-bolt text-sm"></i>
+          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.home') }}</span>
+        </router-link>
+      </div>
 
-      <router-link 
-        to="/calendar" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/calendar' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-calendar text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.calendar') }}</span>
-      </router-link>
+      <!-- SEZIONE STORICO -->
+      <div class="mb-2">
+        <button 
+          @click="isHistoryExpanded = !isHistoryExpanded"
+          class="w-full flex items-center justify-between px-4 py-2 rounded-xl hover:bg-base-300 transition-all duration-300 group cursor-pointer"
+          :class="{ 'opacity-100': isHistoryExpanded || isHistoryActive, 'opacity-40': !isHistoryExpanded && !isHistoryActive }"
+        >
+          <div class="flex items-center gap-3">
+            <i class="fi fi-sr-time-past text-sm" :class="{ 'text-primary': isHistoryActive }"></i>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Storico & Analisi</span>
+          </div>
+          <i class="fi fi-sr-angle-small-down transition-transform duration-300" :class="{ 'rotate-180': isHistoryExpanded }"></i>
+        </button>
 
-      <router-link 
-        to="/prediction" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/prediction' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-chart-line-up text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.prediction') }}</span>
-      </router-link>
+        <div v-show="isHistoryExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/5 space-y-1 overflow-hidden transition-all duration-300">
+          <router-link 
+            to="/calendar" 
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
+            :class="$route.path === '/calendar' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+            @click="$emit('close-drawer')"
+          >
+            <i class="fi fi-sr-calendar text-[10px]"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.calendar') }}</span>
+          </router-link>
 
-      <router-link 
-        to="/patterns" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/patterns' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-brain text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.patterns') }}</span>
-      </router-link>
+          <router-link 
+            to="/comparison" 
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
+            :class="$route.path === '/comparison' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+            @click="$emit('close-drawer')"
+          >
+            <i class="fi fi-sr-apps-sort text-[10px]"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.comparison') }}</span>
+          </router-link>
 
-      <router-link 
-        to="/comparison" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/comparison' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-apps-sort text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.comparison') }}</span>
-      </router-link>
+          <router-link 
+            to="/summary" 
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
+            :class="$route.path === '/summary' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+            @click="$emit('close-drawer')"
+          >
+            <i class="fi fi-sr-document-signed text-[10px]"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.summary') }}</span>
+          </router-link>
+        </div>
+      </div>
 
-      <router-link 
-        to="/dietometer" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/dietometer' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-wheat text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.dietometer') }}</span>
-      </router-link>
+      <!-- SEZIONE AI -->
+      <div class="mb-2">
+        <button 
+          @click="isAiExpanded = !isAiExpanded"
+          class="w-full flex items-center justify-between px-4 py-2 rounded-xl hover:bg-base-300 transition-all duration-300 group cursor-pointer"
+          :class="{ 'opacity-100': isAiExpanded || isAiActive, 'opacity-40': !isAiExpanded && !isAiActive }"
+        >
+          <div class="flex items-center gap-3">
+            <i class="fi fi-sr-sparkles text-sm" :class="{ 'text-primary': isAiActive }"></i>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Funzionalità AI</span>
+          </div>
+          <i class="fi fi-sr-angle-small-down transition-transform duration-300" :class="{ 'rotate-180': isAiExpanded }"></i>
+        </button>
+        
+        <div v-show="isAiExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/5 space-y-1 overflow-hidden transition-all duration-300">
+          <router-link 
+            to="/prediction" 
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
+            :class="$route.path === '/prediction' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+            @click="$emit('close-drawer')"
+          >
+            <i class="fi fi-sr-chart-line-up text-[10px]"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.prediction') }}</span>
+          </router-link>
 
-      <router-link 
-        to="/summary" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/summary' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-document-signed text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.summary') }}</span>
-      </router-link>
+          <router-link 
+            to="/patterns" 
+            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
+            :class="$route.path === '/patterns' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+            @click="$emit('close-drawer')"
+          >
+            <i class="fi fi-sr-brain text-[10px]"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.patterns') }}</span>
+          </router-link>
+        </div>
+      </div>
 
-      <router-link 
-        to="/settings" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/settings' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-settings text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.settings') }}</span>
-      </router-link>
+      <!-- ALTRE FUNZIONALITÀ -->
+      <div class="pt-2 space-y-1">
+        <router-link 
+          to="/dietometer" 
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
+          :class="$route.path === '/dietometer' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+          @click="$emit('close-drawer')"
+        >
+          <i class="fi fi-sr-wheat text-sm"></i>
+          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.dietometer') }}</span>
+        </router-link>
 
-      <router-link 
-        to="/about" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/about' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-info text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.about') }}</span>
-      </router-link>
+        <router-link 
+          to="/settings" 
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
+          :class="$route.path === '/settings' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+          @click="$emit('close-drawer')"
+        >
+          <i class="fi fi-sr-settings text-sm"></i>
+          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.settings') }}</span>
+        </router-link>
+
+        <router-link 
+          to="/about" 
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
+          :class="$route.path === '/about' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+          @click="$emit('close-drawer')"
+        >
+          <i class="fi fi-sr-info text-sm"></i>
+          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.about') }}</span>
+        </router-link>
+      </div>
 
       <!-- Admin Section -->
-      <div v-if="auth.isAdmin" class="pt-4 pb-2 border-t border-base-content/5">
+      <div v-if="auth.isAdmin" class="pt-4 border-t border-base-content/5 mt-4">
         <div class="px-4 mb-2 text-[8px] font-black uppercase tracking-[0.3em] opacity-30">Admin</div>
         <router-link 
           to="/admin/users" 
@@ -159,6 +199,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { APP_VERSION_LABEL } from '../appVersion'
 import { useAuthStore } from '../stores/auth'
@@ -168,6 +209,29 @@ const $route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const { locale } = useI18n()
+
+// Stato per le sezioni collassabili
+const isAiExpanded = ref(false)
+const isHistoryExpanded = ref(false)
+
+// Verifica se una rotta nelle sezioni è attiva
+const isAiActive = computed(() => {
+  return ['/prediction', '/patterns'].includes($route.path)
+})
+
+const isHistoryActive = computed(() => {
+  return ['/calendar', '/comparison', '/summary'].includes($route.path)
+})
+
+// Espandi automaticamente se la rotta è attiva all'avvio o al cambio rotta
+watch(() => $route.path, (newPath) => {
+  if (['/prediction', '/patterns'].includes(newPath)) {
+    isAiExpanded.value = true
+  }
+  if (['/calendar', '/comparison', '/summary'].includes(newPath)) {
+    isHistoryExpanded.value = true
+  }
+}, { immediate: true })
 
 defineEmits(['close-drawer'])
 

@@ -68,7 +68,7 @@ async function handleRegister(skipWarning = false) {
         <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Registrazione Multiutente</p>
       </div>
       
-      <form class="mt-8 space-y-4" @submit.prevent="handleRegister(false)">
+      <div class="mt-8 space-y-4" @keyup.enter="handleRegister(false)">
         <div class="form-control">
           <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Username</span></label>
           <input v-model="username" type="text" required class="input input-bordered w-full font-black" placeholder="Il tuo username" />
@@ -99,24 +99,23 @@ async function handleRegister(skipWarning = false) {
         </div>
 
         <div class="pt-4">
-          <button type="submit" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
+          <button type="button" @click="handleRegister(false)" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
             <span v-if="loading" class="loading loading-spinner"></span>
-            Crea Account
+            Registrati
           </button>
         </div>
-        
-        <div class="text-center pt-2">
+
+        <div class="text-center">
           <div class="text-[10px] font-bold">
             <span class="opacity-40 uppercase tracking-widest">Hai già un account? </span>
-            <router-link to="/login" class="link link-primary font-black uppercase tracking-widest">Accedi qui</router-link>
+            <router-link to="/login" class="link link-primary font-black uppercase tracking-widest">Accedi</router-link>
           </div>
         </div>
-      </form>
+      </div>
 
-      <!-- Modal Warning Email -->
       <div v-if="showEmailWarning" class="absolute inset-0 bg-base-100/95 backdrop-blur-sm z-50 rounded-2xl flex items-center justify-center p-8 text-center">
         <div class="space-y-6">
-          <div class="w-16 h-16 bg-warning/20 text-warning rounded-full flex items-center justify-center mx-auto">
+          <div class="w-16 h-16 bg-warning/20 text-warning rounded-3xl flex items-center justify-center mx-auto">
             <i class="fi fi-sr-shield-exclamation text-3xl"></i>
           </div>
           <div class="space-y-2">

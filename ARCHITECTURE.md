@@ -1,4 +1,4 @@
-# 🏗️ Architettura GliceChart v1.2.0
+# 🏗️ Architettura GliceChart v1.3.0
 
 Dettagli tecnici sul funzionamento interno, la sicurezza e la gestione dei dati nella versione multiutente basata su **TypeScript** e **ES Modules (ESM)**.
 
@@ -17,41 +17,47 @@ Il cuore del sistema è l'isolamento totale dei dati tra gli utenti. Ogni tabell
 
 ---
 
-## 2. Sicurezza e Autenticazione
+## 2. Sicurezza e Amministrazione
 
-Il sistema implementa standard di sicurezza moderni per proteggere i dati clinici sensibili:
+Il sistema implementa standard di sicurezza moderni e meccanismi di auto-protezione:
 
 ### Autenticazione JWT (Two-Token System)
 1.  **Access Token (`JWT_SECRET`)**: Breve durata (15 min) per l'identificazione di ogni richiesta.
 2.  **Refresh Token (`REFRESH_TOKEN_SECRET`)**: Lunga durata (30 giorni) per mantenere l'utente loggato in modo sicuro.
+    - **Invalidazione**: Tutte le sessioni attive vengono terminate (i refresh tokens vengono eliminati) quando la password viene cambiata o ripristinata, garantendo che eventuali account compromessi vengano disconnessi immediatamente.
 
-### Email Recovery (Native Bridge)
-Per garantire la massima semplicità e superare i limiti di SMTP esterni, la v1.2.0 utilizza il trasporto `sendmail` integrato in Node.js, che comunica direttamente con il sistema di posta locale del server (lo stesso metodo usato dalla funzione `mail()` di PHP).
+### Auto-Protezione Amministrativa (v1.3.0)
+Il sistema integra meccanismi di sicurezza per prevenire errori operativi critici:
+- **Prevenzione Lock-out**: Le API e l'interfaccia impediscono agli amministratori di rimuovere il proprio flag `isAdmin` o eliminare il proprio account.
+- **Validazione Identità**: Ogni operazione su account altrui viene validata incrociando l'ID della sessione con l'ID dell'utente target.
+- **Integrità Password**: I link di ripristino vengono invalidati immediatamente dopo l'uso o in seguito a un cambio password manuale dalle impostazioni.
+- **Integrità Query**: Le query amministrative sono ottimizzate per restituire sempre l'indirizzo email e i dati di registrazione corretti per il monitoraggio degli utenti.
 
 ---
 
 ## 3. Motore di Sincronizzazione Multi-utente
 
-Il backend esegue un ciclo di polling parallelo ottimizzato:
-1.  **Recupero Utenti**: Seleziona dal DB tutti gli utenti con credenziali Gluroo valide.
-2.  **Polling Parallelo**: Esegue chiamate asincrone simultanee alle API Gluroo per ogni utente.
-3.  **Normalizzazione Dati**: I dati grezzi vengono puliti (es. correzione URL) e salvati solo se non già presenti.
+Il backend esegue un ciclo di polling parallelo ottimizzato per ogni utente registrato con credenziali Gluroo valide. Il sistema de-duplica i dati basandosi sul timestamp univoco di ogni lettura.
 
 ---
 
-## 4. Frontend & State Management (Vue 3)
+## 4. Frontend & Design System (Vue 3)
+
+### Tipografia e Iconografia (v1.3.0)
+Il design system è stato riprogettato per migliorare la leggibilità e l'esperienza utente:
+- **Font Strategici**: **Plus Jakarta Sans** per l'interfaccia utente e **JetBrains Mono** per i dati numerici e tecnici.
+- **Icon Engine**: Le icone sono ora racchiuse in contenitori quadrati con angoli arrotondati (`rounded-2xl/3xl`) per una coerenza visiva totale.
+- **Pulsing Status Indicator**: Un indicatore circolare pulsante accanto alla glicemia attuale comunica lo stato (Verde, Giallo, Rosso) senza dipendere dal colore del testo numerico, che rimane nero per massima leggibilità.
+- **Geometria & Centratura**: Tutte le card statistiche della homepage sono state riallineate con testi e icone perfettamente centrati.
 
 ### Pinia Stores (ESM)
-- **`auth.ts`**: Gestisce lo stato dell'utente, i permessi, e intercetta le risposte 401 per eseguire l'auto-refresh del token JWT.
-- **`glucose.ts`**: Contiene la logica di calcolo clinico (GMI, eA1c, IOB, COB) e le predizioni matematiche v2.1.
-
-### UI Engine (Tailwind CSS 4 & DaisyUI 5)
-L'interfaccia Premium è costruita con **Tailwind CSS 4** e **daisyUI 5**, utilizzando un sistema di temi unificato che garantisce un'esperienza visiva coerente, reattiva e moderna (Premium Aesthetic).
+- **`auth.ts`**: Gestisce lo stato dell'utente, i permessi, e intercetta le risposte 401 per l'auto-refresh.
+- **`glucose.ts`**: Logica di calcolo clinico (GMI, eA1c, IOB, COB) e predizioni matematiche v2.2.
 
 ---
 
 ## 5. Deployment & Scalabilità
 
-- **TypeScript Nativo**: Utilizzo di `tsx` nel backend per l'esecuzione diretta.
-- **Gestione Processi**: Supporto ufficiale per **PM2**.
+- **TypeScript Nativo**: Utilizzo di `tsx` nel backend per l'esecuzione diretta senza compilazione manuale.
+- **Gestione Processi**: Supporto ufficiale per **PM2** per garantire il riavvio automatico e il monitoraggio.
 - **Porta Default**: `3002`.

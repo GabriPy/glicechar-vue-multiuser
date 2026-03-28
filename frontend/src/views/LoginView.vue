@@ -42,7 +42,7 @@ async function handleLogin() {
         <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('login.subtitle') || 'Accedi al tuo profilo multiutente' }}</p>
       </div>
       
-      <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
+      <div class="mt-8 space-y-6" @keyup.enter="handleLogin">
         <div class="space-y-4">
           <div class="form-control">
             <label class="label py-1">
@@ -64,7 +64,7 @@ async function handleLogin() {
         </div>
 
         <div class="pt-2">
-          <button type="submit" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
+          <button type="button" @click="handleLogin" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
             <span v-if="loading" class="loading loading-spinner"></span>
             {{ $t('login.submit') || 'Accedi' }}
           </button>
@@ -82,7 +82,7 @@ async function handleLogin() {
             <router-link to="/register" class="link link-primary font-black uppercase tracking-widest">{{ $t('login.register') || 'Registrati' }}</router-link>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>

@@ -1,4 +1,4 @@
-# 💉 GliceChart v1.2.0
+# 💉 GliceChart v1.3.0
 
 **Monitor glicemia multiutente professionale**, sviluppato in **TypeScript** con architettura **ES Modules (ESM)**.  
 Una piattaforma completa per il monitoraggio della glicemia in tempo reale, con gestione avanzata di insulina, carboidrati, note e analisi predittiva, progettata per supportare **più utenti simultanei** con isolamento totale dei dati.
@@ -7,11 +7,12 @@ I dati vengono sincronizzati automaticamente da **Gluroo** (o altre fonti tramit
 
 ---
 
-## ✨ Caratteristiche Principali (v1.2.0)
+## ✨ Caratteristiche Principali (v1.3.0)
 
-- **🎨 Design Unified**: Interfaccia ridisegnata con estetica moderna, effetti "glassmorphism", bagliori soffusi (`blur-3xl`) e coerenza cromatica basata su temi DaisyUI 5 (Cupcake, Dark, ecc.).
+- **🎨 Design Refined**: UI modernizzata con i font **Plus Jakarta Sans** (testi) e **JetBrains Mono** (numeri). Iconografia uniformata con background quadrati arrotondati (`rounded-2xl/3xl`) e nuovo indicatore di stato pulsante (Verde/Giallo/Rosso) per un feedback immediato senza interferire con il colore del valore glicemico.
+- **🛡️ Protezione Avanzata**: Sistemi di auto-protezione per gli account amministrativi che impediscono il lock-out accidentale (non è possibile rimuovere i propri privilegi o eliminare il proprio account dal pannello).
 - **👥 Architettura Multiutente**: Registrazione, login sicuro (JWT + Refresh Tokens), recupero password via **Local Mailer (sendmail)** e isolamento completo dei dati tra gli utenti.
-- **🛡️ Pannello Admin**: Gestione utenti centralizzata per gli amministratori (abilitazione, eliminazione, permessi).
+- **🛡️ Pannello Admin**: Gestione utenti centralizzata con visualizzazione corretta delle email e gestione permessi sicura.
 - **🚀 Predizione Glicemia v2.2**: Algoritmo matematico avanzato (ROC + Smoothing) con supporto per soglie critiche personalizzabili (`red_under`, `red_over`).
 - **📊 Analisi Comparativa**: Vista "Confronto Periodi" con overlay grafico per monitorare i progressi orari tra diverse settimane.
 - **🧠 Pattern Smart Dinamici**: Analisi automatica dello storico che identifica schemi ricorrenti e correlazioni con le note (es. "Effetto Pizza").
@@ -48,8 +49,7 @@ glicechart-multiuser/
 ├── backend/            # TypeScript API & Sincronizzazione
 │   ├── server.ts       # Entry point Express (ESM)
 │   ├── db.ts           # Gestione MySQL e isolamento user_id
-│   ├── mailer.ts       # Bridge per invio email (PHP)
-│   ├── mail.php        # Script PHP per l'invio fisico delle email
+│   ├── mailer.ts       # Bridge per invio email
 │   ├── validators.ts   # Schemi Zod per validazione input
 │   └── .env            # Configurazioni server, DB e Email
 │

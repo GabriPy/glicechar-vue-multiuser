@@ -6,8 +6,8 @@
       <div class="card-body items-center text-center p-8 space-y-6">
         <!-- Icona centrata e animata -->
         <div class="relative flex items-center justify-center">
-          <div class="absolute w-20 h-20 bg-warning/10 rounded-full animate-ping"></div>
-          <div class="relative w-16 h-16 rounded-full bg-warning/20 flex items-center justify-center">
+          <div class="absolute w-20 h-20 bg-warning/10 rounded-3xl animate-ping"></div>
+          <div class="relative w-16 h-16 rounded-3xl bg-warning/20 flex items-center justify-center">
             <i class="fi fi-sr-exclamation text-warning text-3xl leading-none"></i>
           </div>
         </div>
@@ -48,81 +48,76 @@
       </div>
 
       <!-- Statistiche Rapide -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
         <!-- Media -->
         <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-primary/30 transition-all">
-          <div class="card-body p-5 relative">
+          <div class="card-body p-5 relative items-center text-center">
             <div class="absolute -top-10 -right-10 w-24 h-24 bg-primary/5 blur-3xl rounded-full group-hover:bg-primary/10 transition-colors"></div>
-            <div class="flex items-center justify-between relative z-10">
-              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ $t('home.avg') }}</span>
-              <div class="p-2 bg-primary/10 rounded-xl text-primary">
+            <div class="flex flex-col items-center gap-2 relative z-10 w-full">
+              <div class="w-12 h-12 bg-primary/10 rounded-2xl text-primary flex items-center justify-center text-xl mb-1">
                 <i class="fi fi-sr-stats"></i>
               </div>
+              <span class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-primary/60">{{ $t('home.avg') }}</span>
             </div>
-            <div class="flex items-baseline gap-2 mt-2 relative z-10">
-              <span class="text-4xl font-black tracking-tighter italic">{{ store.stats?.avg || '--' }}</span>
-              <span class="text-[10px] font-bold opacity-30 uppercase">{{ $t('common.mgdl') }}</span>
+            <div class="flex items-baseline justify-center gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-extrabold tracking-tight text-base-content">{{ store.stats?.avg ?? '--' }}</span>
+              <span class="text-[10px] font-bold opacity-40 uppercase">{{ $t('common.mgdl') }}</span>
             </div>
           </div>
         </div>
 
         <!-- TIR -->
         <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-success/30 transition-all">
-          <div class="card-body p-5 relative">
+          <div class="card-body p-5 relative items-center text-center">
             <div class="absolute -top-10 -right-10 w-24 h-24 bg-success/5 blur-3xl rounded-full group-hover:bg-success/10 transition-colors"></div>
-            <div class="flex items-center justify-between relative z-10">
-              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ $t('home.tir') }}</span>
-              <div class="p-2 bg-success/10 rounded-xl text-success">
+            <div class="flex flex-col items-center gap-2 relative z-10 w-full">
+              <div class="w-12 h-12 bg-success/10 rounded-2xl text-success flex items-center justify-center text-xl mb-1">
                 <i class="fi fi-sr-target"></i>
               </div>
+              <span class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-success/60">{{ $t('home.tir') }}</span>
             </div>
-            <div class="flex items-baseline gap-2 mt-2 relative z-10">
-              <span class="text-4xl font-black tracking-tighter italic">{{ store.stats?.tir || '--' }}</span>
-              <span class="text-[10px] font-bold opacity-30 uppercase">%</span>
+            <div class="flex items-baseline justify-center gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-extrabold tracking-tight text-base-content">{{ store.stats?.tir ?? '--' }}</span>
+              <span class="text-[10px] font-bold opacity-40 uppercase">%</span>
             </div>
           </div>
         </div>
 
         <!-- IOB -->
         <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-secondary/30 transition-all">
-          <div class="card-body p-5 relative">
+          <div class="card-body p-5 relative items-center text-center">
             <div class="absolute -top-10 -right-10 w-24 h-24 bg-secondary/5 blur-3xl rounded-full group-hover:bg-secondary/10 transition-colors"></div>
-            <div class="flex items-center justify-between relative z-10">
-              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">IOB ({{ $t('home.active_insulin') }})</span>
-              <div class="p-2 bg-secondary/10 rounded-xl text-secondary">
+            <div class="flex flex-col items-center gap-2 relative z-10 w-full">
+              <div class="w-12 h-12 bg-secondary/10 rounded-2xl text-secondary flex items-center justify-center text-xl mb-1">
                 <i class="fi fi-sr-syringe"></i>
               </div>
+              <span class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-secondary/60">IOB</span>
             </div>
-            <div class="flex items-baseline gap-2 mt-2 relative z-10">
-              <span class="text-4xl font-black tracking-tighter italic">{{ store.iob.toFixed(1) }}</span>
-              <span class="text-[10px] font-bold opacity-30 uppercase">{{ $t('common.units') }}</span>
+            <div class="flex items-baseline justify-center gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-extrabold tracking-tight text-base-content">{{ store.iob.toFixed(1) }}</span>
+              <span class="text-[10px] font-bold opacity-40 uppercase">{{ $t('common.units') }}</span>
             </div>
           </div>
         </div>
 
         <!-- COB -->
         <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden group hover:border-accent/30 transition-all">
-          <div class="card-body p-5 relative">
+          <div class="card-body p-5 relative items-center text-center">
             <div class="absolute -top-10 -right-10 w-24 h-24 bg-accent/5 blur-3xl rounded-full group-hover:bg-accent/10 transition-colors"></div>
-            <div class="flex items-center justify-between relative z-10">
-              <span class="text-[10px] font-black uppercase tracking-widest opacity-40">COB ({{ $t('home.active_carbs') }})</span>
-              <div class="p-2 bg-accent/10 rounded-xl text-accent">
+            <div class="flex flex-col items-center gap-2 relative z-10 w-full">
+              <div class="w-12 h-12 bg-accent/10 rounded-2xl text-accent flex items-center justify-center text-xl mb-1">
                 <i class="fi fi-sr-wheat"></i>
               </div>
+              <span class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-accent/60">COB</span>
             </div>
-            <div class="flex items-baseline gap-2 mt-2 relative z-10">
-              <span class="text-4xl font-black tracking-tighter italic">{{ store.cob.toFixed(0) }}</span>
-              <span class="text-[10px] font-bold opacity-30 uppercase">g</span>
+            <div class="flex items-baseline justify-center gap-2 mt-2 relative z-10">
+              <span class="text-4xl font-extrabold tracking-tight text-base-content">{{ store.cob.toFixed(0) }}</span>
+              <span class="text-[10px] font-bold opacity-40 uppercase">g</span>
             </div>
           </div>
+        </div>
       </div>
-    </div>
-
-    <!-- Statistiche Dettagliate -->
-    <div class="w-full relative z-10">
-      <DailyStats />
-    </div>
-  </template>
+    </template>
   </div>
 </template>
 
@@ -132,7 +127,6 @@ import { useGlucoseStore } from '../stores/glucose'
 import { useAuthStore } from '../stores/auth'
 import CurrentGlucose from '../components/CurrentGlucose.vue'
 import GlucoseChart   from '../components/GlucoseChart.vue'
-import DailyStats     from '../components/DailyStats.vue'
 
 const store = useGlucoseStore()
 const auth = useAuthStore()

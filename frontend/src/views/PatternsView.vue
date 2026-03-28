@@ -6,8 +6,8 @@
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-accent/5 blur-3xl rounded-full"></div>
         
         <div class="flex items-center gap-4 relative z-10">
-          <div class="p-3 bg-accent/10 rounded-2xl">
-            <i class="fi fi-sr-brain text-accent text-2xl leading-none"></i>
+          <div class="w-12 h-12 bg-accent/10 rounded-2xl text-accent flex items-center justify-center text-2xl">
+            <i class="fi fi-sr-brain"></i>
           </div>
           <div>
             <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic text-primary">Glice<span class="text-base-content">AI</span></h1>
@@ -70,8 +70,8 @@
       <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
       
       <div class="flex items-center gap-4 relative z-10">
-        <div class="p-2.5 bg-primary/10 rounded-xl">
-          <i class="fi fi-sr-database text-primary text-xl"></i>
+        <div class="w-12 h-12 bg-primary/10 rounded-2xl text-primary flex items-center justify-center text-xl">
+          <i class="fi fi-sr-database"></i>
         </div>
         <div>
           <h3 class="font-black uppercase tracking-tight text-sm italic">{{ $t('patterns.data_analyzed') }}</h3>

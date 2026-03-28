@@ -1,11 +1,5 @@
 <template>
   <div class="card bg-base-100 shadow-xl border border-base-content/5 h-full relative overflow-hidden group">
-    <!-- Glow di sfondo dinamico -->
-    <div 
-      class="absolute inset-0 opacity-[0.05] blur-3xl transition-colors duration-1000"
-      :class="store.glucoseColor.replace('text-', 'bg-')"
-    ></div>
-
     <div class="card-body items-center justify-center text-center gap-1 py-6 relative z-10">
 
       <!-- Stato Live -->
@@ -14,16 +8,25 @@
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
           <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-success"></span>
         </div>
-        <span class="text-[11px] uppercase font-black tracking-[0.2em] opacity-40">Live Monitoring</span>
+        <span class="text-[11px] uppercase font-extrabold tracking-[0.2em] opacity-50">Live Monitoring</span>
       </div>
 
       <!-- Valore + freccia -->
       <div v-if="store.current" class="flex flex-col items-center gap-4">
         <div class="flex items-center gap-3">
+          <!-- Pallino di stato -->
+          <div class="flex flex-col items-center justify-center">
+            <div 
+              class="w-6 h-6 rounded-full shadow-lg transition-colors duration-500 relative"
+              :class="store.glucoseColor.replace('text-', 'bg-')"
+            >
+              <div class="absolute inset-0 rounded-full animate-ping opacity-20" :class="store.glucoseColor.replace('text-', 'bg-')"></div>
+            </div>
+          </div>
+
           <div class="flex flex-col items-end">
             <span
-              class="font-black leading-none text-8xl tracking-tighter transition-colors duration-500"
-              :class="store.glucoseColor"
+              class="font-extrabold leading-none text-8xl tracking-tighter text-base-content"
             >{{ store.current.glucose }}</span>
           </div>
           <div class="flex flex-col items-center gap-1">
@@ -36,9 +39,9 @@
           <div class="flex flex-col items-center gap-0.5">
             <div class="flex items-center gap-1.5">
               <div class="w-2 h-2 rounded-full bg-primary"></div>
-              <span class="text-xl font-black tracking-tight">{{ store.iob.toFixed(1) }} <span class="text-xs opacity-40">U</span></span>
+              <span class="text-xl font-extrabold tracking-tight">{{ store.iob.toFixed(1) }} <span class="text-xs opacity-40">U</span></span>
             </div>
-            <span class="text-[10px] font-black uppercase opacity-30 tracking-widest">Insulina Attiva</span>
+            <span class="text-[10px] font-bold uppercase opacity-30 tracking-widest">Insulina Attiva</span>
           </div>
           
           <div class="divider divider-horizontal mx-0 h-6 opacity-10"></div>
@@ -46,9 +49,9 @@
           <div class="flex flex-col items-center gap-0.5">
             <div class="flex items-center gap-1.5">
               <div class="w-2 h-2 rounded-full bg-accent"></div>
-              <span class="text-xl font-black tracking-tight">{{ Math.round(store.cob) }} <span class="text-xs opacity-40">g</span></span>
+              <span class="text-xl font-extrabold tracking-tight">{{ Math.round(store.cob) }} <span class="text-xs opacity-40">g</span></span>
             </div>
-            <span class="text-[10px] font-black uppercase opacity-30 tracking-widest">CHO da assorbire</span>
+            <span class="text-[10px] font-bold uppercase opacity-30 tracking-widest">CHO da assorbire</span>
           </div>
         </div>
       </div>
