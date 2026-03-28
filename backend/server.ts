@@ -171,6 +171,14 @@ const generateTokens = async (user: any) => {
 
 // ── Serve il frontend buildato ────────────────────────────────────────────────
 const FRONTEND_DIST = path.join(__dirname, '..', 'frontend', 'dist');
+const FRONTEND_PUBLIC = path.join(__dirname, '..', 'frontend', 'public');
+
+// Rotta specifica per robots.txt (per evitare il fallback HTML)
+app.get('/robots.txt', (req, res) => {
+  const robotsPath = path.join(FRONTEND_PUBLIC, 'robots.txt');
+  res.sendFile(robotsPath);
+});
+
 app.use(express.static(FRONTEND_DIST));
 
 // ── API Routes (Auth) ─────────────────────────────────────────────────────────
