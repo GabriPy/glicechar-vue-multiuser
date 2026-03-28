@@ -1,19 +1,21 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import HomeView from '../views/HomeView.vue'
-import CalendarView from '../views/CalendarView.vue'
-import SettingsView from '../views/SettingsView.vue'
-import PeriodicSummaryView from '../views/PeriodicSummaryView.vue'
-import DietometerView from '../views/DietometerView.vue'
-import AboutView from '../views/AboutView.vue'
-import PredictionView from '../views/PredictionView.vue'
-import PatternsView from '../views/PatternsView.vue'
-import ComparativeAnalysisView from '../views/ComparativeAnalysisView.vue'
-import LoginView from '../views/LoginView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import UserManagementView from '../views/UserManagementView.vue'
-import ForgotPasswordView from '../views/ForgotPasswordView.vue'
-import ResetPasswordView from '../views/ResetPasswordView.vue'
+
+// Lazy loading dei componenti per ottimizzare le dimensioni dei chunk
+const HomeView = () => import('../views/HomeView.vue')
+const CalendarView = () => import('../views/CalendarView.vue')
+const SettingsView = () => import('../views/SettingsView.vue')
+const PeriodicSummaryView = () => import('../views/PeriodicSummaryView.vue')
+const DietometerView = () => import('../views/DietometerView.vue')
+const AboutView = () => import('../views/AboutView.vue')
+const PredictionView = () => import('../views/PredictionView.vue')
+const PatternsView = () => import('../views/PatternsView.vue')
+const ComparativeAnalysisView = () => import('../views/ComparativeAnalysisView.vue')
+const LoginView = () => import('../views/LoginView.vue')
+const RegisterView = () => import('../views/RegisterView.vue')
+const UserManagementView = () => import('../views/UserManagementView.vue')
+const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue')
+const ResetPasswordView = () => import('../views/ResetPasswordView.vue')
 
 const routes: RouteRecordRaw[] = [
   {

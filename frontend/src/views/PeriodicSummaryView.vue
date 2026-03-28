@@ -214,7 +214,7 @@ import { useGlucoseStore, type Reading } from '../stores/glucose'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 
 const { t } = useI18n()
 const store = useGlucoseStore()
@@ -426,7 +426,7 @@ function exportPDF() {
     [t('summary.hba1c_estimate'), `${gmi.value.toFixed(1)}%`]
   ]
   
-  doc.autoTable({
+  autoTable(doc, {
     startY: 70,
     head: [[t('summary.export.indicator'), t('summary.export.value')]],
     body: statsData,
@@ -445,7 +445,7 @@ function exportPDF() {
     r.trend || 'N/A'
   ])
   
-  doc.autoTable({
+  autoTable(doc, {
     startY: lastY + 20,
     head: [[t('summary.export.date_time'), t('summary.export.glucose'), t('summary.export.trend')]],
     body: tableData,

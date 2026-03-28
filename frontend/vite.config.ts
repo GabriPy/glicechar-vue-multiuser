@@ -23,6 +23,29 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              // Separa Chart.js
+              if (id.includes('chart.js')) {
+                return 'vendor-charts'
+              }
+              // Separa jsPDF
+              if (id.includes('jspdf')) {
+                return 'vendor-pdf'
+              }
+              // Separa Vue core e utility
+              if (id.includes('vue') || id.includes('pinia') || id.includes('axios')) {
+                return 'vendor-core'
+              }
+              // Tutto il resto dei node_modules
+              return 'vendor'
+            }
+          }
+        }
+      }
     }
   }
 })
