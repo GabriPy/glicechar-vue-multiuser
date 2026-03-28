@@ -24,22 +24,28 @@ const messages = {
     },
     nav: {
       home: 'Dashboard',
+      history_section: 'Storico & Analisi',
       calendar: 'Calendario',
       prediction: 'Predizione',
       patterns: 'Pattern Smart',
       comparison: 'Confronto Periodi',
       dietometer: 'Dietometro',
       summary: 'Resoconto',
+      ai_section: 'Funzionalità AI',
       settings: 'Impostazioni',
       admin: 'Gestione Utenti',
+      admin_header: 'Admin',
       about: 'Informazioni',
-      logout: 'Esci'
+      logout: 'Esci',
+      user_type_admin: 'Amministratore',
+      user_type_standard: 'Utente Standard'
     },
     app: {
       theme: 'Tema',
       system_active: 'Sistema Attivo',
       sync: 'Sincronizza',
-      disclaimer: 'GliceChart-multiuser è uno strumento di supporto basato su algoritmi matematici STANDARD. Per qualsiasi modifica terapeutica consultare prima il proprio medico.'
+      disclaimer: 'GliceChart-multiuser è uno strumento di supporto basato su algoritmi matematici STANDARD. Per qualsiasi modifica terapeutica consultare prima il proprio medico.',
+      multiuser: 'Multiutente'
     },
     home: {
       current: 'Glicemia Attuale',
@@ -281,16 +287,21 @@ const messages = {
     },
     nav: {
       home: 'Dashboard',
+      history_section: 'History & Analysis',
       calendar: 'Calendar',
       prediction: 'Prediction',
       patterns: 'Smart Patterns',
       comparison: 'Period Comparison',
       dietometer: 'Dietometer',
       summary: 'Report',
+      ai_section: 'AI Features',
       settings: 'Settings',
       admin: 'User Management',
+      admin_header: 'Admin',
       about: 'About',
-      logout: 'Logout'
+      logout: 'Logout',
+      user_type_admin: 'Administrator',
+      user_type_standard: 'Standard User'
     },
     app: {
       theme: 'Theme',
@@ -511,7 +522,8 @@ const messages = {
       now_line: '"NOW" Line',
       now_line_desc: 'Available in the calendar to indicate the current time relative to the whole day.',
       secure_management: 'Secure Management',
-      secure_management_desc: 'GliceChart-multiuser is a support tool based on mathematical algorithms and statistical data. Always consult your doctor for therapeutic decisions.'
+      secure_management_desc: 'GliceChart-multiuser is a support tool based on mathematical algorithms and statistical data. Always consult your doctor for therapeutic decisions.',
+      multiuser: 'Multiuser'
     }
   }
 }

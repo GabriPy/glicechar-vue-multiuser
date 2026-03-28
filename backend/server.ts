@@ -83,7 +83,23 @@ interface AuthenticatedRequest extends Request {
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:3002',
+  'http://localhost:5173',
+  'https://glicechart.ghibiri.it'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Accesso negato da CORS'));
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Logger HTTP migliorato con picocolors
@@ -100,17 +116,18 @@ app.use(morgan((tokens, req, res) => {
   ].join(' ');
 }));
 
-// Rate limiting disabilitato per permettere un uso libero
-/*
+// Rate limiting per proteggere da attacchi Brute Force e DoS
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: { error: 'Troppi tentativi, riprova tra 15 minuti' }
+  windowMs: 15 * 60 * 1000, // 15 minuti
+  max: 20, // Limite di 20 richieste per finestra (Login/Register)
+  message: { error: 'Troppi tentativi, riprova tra 15 minuti' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 const apiLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 500, // Aumentato da 100 a 500
+  windowMs: 1 * 60 * 1000, // 1 minuto
+  max: 300, // Limite di 300 richieste al minuto per le API generali
   message: { error: 'Troppe richieste, rallenta un po\'' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -118,15 +135,18 @@ const apiLimiter = rateLimit({
 
 const strictLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 ora
-  max: 5, // Solo 5 tentativi falliti per ora per IP
+  max: 10, // Solo 10 tentativi falliti per ora per IP
   skipSuccessfulRequests: true,
-  message: { error: 'Troppi tentativi falliti, riprova tra un\'ora' }
+  message: { error: 'Troppi tentativi falliti, riprova tra un\'ora' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 app.use('/api/', apiLimiter);
 app.use('/api/auth/login', authLimiter, strictLimiter);
 app.use('/api/auth/register', authLimiter);
-*/
+app.use('/api/auth/forgot-password', authLimiter);
+app.use('/api/auth/reset-password', authLimiter);
 
 // Middleware di autenticazione
 const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -208,7 +228,8 @@ app.post('/api/auth/register', async (req, res) => {
     res.json({ ok: true, userId, isAdmin: isAdminUser });
   } catch (e: any) {
     if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi', details: e.errors });
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Registration Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno durante la registrazione' });
   }
 });
 
@@ -240,7 +261,8 @@ app.post('/api/auth/login', async (req, res) => {
     });
   } catch (e: any) {
     if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi' });
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Login Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno durante il login' });
   }
 });
 
@@ -270,7 +292,8 @@ app.post('/api/auth/refresh', async (req, res) => {
       res.json({ token: accessToken });
     });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Refresh Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno durante il refresh del token' });
   }
 });
 
@@ -282,7 +305,8 @@ app.post('/api/auth/logout', authenticateToken, async (req: AuthenticatedRequest
     }
     res.json({ ok: true });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Logout Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno durante il logout' });
   }
 });
 
@@ -305,7 +329,8 @@ app.get('/api/auth/me', authenticateToken, async (req: AuthenticatedRequest, res
       }
     });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Me Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno recupero profilo' });
   }
 });
 
@@ -325,15 +350,14 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         console.log(getTime() + pc.green('✔ ') + pc.bold(`[${user.username}] `) + pc.dim('Email di reset inviata con successo'));
       } catch (mailError: any) {
         console.error(getTime() + pc.red('✖ ') + pc.bold(`[${user.username}] `) + pc.dim('Invio email di reset fallito: ') + mailError.message);
-        // In questo caso particolare potremmo voler restituire l'errore all'utente
-        // ma per ora manteniamo la risposta generica per sicurezza
       }
     }
     
     res.json({ ok: true, message: 'Se l\'email è presente nei nostri sistemi, riceverai le istruzioni tra poco.' });
   } catch (e: any) {
     if (e.name === 'ZodError') return res.status(400).json({ error: 'Email non valida' });
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Forgot Password Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno' });
   }
 });
 
@@ -350,7 +374,8 @@ app.post('/api/auth/reset-password', async (req, res) => {
     res.json({ ok: true, message: 'Password aggiornata correttamente' });
   } catch (e: any) {
     if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi' });
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Reset Password Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno' });
   }
 });
 
@@ -411,7 +436,8 @@ app.get('/api/current', authenticateToken, async (req: AuthenticatedRequest, res
     if (!latest) return res.status(404).json({ error: 'Nessuna lettura disponibile' });
     res.json(latest);
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Current Glucose Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno recupero dati attuali' });
   }
 });
 
@@ -422,7 +448,8 @@ app.get('/api/readings', authenticateToken, async (req: AuthenticatedRequest, re
     const rows = await getReadingsByMinutes(req.user.id, range);
     res.json(rows);
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Readings Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno recupero letture' });
   }
 });
 
@@ -433,7 +460,8 @@ app.get('/api/insulin', authenticateToken, async (req: AuthenticatedRequest, res
     const rows = await getInsulinByMinutes(req.user.id, range);
     res.json(rows);
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Insulin Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno recupero insuline' });
   }
 });
 
@@ -444,7 +472,8 @@ app.post('/api/insulin', authenticateToken, async (req: AuthenticatedRequest, re
     res.json({ ok: true, id });
   } catch (e: any) {
     if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi', details: e.errors });
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Insert Insulin Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno salvataggio insulina' });
   }
 });
 
@@ -453,7 +482,8 @@ app.delete('/api/insulin/:id', authenticateToken, async (req: AuthenticatedReque
     const ok = await deleteInsulin(req.user.id, parseInt(req.params.id));
     res.json({ ok });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Delete Insulin Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno eliminazione insulina' });
   }
 });
 
@@ -464,7 +494,8 @@ app.put('/api/insulin/:id', authenticateToken, async (req: AuthenticatedRequest,
     res.json({ ok });
   } catch (e: any) {
     if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi', details: e.errors });
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Update Insulin Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno aggiornamento insulina' });
   }
 });
 
@@ -478,7 +509,8 @@ app.post('/api/sync', authenticateToken, async (req: AuthenticatedRequest, res) 
     const latest = await getLatestReading(req.user.id);
     res.json({ ok: true, latest });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[Sync Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno durante la sincronizzazione' });
   }
 });
 
@@ -489,7 +521,8 @@ app.get('/api/history/readings', authenticateToken, async (req: AuthenticatedReq
     const rows = await getReadingsByDate(req.user.id, date);
     res.json(rows);
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[History Readings Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno recupero storico letture' });
   }
 });
 
@@ -500,7 +533,8 @@ app.get('/api/history/insulin', authenticateToken, async (req: AuthenticatedRequ
     const rows = await getInsulinByDate(req.user.id, date);
     res.json(rows);
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error(pc.red('[History Insulin Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno recupero storico insuline' });
   }
 });
 

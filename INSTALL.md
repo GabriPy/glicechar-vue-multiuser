@@ -1,14 +1,15 @@
-# 🛠️ Guida all'Installazione v1.3.0
+# 📥 Guida all'Installazione - GliceChart Multiuser v1.3.0
 
-Segui questi passaggi per installare e configurare **GliceChart-multiuser** sul tuo server locale o remoto.
+Segui questi passaggi per configurare GliceChart sul tuo server Linux/Windows.
+
+---
 
 ## 1. Prerequisiti
 
-Assicurati di avere installato:
-- **Node.js 20.x** o superiore.
-- **MySQL 8.0** o superiore.
-- **NPM** o **Yarn**.
-- **PM2** e **tsx** installati globalmente: `npm install -g pm2 tsx`.
+- **Node.js** (v18 o superiore)
+- **MySQL** (v8.0 o superiore)
+- **Git**
+- Una chiave API di **Resend** (gratuita su [resend.com](https://resend.com))
 
 ---
 
@@ -18,103 +19,77 @@ Crea il database dedicato e un utente con i privilegi necessari. È fondamentale
 
 ```sql
 -- Creazione Database
-CREATE DATABASE `glicechart-multiutente` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `glicechart-multiutente` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Creazione Utente (Sostituisci 'TUA_PASSWORD_SICURA')
-CREATE USER 'glucoview'@'localhost' IDENTIFIED BY 'TUA_PASSWORD_SICURA';
+CREATE USER IF NOT EXISTS 'glucoview'@'localhost' IDENTIFIED BY 'TUA_PASSWORD_SICURA';
 
 -- Assegnazione Privilegi
 GRANT ALL PRIVILEGES ON `glicechart-multiutente`.* TO 'glucoview'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-> **💡 Risoluzione Problemi**: Se riscontri `ER_ACCESS_DENIED_ERROR` all'avvio del backend, verifica che le credenziali nel file `.env` corrispondano esattamente a quelle create sopra e che il servizio MySQL sia attivo. In alcuni sistemi, potrebbe essere necessario usare `127.0.0.1` invece di `localhost` nel file `.env`.
-
 ---
 
-## 3. Installazione Dipendenze
+## 3. Configurazione Ambiente (.env)
 
-```bash
-# Backend
-cd backend
-npm install
-
-# Frontend
-cd ../frontend
-npm install
-```
-
----
-
-## 4. Configurazione Ambiente (.env)
-
-Crea un file `.env` nella cartella `backend/` seguendo questo schema:
+Nella cartella `backend/`, rinomina il file `.env.example` in `.env` (o crealo) e configura i seguenti parametri critici:
 
 ```env
-# Database
+# URL Pubblico dell'app
+FRONTEND_URL=https://glicechart.ghibiri.it
+
+# MySQL
 DB_HOST=localhost
 DB_USER=glucoview
 DB_PASSWORD=TUA_PASSWORD_SICURA
 DB_NAME=glicechart-multiutente
 
-# Sicurezza (JWT)
-JWT_SECRET=genera_una_stringa_casuale_lunga
-REFRESH_TOKEN_SECRET=genera_un_altra_stringa_casuale_lunga
+# SICUREZZA JWT (Genera chiavi casuali!)
+# Puoi usare: openssl rand -base64 32
+JWT_SECRET=inserisci_qui_una_chiave_molto_lunga
+REFRESH_TOKEN_SECRET=inserisci_qui_un_altra_chiave_molto_lunga
 
-# ── Email (Resend API - Consigliato) ────────────────────────
-# Ottieni la tua API Key su https://resend.com
-RESEND_API_KEY=tua_api_key_resend
+# EMAIL (Resend API)
+RESEND_API_KEY=re_tua_chiave
 RESEND_PASSWORDRECOVERY_TEMPLATE_ID=password-reset
 RESEND_WELCOME_TEMPLATE_ID=welcome-newuser
-
-# Mittente autorizzato
 EMAIL_FROM="GliceChart" <noreply@glicechart.ghibiri.it>
-
-# ── Email (SMTP Tradizionale - Alternativa) ────────────────
-EMAIL_HOST=
-EMAIL_PORT=587
-EMAIL_USER=
-EMAIL_PASS=
-# EMAIL_FROM viene usato anche qui se RESEND_API_KEY è vuota.
-
-# Server
-PORT=3002
-FRONTEND_URL=https://tuo-dominio.it
-POLL_INTERVAL_SECONDS=15
 ```
 
 ---
 
-## 5. Configurazione Invio Email
+## 4. Installazione e Build
 
-Il sistema è preconfigurato per usare il mailer locale del server (Postfix/Sendmail) su Linux. Se vuoi usare un servizio esterno (Gmail, Outlook, Resend, ecc.), compila i campi `EMAIL_HOST`, `EMAIL_USER` e `EMAIL_PASS` nel file `.env`.
+### Backend
+```bash
+cd backend
+npm install
+# Per avviare in sviluppo: npm run dev
+# Per avviare in produzione: npm start
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm run build
+```
 
 ---
 
-## 6. Avvio del Sistema
+## 5. Messa in Produzione
 
-### Sviluppo
-Backend (con hot-reload): `cd backend && npm run dev`  
-Frontend (Vite): `cd frontend && npm run dev`
-
-### Produzione (Consigliato)
-Utilizza **PM2** per gestire il backend in background:
+Per mantenere il server sempre attivo su un VPS, si consiglia l'uso di **PM2**:
 
 ```bash
-# Build frontend
-cd frontend
-npm run build
-
-# Avvio backend con PM2 e tsx
-cd ../backend
-pm2 start tsx --name "glicechart-backend" -- server.ts
+cd backend
+npm install -g pm2
+pm2 start server.ts --name "glicechart" --interpreter tsx
 ```
+
+Assicurati di configurare un reverse proxy come **Nginx** per gestire il certificato SSL (HTTPS) e puntare al backend sulla porta 3002.
 
 ---
 
-## 7. Primo Accesso e Privilegi Admin
-
-1.  Apri il browser su `http://tuo-ip:3002`.
-2.  Vai alla pagina di **Registrazione** e crea il tuo account.
-3.  Per abilitare i privilegi amministrativi, modifica manualmente il database (campo `isAdmin = 1` nella tabella `users`).
-4.  **Sicurezza**: Una volta loggato come Admin, non potrai rimuovere i tuoi privilegi o eliminare il tuo account dal pannello per evitare lock-out accidentali.
+© 2024 GliceChart Team - [glicechart.ghibiri.it](https://glicechart.ghibiri.it)

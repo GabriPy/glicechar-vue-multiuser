@@ -8,7 +8,7 @@
       <div class="flex flex-col">
         <h1 class="text-2xl font-black uppercase tracking-tighter italic leading-none">Glice<span class="text-primary">Chart</span></h1>
         <div class="flex items-center gap-2 mt-1">
-          <span class="px-1.5 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest rounded-md">Multiuser</span>
+          <span class="px-1.5 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest rounded-md">{{ $t('app.multiuser') }}</span>
           <span class="text-[8px] font-black opacity-20 uppercase tracking-[0.2em]">{{ APP_VERSION_LABEL }}</span>
         </div>
       </div>
@@ -33,17 +33,17 @@
       <div class="mb-2">
         <button 
           @click="isHistoryExpanded = !isHistoryExpanded"
-          class="w-full flex items-center justify-between px-4 py-2 rounded-xl hover:bg-base-300 transition-all duration-300 group cursor-pointer"
-          :class="{ 'opacity-100': isHistoryExpanded || isHistoryActive, 'opacity-40': !isHistoryExpanded && !isHistoryActive }"
+          class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer"
+          :class="isHistoryActive ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
         >
           <div class="flex items-center gap-3">
-            <i class="fi fi-sr-time-past text-sm" :class="{ 'text-primary': isHistoryActive }"></i>
-            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Storico & Analisi</span>
+            <i class="fi fi-sr-time-past text-sm"></i>
+            <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.history_section') }}</span>
           </div>
-          <i class="fi fi-sr-angle-small-down transition-transform duration-300" :class="{ 'rotate-180': isHistoryExpanded }"></i>
+          <i class="fi fi-sr-angle-small-down transition-transform duration-300 text-sm" :class="{ 'rotate-180': isHistoryExpanded }"></i>
         </button>
 
-        <div v-show="isHistoryExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/5 space-y-1 overflow-hidden transition-all duration-300">
+        <div v-show="isHistoryExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/10 space-y-1 overflow-hidden transition-all duration-300">
           <router-link 
             to="/calendar" 
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
@@ -80,17 +80,17 @@
       <div class="mb-2">
         <button 
           @click="isAiExpanded = !isAiExpanded"
-          class="w-full flex items-center justify-between px-4 py-2 rounded-xl hover:bg-base-300 transition-all duration-300 group cursor-pointer"
-          :class="{ 'opacity-100': isAiExpanded || isAiActive, 'opacity-40': !isAiExpanded && !isAiActive }"
+          class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer"
+          :class="isAiActive ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
         >
           <div class="flex items-center gap-3">
-            <i class="fi fi-sr-sparkles text-sm" :class="{ 'text-primary': isAiActive }"></i>
-            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Funzionalità AI</span>
+            <i class="fi fi-sr-sparkles text-sm"></i>
+            <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.ai_section') }}</span>
           </div>
-          <i class="fi fi-sr-angle-small-down transition-transform duration-300" :class="{ 'rotate-180': isAiExpanded }"></i>
+          <i class="fi fi-sr-angle-small-down transition-transform duration-300 text-sm" :class="{ 'rotate-180': isAiExpanded }"></i>
         </button>
         
-        <div v-show="isAiExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/5 space-y-1 overflow-hidden transition-all duration-300">
+        <div v-show="isAiExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/10 space-y-1 overflow-hidden transition-all duration-300">
           <router-link 
             to="/prediction" 
             class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
@@ -148,7 +148,7 @@
 
       <!-- Admin Section -->
       <div v-if="auth.isAdmin" class="pt-4 border-t border-base-content/5 mt-4">
-        <div class="px-4 mb-2 text-[8px] font-black uppercase tracking-[0.3em] opacity-30">Admin</div>
+        <div class="px-4 mb-2 text-[8px] font-black uppercase tracking-[0.3em] opacity-30">{{ $t('nav.admin_header') }}</div>
         <router-link 
           to="/admin/users" 
           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
@@ -185,8 +185,8 @@
           </div>
           <div class="flex flex-col overflow-hidden">
             <span class="text-[10px] font-black uppercase tracking-tight truncate leading-none">{{ auth.user.username }}</span>
-            <span v-if="auth.user.isAdmin" class="text-[7px] font-black uppercase text-primary tracking-widest mt-1">Administrator</span>
-            <span v-else class="text-[7px] font-black uppercase opacity-40 tracking-widest mt-1">Standard User</span>
+            <span v-if="auth.user.isAdmin" class="text-[7px] font-black uppercase text-primary tracking-widest mt-1">{{ $t('nav.user_type_admin') }}</span>
+            <span v-else class="text-[7px] font-black uppercase opacity-40 tracking-widest mt-1">{{ $t('nav.user_type_standard') }}</span>
           </div>
         </div>
         <button @click="handleLogout" class="btn btn-ghost btn-xs w-full font-black uppercase tracking-widest opacity-40 hover:opacity-100 hover:text-error transition-all">
