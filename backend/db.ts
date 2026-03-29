@@ -423,7 +423,7 @@ export async function getReadingsByDate(userId: number, date: string) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, glucose, trend
      FROM readings
-     WHERE user_id = ? AND DATE(timestamp) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
      ORDER BY timestamp ASC`,
     [userId, date]
   );
@@ -438,7 +438,7 @@ export async function getInsulinByDate(userId: number, date: string) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, type, units
      FROM insulin_records
-     WHERE user_id = ? AND DATE(timestamp) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
      ORDER BY timestamp ASC`,
     [userId, date]
   );
@@ -492,7 +492,7 @@ export async function getCarbsByDate(userId: number, date: string) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, amount, absorption_speed as speed
      FROM carb_records
-     WHERE user_id = ? AND DATE(timestamp) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
      ORDER BY timestamp ASC`,
     [userId, date]
   );
@@ -546,7 +546,7 @@ export async function getNotesByDate(userId: number, date: string) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, text
      FROM notes
-     WHERE user_id = ? AND DATE(timestamp) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
      ORDER BY timestamp ASC`,
     [userId, date]
   );
