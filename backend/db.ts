@@ -15,6 +15,7 @@ export async function getPool(): Promise<Pool> {
       database: process.env.DB_NAME     || 'glicechart-multiutente',
       waitForConnections: true,
       connectionLimit: 10,
+      timezone: 'local', // Forza il driver a usare il fuso orario del sistema
     });
 
     await initDB();
@@ -27,6 +28,9 @@ async function initDB() {
   if (!pool) return;
   const conn = await pool.getConnection();
   try {
+    // Sincronizza il fuso orario della sessione con quello del sistema
+    await conn.execute(`SET time_zone = 'SYSTEM'`);
+    
     // Tabella Utenti
     await conn.execute(`
       CREATE TABLE IF NOT EXISTS users (
