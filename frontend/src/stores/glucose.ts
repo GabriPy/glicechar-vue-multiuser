@@ -22,6 +22,7 @@ export interface CarbRecord {
   id: number;
   amount: number;
   timestamp: string;
+  speed?: 'fast' | 'normal' | 'slow';
 }
 
 export interface NoteRecord {
@@ -157,6 +158,7 @@ export const useGlucoseStore = defineStore('glucose', () => {
       const elapsedMs = now - new Date(ins.timestamp).getTime()
       if (elapsedMs < 0 || elapsedMs >= durationMs) return total
       
+      // Decadimento lineare per la visualizzazione semplice in header
       const factor = 1 - (elapsedMs / durationMs)
       return total + (Number(ins.units) * factor)
     }, 0)
@@ -171,10 +173,27 @@ export const useGlucoseStore = defineStore('glucose', () => {
       const elapsedMs = now - new Date(carb.timestamp).getTime()
       if (elapsedMs < 0 || elapsedMs >= durationMs) return total
       
+      // Decadimento lineare per la visualizzazione semplice in header
       const factor = 1 - (elapsedMs / durationMs)
       return total + (Number(carb.amount) * factor)
     }, 0)
   })
+
+  // ── Helper Attività (Curve Gaussiane) ───────────────────────────────────
+  function gaussian(x: number, peak: number, width: number) {
+    return Math.exp(-Math.pow(x - peak, 2) / (2 * width * width))
+  }
+
+  function getInsulinActivity(elapsedMinutes: number) {
+    // Picco a 75 min, deviazione standard 35 min
+    return gaussian(elapsedMinutes, 75, 35)
+  }
+
+  function getCarbActivity(elapsedMinutes: number, speed: 'fast' | 'normal' | 'slow' = 'normal') {
+    if (speed === 'fast')   return gaussian(elapsedMinutes, 20, 15)
+    if (speed === 'normal') return gaussian(elapsedMinutes, 50, 30)
+    return gaussian(elapsedMinutes, 110, 50)
+  }
 
   // ── Helper Colore ──────────────────────────────────────────────────────────
   function getStatusColor(value: number | null | undefined) {
@@ -190,7 +209,7 @@ export const useGlucoseStore = defineStore('glucose', () => {
     return 'text-success'
   }
 
-  // ── Predizione Glicemia ──────────────────────
+  // ── Predizione Glicemia v3.0 (Simulazione Minuto per Minuto) ──────────────
   const prediction = computed(() => {
     if (!current.value || readings.value.length < 5) return null
 
@@ -198,55 +217,87 @@ export const useGlucoseStore = defineStore('glucose', () => {
     const recent5 = readings.value.slice(-5)
     const smoothedCurrent = Math.round(recent5.reduce((a, b) => a + b.glucose, 0) / recent5.length)
 
+    // Calcolo Rate of Change (ROC)
     const firstReading = readings.value[readings.value.length - 5]
     const lastReading = readings.value[readings.value.length - 1]
     const dt = (new Date(lastReading.timestamp).getTime() - new Date(firstReading.timestamp).getTime()) / 60000
     const dg = lastReading.glucose - firstReading.glucose
     let roc = dg / dt
 
-    let correctionFactor = 1.0
-    if (roc > 2.0 || roc < -2.0) correctionFactor = 1.15
-    const adjustedRoc = roc * correctionFactor
+    // Correzione basata sulla freccia del sensore (Trend)
+    const trend = current.value.trend
+    if (trend === 'DoubleDown') roc -= 1.5
+    if (trend === 'SingleDown') roc -= 0.7
+    if (trend === 'SingleUp')   roc += 0.7
+    if (trend === 'DoubleUp')   roc += 1.5
 
     const ISF = Number(settings.value.insulin_sensitivity) || 60
     const carbRatio = Number(settings.value.carb_ratio) || 15
     const CR = ISF / carbRatio
-    
-    const insulinDurationMs = (Number(settings.value.rapid_duration) || 3) * 60 * 60 * 1000
-    const carbDurationMs = (Number(settings.value.carb_duration) || 4) * 60 * 60 * 1000
 
-    const predictAt = (minutes: number) => {
-      let basePred = smoothedCurrent + (adjustedRoc * minutes)
-      let insulinEffect = 0
-      allInsulin.value.forEach(ins => {
-        if (ins.type !== 'rapid') return
-        const elapsed = nowTs - new Date(ins.timestamp).getTime()
-        if (elapsed < 0 || elapsed >= insulinDurationMs) return
-        
-        const currentFactor = 1 - (elapsed / insulinDurationMs)
-        const futureFactor = 1 - ((elapsed + minutes * 60 * 1000) / insulinDurationMs)
-        const consumed = currentFactor - Math.max(0, futureFactor)
-        insulinEffect += (Number(ins.units) * consumed * ISF)
-      })
+    // Simulazione minuto per minuto
+    const simulate = (minutesAhead: number) => {
+      let predicted = smoothedCurrent
+      
+      // Effetto "Pressione Insulina" (basato su IOB totale)
+      const insulinPressure = iob.value * ISF
+      const pressureImpact = (insulinPressure * 0.15) / 60 // Impatto spalmato su 60 min
 
-      let carbEffect = 0
-      allCarbs.value.forEach(carb => {
-        const elapsed = nowTs - new Date(carb.timestamp).getTime()
-        if (elapsed < 0 || elapsed >= carbDurationMs) return
-        
-        const currentFactor = 1 - (elapsed / carbDurationMs)
-        const futureFactor = 1 - ((elapsed + minutes * 60 * 1000) / carbDurationMs)
-        const consumed = currentFactor - Math.max(0, futureFactor)
-        carbEffect += (Number(carb.amount) * consumed * CR)
-      })
+      for (let m = 1; m <= minutesAhead; m++) {
+        // 1. Smorzamento Trend (Damping esponenziale)
+        const damping = Math.exp(-m / 45)
+        const trendEffect = roc * damping
 
-      const finalVal = Math.round(basePred - insulinEffect + carbEffect)
-      return Math.max(40, Math.min(400, finalVal))
+        // 2. Impatto Insulina Attiva (Integrale della curva gaussiana)
+        let insulinEffect = 0
+        allInsulin.value.forEach(ins => {
+          if (ins.type !== 'rapid') return
+          const elapsed = (nowTs - new Date(ins.timestamp).getTime()) / 60000 + m
+          if (elapsed < 0 || elapsed > 360) return // Oltre 6 ore l'effetto è nullo
+          
+          // L'attività è normalizzata per unità. ISF determina l'abbassamento totale.
+          // Approssimiamo l'area sotto la curva per questo minuto
+          const activity = getInsulinActivity(elapsed)
+          // Fattore di scala per far sì che l'integrale della gaussiana * ISF = abbassamento totale
+          // La costante 0.011 è un'approssimazione per l'integrale della nostra specifica gaussiana
+          insulinEffect += (Number(ins.units) * activity * ISF * 0.011)
+        })
+
+        // 3. Impatto Carboidrati Attivi
+        let carbEffect = 0
+        allCarbs.value.forEach(carb => {
+          const elapsed = (nowTs - new Date(carb.timestamp).getTime()) / 60000 + m
+          if (elapsed < 0 || elapsed > 360) return
+          
+          const activity = getCarbActivity(elapsed, carb.speed || 'normal')
+          // Costante 0.013 approssimativa per l'integrale della curva carboidrati
+          carbEffect += (Number(carb.amount) * activity * CR * 0.013)
+        })
+
+        // 4. Bias Notturno (00:00 - 06:00)
+        const currentHour = new Date(nowTs + m * 60000).getHours()
+        let nightBias = 0
+        if (currentHour >= 0 && currentHour <= 6) {
+          nightBias = 0.08 // ~5 mg/dL all'ora
+        }
+
+        predicted += trendEffect - insulinEffect + carbEffect - pressureImpact - nightBias
+      }
+
+      return predicted
     }
 
-    const p15 = predictAt(15)
-    const p30 = predictAt(30)
-    const p60 = predictAt(60)
+    const p15 = Math.round(Math.max(40, Math.min(400, simulate(15))))
+    const p30 = Math.round(Math.max(40, Math.min(400, simulate(30))))
+    const p60 = Math.round(Math.max(40, Math.min(400, simulate(60))))
+
+    // Calcolo intervallo di confidenza e probabilità
+    const variability = Math.abs(roc) * 10 + 5
+    const minExpected = Math.round(Math.max(40, p60 - variability))
+    const maxExpected = Math.round(Math.min(400, p60 + variability))
+    
+    // Confidenza decresce col tempo e aumenta con la stabilità del trend
+    const confidence = Math.round(Math.max(30, 95 - (Math.abs(roc) * 15)))
 
     let trendLabel = 'stable'
     if (roc > 2.0) trendLabel = 'fast_rising'
@@ -254,20 +305,18 @@ export const useGlucoseStore = defineStore('glucose', () => {
     else if (roc < -2.0) trendLabel = 'fast_falling'
     else if (roc < -0.5) trendLabel = 'falling'
 
-    let riskLevel = 'normal'
-    if (p15 < 70 || p30 < 70 || p60 < 70) riskLevel = 'high'
-    else if (p15 > 180 || p30 > 180 || p60 > 180) riskLevel = 'high'
-    else if (roc > 1.5 || roc < -1.5) riskLevel = 'normal'
-    else riskLevel = 'low'
-
     return {
       current: smoothedCurrent,
       t15: p15,
       t30: p30,
       t60: p60,
+      minExpected,
+      maxExpected,
+      confidence,
+      likelyHypo: p15 < 70 || p30 < 70 || p60 < 70,
+      likelyHyper: p15 > 200 || p30 > 200 || p60 > 200,
       roc: roc.toFixed(2),
-      trend: trendLabel,
-      risk: riskLevel
+      trend: trendLabel
     }
   })
 
@@ -463,12 +512,13 @@ export const useGlucoseStore = defineStore('glucose', () => {
     }
   }
 
-  async function addCarb(amount: number, timestamp: string | null = null) {
+  async function addCarb(amount: number, timestamp: string | null = null, speed: 'fast' | 'normal' | 'slow' = 'normal') {
     loading.value = true
     try {
       await api().post('/api/carbs', {
         timestamp: timestamp || new Date().toISOString(),
-        amount
+        amount,
+        speed
       })
       await fetchReadings()
     } catch {
@@ -490,10 +540,10 @@ export const useGlucoseStore = defineStore('glucose', () => {
     }
   }
 
-  async function editCarb(id: number, { timestamp, amount }: { timestamp: string, amount: number }) {
+  async function editCarb(id: number, { timestamp, amount, speed }: { timestamp: string, amount: number, speed?: 'fast' | 'normal' | 'slow' }) {
     loading.value = true
     try {
-      await api().put(`/api/carbs/${id}`, { timestamp, amount })
+      await api().put(`/api/carbs/${id}`, { timestamp, amount, speed: speed || 'normal' })
       await fetchReadings()
     } catch {
       error.value = 'Errore modifica carboidrati'

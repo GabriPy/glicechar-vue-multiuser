@@ -19,9 +19,9 @@
       <!-- DASHBOARD -->
       <div class="mb-4">
         <router-link 
-          to="/" 
+          to="/dashboard" 
           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-          :class="$route.path === '/' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+          :class="$route.path === '/dashboard' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
           @click="$emit('close-drawer')"
         >
           <i class="fi fi-sr-bolt text-sm"></i>
@@ -133,16 +133,6 @@
         >
           <i class="fi fi-sr-settings text-sm"></i>
           <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.settings') }}</span>
-        </router-link>
-
-        <router-link 
-          to="/about" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-          :class="$route.path === '/about' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-          @click="$emit('close-drawer')"
-        >
-          <i class="fi fi-sr-info text-sm"></i>
-          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.about') }}</span>
         </router-link>
       </div>
 

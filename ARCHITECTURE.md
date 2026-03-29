@@ -33,6 +33,19 @@ Il sistema integra meccanismi di sicurezza per prevenire errori operativi critic
 - **Integrità Password**: I link di ripristino vengono invalidati immediatamente dopo l'uso o in seguito a un cambio password manuale dalle impostazioni.
 - **Integrità Query**: Le query amministrative sono ottimizzate per restituire sempre l'indirizzo email e i dati di registrazione corretti per il monitoraggio degli utenti.
 
+### Algoritmo di Predizione GliceForecast v3.0
+Il sistema utilizza un modello deterministico a simulazione discreta (minuto per minuto) per prevedere l'andamento glicemico a 60 minuti:
+
+1.  **Damping Esponenziale del Trend**: Il Rate of Change (ROC) calcolato sulle ultime 5 letture viene smorzato nel tempo utilizzando un fattore $e^{-m/45}$, riflettendo la naturale tendenza della glicemia a stabilizzarsi.
+2.  **Integrazione Trend Arrow**: La velocità iniziale viene corretta in base alla freccia del sensore (es. ±1.5 mg/dL per freccia doppia).
+3.  **Curve di Attività Gaussiane**:
+    - **Insulina**: Modello a campana con picco a 75 minuti, modellando la farmacocinetica reale dell'insulina rapida.
+    - **Carboidrati**: Tre profili di assorbimento (Rapido, Medio, Lento) basati su differenti distribuzioni gaussiane.
+4.  **Pressione Insulinica & Bias Notturno**:
+    - Considera l'impatto dell'insulina ancora attiva (IOB) sulla tendenza futura.
+    - Applica un bias correttivo durante le ore notturne (00:00 - 06:00) per compensare variazioni del metabolismo basale.
+5.  **Intervallo di Confidenza**: Fornisce una fascia di probabilità (min/max) basata sulla volatilità del segnale recente.
+
 ---
 
 ## 3. Motore di Sincronizzazione Multi-utente

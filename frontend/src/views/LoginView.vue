@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import PublicNavbar from '../components/PublicNavbar.vue';
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -20,7 +21,7 @@ async function handleLogin() {
   error.value = '';
   const success = await auth.login(username.value, password.value);
   if (success) {
-    router.push('/');
+    router.push('/dashboard');
   } else {
     error.value = auth.error;
   }
@@ -29,17 +30,20 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-base-200 px-4 relative overflow-hidden">
-    <!-- Background Decor (subtle gradient/glow) -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
+  <div class="min-h-screen flex flex-col bg-base-200 relative overflow-hidden">
+    <PublicNavbar />
+    
+    <div class="flex-1 flex items-center justify-center px-4">
+      <!-- Background Decor (subtle gradient/glow) -->
+      <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
       <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full"></div>
       <div class="absolute top-[40%] -right-[10%] w-[30%] h-[50%] bg-secondary/10 blur-[100px] rounded-full"></div>
     </div>
 
-    <div class="max-w-md w-full space-y-8 bg-base-100 p-8 rounded-2xl shadow-xl relative z-10 border border-base-content/5">
+      <div class="max-w-md w-full space-y-8 bg-base-100 p-8 rounded-2xl shadow-xl relative z-10 border border-base-content/5">
       <div class="text-center">
         <h2 class="mt-6 text-3xl font-black uppercase tracking-tight text-primary italic">Glice<span class="text-base-content">Chart</span></h2>
-        <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('login.subtitle') || 'Accedi al tuo profilo multiutente' }}</p>
+        <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('login.subtitle') || 'Accedi al tuo profilo' }}</p>
       </div>
       
       <div class="mt-8 space-y-6" @keyup.enter="handleLogin">
@@ -81,6 +85,7 @@ async function handleLogin() {
             <span class="opacity-40 uppercase tracking-widest">{{ $t('login.no_account') || 'Non hai un account?' }} </span>
             <router-link to="/register" class="link link-primary font-black uppercase tracking-widest">{{ $t('login.register') || 'Registrati' }}</router-link>
           </div>
+        </div>
         </div>
       </div>
     </div>

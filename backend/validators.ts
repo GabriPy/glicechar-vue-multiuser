@@ -36,6 +36,7 @@ export const insulinSchema = z.object({
 export const carbSchema = z.object({
   timestamp: z.string().datetime().or(z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/)),
   amount: z.number().int().positive().max(500),
+  speed: z.enum(['fast', 'normal', 'slow']).optional().default('normal'),
 });
 
 export const noteSchema = z.object({

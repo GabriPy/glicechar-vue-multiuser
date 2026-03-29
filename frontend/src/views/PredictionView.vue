@@ -9,9 +9,9 @@
           <div class="w-12 h-12 bg-secondary/10 rounded-2xl text-secondary flex items-center justify-center text-2xl">
             <i class="fi fi-sr-chart-line-up"></i>
           </div>
-          <div>
+          <div class="flex flex-col">
             <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic text-primary">Glice<span class="text-base-content">Forecast</span></h1>
-            <p class="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-2">{{ $t('prediction.subtitle') }}</p>
+            <p class="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">{{ $t('prediction.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -66,14 +66,18 @@
                 <span class="text-xl font-black italic leading-none">{{ store.prediction?.t30 || '--' }}</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-[10px] font-black uppercase opacity-50 text-current">{{ $t('prediction.trend') }}</span>
-                <span class="text-xl font-black italic leading-none">{{ store.prediction?.roc > 0 ? '+' : '' }}{{ store.prediction?.roc || '0.00' }}</span>
+                <span class="text-[10px] font-black uppercase opacity-50 text-current">{{ $t('prediction.confidence') }}</span>
+                <span class="text-xl font-black italic leading-none">{{ store.prediction?.confidence }}%</span>
               </div>
             </div>
 
-            <div class="mt-4 w-full relative z-10">
+            <div class="mt-4 w-full relative z-10 space-y-2">
+              <div class="flex items-center justify-between text-[10px] font-black uppercase opacity-60 px-2">
+                <span>{{ $t('prediction.expected_interval') }}</span>
+                <span>{{ store.prediction?.minExpected }} - {{ store.prediction?.maxExpected }} mg/dL</span>
+              </div>
               <div class="badge w-full py-4 font-black text-[10px] uppercase tracking-widest border-none shadow-lg shadow-black/10" :class="riskBadgeClass">
-                {{ $t('prediction.risk') }}: {{ riskLabelText }}
+                {{ riskLabelText }}
               </div>
             </div>
           </div>
@@ -165,7 +169,7 @@
 
         <div class="bg-base-300/30 p-5 rounded-2xl border border-base-content/5">
           <p class="text-xs font-bold opacity-40 uppercase tracking-widest text-center italic">
-            {{ $t('prediction.formula') }}
+            {{ $t('prediction.footer_text') }}
           </p>
         </div>
       </div>
@@ -198,24 +202,21 @@ onMounted(async () => {
 onUnmounted(() => clearInterval(interval))
 
 const riskColorClass = computed(() => {
-  if (store.prediction?.risk === 'high') return 'bg-error text-error-content'
-  if (store.prediction?.risk === 'normal') return 'bg-warning text-warning-content'
+  if (store.prediction?.likelyHypo) return 'bg-error text-error-content'
+  if (store.prediction?.likelyHyper) return 'bg-warning text-warning-content'
   return 'bg-success text-success-content'
 })
 
 const riskBadgeClass = computed(() => {
-  if (store.prediction?.risk === 'high') return 'bg-black/20 text-white'
-  if (store.prediction?.risk === 'normal') return 'bg-black/10 text-black/60'
+  if (store.prediction?.likelyHypo) return 'bg-black/20 text-white'
+  if (store.prediction?.likelyHyper) return 'bg-black/10 text-black/60'
   return 'bg-black/10 text-black/60'
 })
 
 const riskLabelText = computed(() => {
-  const labels = { 
-    high: t('prediction.risk_levels.high'), 
-    normal: t('prediction.risk_levels.normal'), 
-    low: t('prediction.risk_levels.low') 
-  }
-  return labels[store.prediction?.risk] || 'N/A'
+  if (store.prediction?.likelyHypo) return t('prediction.hypo_risk')
+  if (store.prediction?.likelyHyper) return t('prediction.hyper_risk')
+  return t('prediction.stable')
 })
 
 const trendIconColor = computed(() => {
@@ -243,6 +244,12 @@ const chartData = computed(() => {
     { x: nowTs + 60 * 60000, y: store.prediction?.t60 }
   ]
 
+  // Dataset per l'intervallo di confidenza (min/max a 60 min)
+  const rangeData = [
+    { x: nowTs + 60 * 60000, y: store.prediction?.maxExpected },
+    { x: nowTs + 60 * 60000, y: store.prediction?.minExpected }
+  ]
+
   return {
     datasets: [
       {
@@ -253,6 +260,18 @@ const chartData = computed(() => {
         fill: true,
         tension: 0.3,
         pointRadius: 1
+      },
+      {
+        label: 'Intervallo Atteso',
+        data: [
+          { x: nowTs + 60 * 60000, y: store.prediction?.minExpected },
+          { x: nowTs + 60 * 60000, y: store.prediction?.maxExpected }
+        ],
+        borderColor: 'transparent',
+        backgroundColor: 'rgba(244, 63, 94, 0.1)',
+        fill: true,
+        pointRadius: 0,
+        tension: 0
       },
       {
         label: 'Predizione',

@@ -1,23 +1,23 @@
-# 💉 GliceChart Multiuser v1.3.0
+# 💉 GliceChart Multiuser v1.4.0
 
-Piattaforma web moderna per il monitoraggio glicemico avanzato con supporto multi-utente, predizioni AI e analisi dei pattern. Progettata per integrarsi perfettamente con l'ecosistema Gluroo/Nightscout.
+Piattaforma web moderna per il monitoraggio glicemico avanzato con supporto multi-utente, analisi predittive e strumenti smart. Progettata per integrarsi perfettamente con l'ecosistema Gluroo/Nightscout.
 
 🌐 **Live Demo**: [glicechart.ghibiri.it](https://glicechart.ghibiri.it)
 
 ---
 
-## ✨ Funzionalità Principali (v1.3.0)
+## ✨ Funzionalità Principali (v1.4.0)
 
-- **🎨 Design Refined**: UI modernizzata con i font **Plus Jakarta Sans** (testi) e **JetBrains Mono** (numeri). Iconografia uniformata con background quadrati arrotondati (`rounded-2xl/3xl`) e nuovo indicatore di stato pulsante (Verde/Giallo/Rosso) per un feedback immediato senza interferire con il colore del valore glicemico.
+- **🎨 Landing Page Professionale**: Nuova interfaccia di ingresso con selettore temi e lingue integrato. Spiegazione tecnica dettagliata degli algoritmi direttamente accessibile.
+- **📈 GliceForecast v3.0**: Algoritmo predittivo evoluto con simulazione gaussiana minuto per minuto e smorzamento esponenziale dei trend.
+- **🧠 Pattern Smart v2.0**: Identificazione automatica di abitudini e correlazioni tra cibo e glicemia con logica di clustering temporale.
+- **🥗 Dietometro Visivo**: Calcolo dei carboidrati integrato con database visuale per una stima rapida dell'impatto glicemico.
+- **🎨 Design Refined**: UI modernizzata con i font **Plus Jakarta Sans** (testi) e **JetBrains Mono** (numeri). Iconografia uniformata con background quadrati arrotondati (`rounded-2xl/3xl`).
 - **🛡️ Sicurezza Enterprise**:
   - **Auto-Protezione Admin**: Impedisce il lock-out accidentale degli amministratori.
   - **Rate Limiting**: Protezione avanzata contro attacchi brute-force e DoS.
   - **CORS Strict**: Accesso API limitato esclusivamente al dominio autorizzato.
   - **Session Invalidation**: Cambio password forza il logout su tutti i dispositivi.
-- **📈 Analisi Avanzata**:
-  - **Predizione Glicemia**: Algoritmo v2.2 con smoothing e impatto IOB/COB.
-  - **Pattern Smart**: Identificazione automatica di correlazioni tra note e risposte glicemiche.
-  - **Resoconto PDF**: Esportazione professionale dei dati per consultazione medica.
 - **👥 Architettura Multiutente**: Isolamento completo dei dati, login sicuro (JWT + Refresh Tokens) e recupero password via email (Resend API).
 
 ---

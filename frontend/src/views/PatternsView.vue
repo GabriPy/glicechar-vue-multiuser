@@ -10,7 +10,7 @@
             <i class="fi fi-sr-brain"></i>
           </div>
           <div>
-            <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic text-primary">Glice<span class="text-base-content">AI</span></h1>
+            <h1 class="text-3xl font-black uppercase tracking-tight leading-none italic text-primary">Glice<span class="text-base-content">Smart</span></h1>
             <p class="text-xs font-black opacity-30 uppercase tracking-[0.2em] mt-2">{{ $t('patterns.subtitle') }}</p>
           </div>
         </div>

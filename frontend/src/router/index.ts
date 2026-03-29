@@ -3,6 +3,7 @@ import { useAuthStore } from '../stores/auth'
 
 // Lazy loading dei componenti per ottimizzare le dimensioni dei chunk
 const HomeView = () => import('../views/HomeView.vue')
+const LandingView = () => import('../views/LandingView.vue')
 const CalendarView = () => import('../views/CalendarView.vue')
 const SettingsView = () => import('../views/SettingsView.vue')
 const PeriodicSummaryView = () => import('../views/PeriodicSummaryView.vue')
@@ -44,6 +45,12 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/',
+    name: 'landing',
+    component: LandingView,
+    meta: { public: true }
+  },
+  {
+    path: '/dashboard',
     name: 'home',
     component: HomeView
   },
@@ -87,11 +94,6 @@ const routes: RouteRecordRaw[] = [
     path: '/settings',
     name: 'settings',
     component: SettingsView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: AboutView
   }
 ]
 
@@ -106,9 +108,9 @@ router.beforeEach(async (to, from, next) => {
   if (!auth.isAuthenticated && !to.meta.public) {
     next('/login')
   } else if (auth.isAuthenticated && to.meta.public) {
-    next('/')
+    next('/dashboard')
   } else if (to.meta.adminOnly && !auth.isAdmin) {
-    next('/')
+    next('/dashboard')
   } else {
     next()
   }

@@ -14,7 +14,7 @@
 
       <div class="flex flex-col gap-6">
         <!-- Parte Superiore: Inserimento -->
-        <div class="flex flex-col gap-4 h-[180px]">
+        <div class="flex flex-col gap-4 h-[240px]">
           <!-- Quantità CHO -->
           <div class="flex flex-col gap-1.5">
             <div class="flex items-center justify-between px-1">
@@ -43,6 +43,23 @@
             >
               {{ val }}g
             </button>
+          </div>
+
+          <!-- Velocità Assorbimento -->
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] font-black uppercase opacity-30 tracking-widest px-1">Velocità</span>
+            <div class="flex items-center gap-1 bg-base-300 p-1 rounded-xl h-[38px]">
+              <button 
+                v-for="s in ['fast', 'normal', 'slow']" 
+                :key="s"
+                @click="speed = s"
+                class="btn btn-xs flex-1 rounded-lg border-none font-black text-[9px] uppercase tracking-tighter h-full transition-all"
+                :class="speed === s ? 'bg-accent text-accent-content shadow-md' : 'btn-ghost opacity-40 hover:opacity-100'"
+              >
+                <i :class="s === 'fast' ? 'fi fi-sr-bolt' : s === 'normal' ? 'fi fi-sr-restaurant' : 'fi fi-sr-clock'"></i>
+                {{ s === 'fast' ? 'Rapido' : s === 'normal' ? 'Medio' : 'Lento' }}
+              </button>
+            </div>
           </div>
 
           <!-- Conferma -->
@@ -138,6 +155,20 @@
               class="input input-bordered bg-base-300/50 font-black"
             />
           </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black uppercase opacity-40">Velocità Assorbimento</label>
+            <div class="flex items-center gap-1 bg-base-300 p-1 rounded-xl">
+              <button 
+                v-for="s in ['fast', 'normal', 'slow']" 
+                :key="s"
+                @click="editForm.speed = s"
+                class="btn btn-xs flex-1 rounded-lg border-none font-black text-[9px] uppercase tracking-tighter h-8 transition-all"
+                :class="editForm.speed === s ? 'bg-accent text-accent-content shadow-md' : 'btn-ghost opacity-40 hover:opacity-100'"
+              >
+                {{ s === 'fast' ? 'Rapido' : s === 'normal' ? 'Medio' : 'Lento' }}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="modal-action gap-2">
@@ -173,8 +204,9 @@ const amount = computed({
     store.carbDraftAmount = Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0
   }
 })
+const speed = ref('normal')
 const editingId = ref(null)
-const editForm = ref({ amount: 0, timestamp: '' })
+const editForm = ref({ amount: 0, timestamp: '', speed: 'normal' })
 
 const sortedCarbs = computed(() => {
   return [...store.carbRecords].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
@@ -185,8 +217,11 @@ function formatTime(ts) {
 }
 
 async function save() {
-  await store.addCarb(amount.value)
-  if (!store.error) amount.value = 0
+  await store.addCarb(amount.value, null, speed.value)
+  if (!store.error) {
+    amount.value = 0
+    speed.value = 'normal'
+  }
 }
 
 function startEdit(carb) {
@@ -195,15 +230,17 @@ function startEdit(carb) {
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
   editForm.value = {
     amount: carb.amount,
-    timestamp: d.toISOString().slice(0, 16)
+    timestamp: d.toISOString().slice(0, 16),
+    speed: carb.speed || 'normal'
   }
   document.getElementById(`edit_modal_carb_${id}`).showModal()
 }
 
 async function saveEdit() {
-  await store.editCarb(editingId.value, {
-    amount: editForm.value.amount,
-    timestamp: new Date(editForm.value.timestamp).toISOString()
+  await store.editCarb(editingId.value, { 
+    amount: editForm.value.amount, 
+    timestamp: new Date(editForm.value.timestamp).toISOString(),
+    speed: editForm.value.speed
   })
   if (!store.error) {
     editingId.value = null

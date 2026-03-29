@@ -84,11 +84,18 @@ async function initDB() {
         user_id    INT NOT NULL,
         timestamp  DATETIME NOT NULL,
         amount     INT NOT NULL,
+        absorption_speed ENUM('fast', 'normal', 'slow') DEFAULT 'normal',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_user_timestamp (user_id, timestamp),
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
+
+    // Migrazione: Aggiunge la colonna absorption_speed se non esiste
+    try { 
+      await conn.execute(`ALTER TABLE carb_records ADD COLUMN absorption_speed ENUM('fast', 'normal', 'slow') DEFAULT 'normal' AFTER amount`);
+      console.log(pc.green('✅ Colonna absorption_speed aggiunta a carb_records'));
+    } catch (e) { /* Già esistente */ }
 
     await conn.execute(`
       CREATE TABLE IF NOT EXISTS settings (
@@ -437,11 +444,11 @@ export async function getInsulinByDate(userId: number, date: string) {
   }));
 }
 
-export async function insertCarb(userId: number, { timestamp, amount }: any) {
+export async function insertCarb(userId: number, { timestamp, amount, speed }: any) {
   const p = await getPool();
   const [result] = await p.execute<ResultSetHeader>(
-    `INSERT INTO carb_records (user_id, timestamp, amount) VALUES (?, ?, ?)`,
-    [userId, new Date(timestamp), amount]
+    `INSERT INTO carb_records (user_id, timestamp, amount, absorption_speed) VALUES (?, ?, ?, ?)`,
+    [userId, new Date(timestamp), amount, speed || 'normal']
   );
   return result.insertId;
 }
@@ -449,7 +456,7 @@ export async function insertCarb(userId: number, { timestamp, amount }: any) {
 export async function getCarbsByMinutes(userId: number, minutes: number) {
   const p = await getPool();
   const [rows] = await p.execute<RowDataPacket[]>(
-    `SELECT id, timestamp, amount
+    `SELECT id, timestamp, amount, absorption_speed as speed
      FROM carb_records
      WHERE user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
      ORDER BY timestamp ASC`,
@@ -467,11 +474,11 @@ export async function deleteCarb(userId: number, id: number) {
   return result.affectedRows > 0;
 }
 
-export async function updateCarb(userId: number, id: number, { timestamp, amount }: any) {
+export async function updateCarb(userId: number, id: number, { timestamp, amount, speed }: any) {
   const p = await getPool();
   const [result] = await p.execute<ResultSetHeader>(
-    `UPDATE carb_records SET timestamp = ?, amount = ? WHERE id = ? AND user_id = ?`,
-    [new Date(timestamp), amount, id, userId]
+    `UPDATE carb_records SET timestamp = ?, amount = ?, absorption_speed = ? WHERE id = ? AND user_id = ?`,
+    [new Date(timestamp), amount, speed || 'normal', id, userId]
   );
   return result.affectedRows > 0;
 }
@@ -479,7 +486,7 @@ export async function updateCarb(userId: number, id: number, { timestamp, amount
 export async function getCarbsByDate(userId: number, date: string) {
   const p = await getPool();
   const [rows] = await p.execute<RowDataPacket[]>(
-    `SELECT id, timestamp, amount
+    `SELECT id, timestamp, amount, absorption_speed as speed
      FROM carb_records
      WHERE user_id = ? AND DATE(timestamp) = ?
      ORDER BY timestamp ASC`,

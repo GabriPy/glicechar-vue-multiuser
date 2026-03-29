@@ -471,7 +471,7 @@ async function sendToCarbInput() {
   store.carbDraftAmount = total
   clearCart()
   if (cartDialog.value) cartDialog.value.close()
-  await router.push('/')
+  await router.push('/dashboard')
 }
 </script>
 

@@ -256,6 +256,20 @@
                 class="input bg-base-300/50 font-black text-xl"
               />
             </div>
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black uppercase opacity-40">{{ $t('calendar.absorption_speed') }}</label>
+              <div class="flex items-center gap-1 bg-base-300 p-1 rounded-xl">
+                <button 
+                  v-for="s in ['fast', 'normal', 'slow']" 
+                  :key="s"
+                  @click="editForm.speed = s"
+                  class="btn btn-xs flex-1 rounded-lg border-none font-black text-[9px] uppercase tracking-tighter h-8 transition-all"
+                  :class="editForm.speed === s ? 'bg-accent text-accent-content shadow-md' : 'btn-ghost opacity-40 hover:opacity-100'"
+                >
+                  {{ s === 'fast' ? $t('calendar.fast') : s === 'normal' ? $t('calendar.medium') : $t('calendar.slow') }}
+                </button>
+              </div>
+            </div>
           </template>
 
           <!-- Modifica Nota -->
@@ -319,6 +333,7 @@ const editForm = reactive({
   units: 1,
   insulinType: 'rapid',
   amount: 10,
+  speed: 'normal',
   text: '',
   time: '',
   originalTimestamp: ''
@@ -336,6 +351,7 @@ function startEdit(type, item) {
     editForm.insulinType = item.type
   } else if (type === 'carb') {
     editForm.amount = item.amount
+    editForm.speed = item.speed || 'normal'
   } else if (type === 'note') {
     editForm.text = item.text
   }
@@ -362,6 +378,7 @@ function startAdd(type) {
     editForm.insulinType = 'rapid'
   } else if (type === 'carb') {
     editForm.amount = 10
+    editForm.speed = 'normal'
   } else if (type === 'note') {
     editForm.text = ''
   }
@@ -392,10 +409,11 @@ async function handleSave() {
       if (isEditing.value) {
         await store.editCarb(editForm.id, { 
           timestamp, 
-          amount: parseInt(editForm.amount) 
+          amount: parseInt(editForm.amount),
+          speed: editForm.speed
         })
       } else {
-        await store.addCarb(parseInt(editForm.amount), timestamp)
+        await store.addCarb(parseInt(editForm.amount), timestamp, editForm.speed)
       }
     } else if (editingItem.value.type === 'note') {
       if (isEditing.value) {

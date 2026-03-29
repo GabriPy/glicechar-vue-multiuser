@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import PublicNavbar from '../components/PublicNavbar.vue';
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -55,8 +56,11 @@ async function handleRegister(skipWarning = false) {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-base-200 px-4 relative overflow-hidden">
-    <!-- Background Decor -->
+  <div class="min-h-screen flex flex-col bg-base-200 relative overflow-hidden pt-16">
+    <PublicNavbar />
+    
+    <div class="flex-1 flex items-center justify-center px-4">
+      <!-- Background Decor -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
       <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full"></div>
       <div class="absolute top-[40%] -right-[10%] w-[30%] h-[50%] bg-secondary/10 blur-[100px] rounded-full"></div>
@@ -133,6 +137,7 @@ async function handleRegister(skipWarning = false) {
             </button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>
