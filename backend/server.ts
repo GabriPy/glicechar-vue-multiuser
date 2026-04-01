@@ -13,7 +13,8 @@ import pc from 'picocolors';
 import { 
   loginSchema, registerSchema, insulinSchema, carbSchema, 
   noteSchema, settingsSchema, glurooSchema, foodSchema,
-  updateAccountSchema, forgotPasswordSchema, resetPasswordSchema
+  updateAccountSchema, forgotPasswordSchema, resetPasswordSchema,
+  supportSchema
 } from './validators.js';
 
 import { 
@@ -58,7 +59,10 @@ import {
   getNotesByMinutes,
   getNotesByDate,
   getSettings,
-  updateSettings
+  updateSettings,
+  insertSupportMessage,
+  getAllSupportMessages,
+  deleteSupportMessage
 } from './db.js';
 import { fetchLatestReadings } from './gluroo.js';
 import { sendPasswordResetEmail, sendWelcomeEmail } from './mailer.js';
@@ -739,6 +743,20 @@ app.put('/api/user/gluroo', authenticateToken, async (req: AuthenticatedRequest,
   }
 });
 
+// ── Support Routes ───────────────────────────────────────────────────────────
+
+app.post('/api/support', async (req, res) => {
+  try {
+    const data = supportSchema.parse(req.body);
+    await insertSupportMessage(data.email, data.subject, data.message);
+    res.json({ ok: true });
+  } catch (e: any) {
+    if (e.name === 'ZodError') return res.status(400).json({ error: 'Dati non validi', details: e.errors });
+    console.error(pc.red('[Support Error]'), e.message);
+    res.status(500).json({ error: 'Errore interno durante l\'invio della richiesta' });
+  }
+});
+
 // ── Admin Routes ─────────────────────────────────────────────────────────────
 
 app.get('/api/admin/users', authenticateToken, isAdmin, async (req: AuthenticatedRequest, res) => {
@@ -774,6 +792,24 @@ app.patch('/api/admin/users/:id/admin', authenticateToken, isAdmin, async (req: 
     
     const ok = await toggleAdmin(targetId, targetIsAdmin);
     res.json({ ok });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/admin/support-messages', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const messages = await getAllSupportMessages();
+    res.json(messages);
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.delete('/api/admin/support-messages/:id', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    await deleteSupportMessage(parseInt(req.params.id));
+    res.json({ ok: true });
   } catch (e: any) {
     res.status(500).json({ error: e.message });
   }

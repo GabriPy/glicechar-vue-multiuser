@@ -74,3 +74,9 @@ export const foodSchema = z.object({
   carbs_per_100g: z.number().int().min(0).max(100),
   category: z.enum(['primo', 'secondo', 'contorno', 'frutta']).optional(),
 });
+
+export const supportSchema = z.object({
+  email: z.string().email(),
+  subject: z.string().min(3).max(200),
+  message: z.string().min(10).max(2000),
+});

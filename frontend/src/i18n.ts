@@ -55,7 +55,8 @@ const messages = {
       gap: 'Gap',
       now_label: 'ADESSO',
       history: 'Storico',
-      export: 'Esporta'
+      export: 'Esporta',
+      current_version: 'v1.4.5'
     },
     nav: {
       home: 'Dashboard',
@@ -84,6 +85,7 @@ const messages = {
       privacy: 'Privacy Policy',
       cookie_policy: 'Cookie Policy',
       cookie_privacy: 'Cookie & Privacy',
+      support: 'Supporto',
       legal: 'Note Legali',
       cookie_banner_text: 'Utilizziamo cookie tecnici per garantire il corretto funzionamento del sito e migliorare la tua esperienza. Non utilizziamo cookie di profilazione o tracciamento di terze parti.',
       accept: 'Accetta',
@@ -116,6 +118,26 @@ const messages = {
       cookies_third_party_desc: 'Attualmente, GliceChart <strong>NON utilizza cookie di profilazione, marketing o tracciamento di terze parti</strong> (come Google Analytics, Facebook Pixel, etc.).',
       cookies_consent_title: 'Gestione del Consenso',
       cookies_consent_desc: 'Poiché utilizziamo solo cookie tecnici necessari, non è richiesto il consenso preventivo secondo le normative vigenti (GDPR/ePrivacy). Tuttavia, forniamo trasparenza totale su ciò che viene memorizzato sul tuo dispositivo.'
+    },
+    support: {
+      title: 'Supporto Clienti',
+      subtitle: 'Come possiamo aiutarti?',
+      desc: 'Inviaci un messaggio e ti risponderemo il prima possibile all\'indirizzo email indicato.',
+      email: 'Il tuo indirizzo Email',
+      subject: 'Oggetto della richiesta',
+      message: 'Il tuo messaggio',
+      send: 'Invia Richiesta',
+      sending: 'Invio in corso...',
+      success_title: 'Messaggio Inviato!',
+      success_desc: 'Abbiamo ricevuto la tua richiesta. Ti risponderemo al più presto.',
+      error: 'Errore durante l\'invio. Riprova più tardi.',
+      admin_title: 'Richieste Utenti',
+      admin_no_messages: 'Nessuna richiesta di supporto presente.',
+      admin_delete_confirm: 'Sei sicuro di voler eliminare questa richiesta?',
+      admin_email: 'Utente',
+      admin_subject: 'Oggetto',
+      admin_message: 'Messaggio',
+      admin_date: 'Data'
     },
     login: {
       title: 'Accedi',
@@ -492,7 +514,8 @@ const messages = {
       gap: 'Gap',
       now_label: 'NOW',
       history: 'History',
-      export: 'Export'
+      export: 'Export',
+      current_version: 'v1.4.5'
     },
     nav: {
       home: 'Dashboard',
@@ -521,6 +544,7 @@ const messages = {
       privacy: 'Privacy Policy',
       cookie_policy: 'Cookie Policy',
       cookie_privacy: 'Cookie & Privacy',
+      support: 'Support',
       legal: 'Legal Notes',
       cookie_banner_text: 'We use technical cookies to ensure the correct functioning of the site and improve your experience. We do not use third-party profiling or tracking cookies.',
       accept: 'Accept',
@@ -553,6 +577,26 @@ const messages = {
       cookies_third_party_desc: 'Currently, GliceChart <strong>DOES NOT use profiling, marketing, or tracking cookies from third parties</strong> (such as Google Analytics, Facebook Pixel, etc.).',
       cookies_consent_title: 'Consent Management',
       cookies_consent_desc: 'Since we only use necessary technical cookies, prior consent is not required according to current regulations (GDPR/ePrivacy). However, we provide full transparency on what is stored on your device.'
+    },
+    support: {
+      title: 'Customer Support',
+      subtitle: 'How can we help you?',
+      desc: 'Send us a message and we will get back to you as soon as possible at the indicated email address.',
+      email: 'Your Email Address',
+      subject: 'Request Subject',
+      message: 'Your Message',
+      send: 'Send Request',
+      sending: 'Sending...',
+      success_title: 'Message Sent!',
+      success_desc: 'We have received your request. We will get back to you shortly.',
+      error: 'Error while sending. Please try again later.',
+      admin_title: 'User Requests',
+      admin_no_messages: 'No support requests present.',
+      admin_delete_confirm: 'Are you sure you want to delete this request?',
+      admin_email: 'User',
+      admin_subject: 'Subject',
+      admin_message: 'Message',
+      admin_date: 'Date'
     },
     login: {
       title: 'Login',

@@ -168,6 +168,16 @@ async function initDB() {
       )
     `);
 
+    await conn.execute(`
+      CREATE TABLE IF NOT EXISTS support_messages (
+        id         INT AUTO_INCREMENT PRIMARY KEY,
+        email      VARCHAR(100) NOT NULL,
+        subject    VARCHAR(200) NOT NULL,
+        message    TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Inserisce cibi globali (user_id = NULL) se non esistono già
     const foods = [
       { name: 'Pasta', carbs: 70, cat: 'primo' },
@@ -633,6 +643,29 @@ export async function updateSettings(userId: number, { tir_min, tir_max, red_und
     [userId, tir_min, tir_max, red_under, red_over, rapid_duration, slow_duration, carb_duration, insulin_sensitivity, carb_ratio]
   );
   return result.affectedRows > 0;
+}
+
+// ── Funzioni Supporto ────────────────────────────────────────────────────────
+
+export async function insertSupportMessage(email: string, subject: string, message: string) {
+  const p = await getPool();
+  await p.execute(
+    `INSERT INTO support_messages (email, subject, message) VALUES (?, ?, ?)`,
+    [email, subject, message]
+  );
+}
+
+export async function getAllSupportMessages() {
+  const p = await getPool();
+  const [rows] = await p.execute<RowDataPacket[]>(
+    `SELECT * FROM support_messages ORDER BY created_at DESC`
+  );
+  return rows;
+}
+
+export async function deleteSupportMessage(id: number) {
+  const p = await getPool();
+  await p.execute(`DELETE FROM support_messages WHERE id = ?`, [id]);
 }
 
 export async function getAllUsers() {

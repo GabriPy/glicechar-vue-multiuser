@@ -1,154 +1,72 @@
 <template>
-  <aside class="w-64 h-full bg-base-100 border-r border-base-content/5 flex flex-col z-[100] relative overflow-hidden">
-    <!-- Decor Background -->
-    <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/5 blur-3xl rounded-full pointer-events-none"></div>
-    
-    <!-- Logo -->
-    <div class="p-8 mb-4 relative z-10">
-      <div class="flex flex-col">
-        <h1 class="text-2xl font-black uppercase tracking-tighter italic leading-none">Glice<span class="text-primary">Chart</span></h1>
-        <div class="flex items-center gap-2 mt-1">
-          <span class="px-1.5 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest rounded-md">{{ $t('app.multiuser') }}</span>
-          <span class="text-[8px] font-black opacity-20 uppercase tracking-[0.2em]">{{ APP_VERSION_LABEL }}</span>
-        </div>
-      </div>
+  <aside class="flex flex-col h-full bg-base-200/50 backdrop-blur-xl border-r border-base-content/5 relative overflow-hidden group/sidebar">
+    <!-- Background Decor -->
+    <div class="absolute inset-0 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-1000 pointer-events-none">
+      <div class="absolute -top-24 -left-24 w-64 h-64 bg-primary/5 blur-[80px] rounded-full"></div>
     </div>
 
-    <!-- Navigazione -->
-    <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar pb-6">
-      <!-- DASHBOARD -->
-      <router-link 
-        to="/dashboard" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/dashboard' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-bolt text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.home') }}</span>
-      </router-link>
-
-      <!-- SEZIONE STORICO -->
-      <div v-if="auth.user?.gluroo?.link" class="pt-2">
-        <button 
-          @click="isHistoryExpanded = !isHistoryExpanded"
-          class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer"
-          :class="isHistoryActive ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        >
-          <div class="flex items-center gap-3">
-            <i class="fi fi-sr-time-past text-sm"></i>
-            <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.history_section') }}</span>
-          </div>
-          <i class="fi fi-sr-angle-small-down transition-transform duration-300 text-sm" :class="{ 'rotate-180': isHistoryExpanded }"></i>
-        </button>
-
-        <div v-show="isHistoryExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/10 space-y-1 overflow-hidden transition-all duration-300">
-          <router-link 
-            to="/calendar" 
-            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
-            :class="$route.path === '/calendar' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-            @click="$emit('close-drawer')"
-          >
-            <i class="fi fi-sr-calendar text-[10px]"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.calendar') }}</span>
-          </router-link>
-
-          <router-link 
-            to="/comparison" 
-            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
-            :class="$route.path === '/comparison' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-            @click="$emit('close-drawer')"
-          >
-            <i class="fi fi-sr-apps-sort text-[10px]"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.comparison') }}</span>
-          </router-link>
-
-          <router-link 
-            to="/summary" 
-            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
-            :class="$route.path === '/summary' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-            @click="$emit('close-drawer')"
-          >
-            <i class="fi fi-sr-document-signed text-[10px]"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.summary') }}</span>
-          </router-link>
+    <!-- Header / Logo -->
+    <div class="p-8 mb-4 relative z-10">
+      <router-link to="/dashboard" class="flex items-center gap-3 group/logo">
+        <div class="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center text-white text-lg shadow-xl shadow-primary/20 group-hover/logo:scale-110 transition-all duration-500 rotate-3 group-hover/logo:rotate-0">
+          <i class="fi fi-sr-chart-line-up"></i>
         </div>
-      </div>
-
-      <!-- SEZIONE AI -->
-      <div v-if="auth.user?.gluroo?.link" class="pt-1">
-        <button 
-          @click="isAiExpanded = !isAiExpanded"
-          class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer"
-          :class="isAiActive ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        >
-          <div class="flex items-center gap-3">
-            <i class="fi fi-sr-sparkles text-sm"></i>
-            <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.ai_section') }}</span>
-          </div>
-          <i class="fi fi-sr-angle-small-down transition-transform duration-300 text-sm" :class="{ 'rotate-180': isAiExpanded }"></i>
-        </button>
-        
-        <div v-show="isAiExpanded" class="mt-1 ml-4 pl-4 border-l border-base-content/10 space-y-1 overflow-hidden transition-all duration-300">
-          <router-link 
-            to="/prediction" 
-            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
-            :class="$route.path === '/prediction' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-            @click="$emit('close-drawer')"
-          >
-            <i class="fi fi-sr-chart-line-up text-[10px]"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.prediction') }}</span>
-          </router-link>
-
-          <router-link 
-            to="/patterns" 
-            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"
-            :class="$route.path === '/patterns' ? 'text-primary font-bold' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-            @click="$emit('close-drawer')"
-          >
-            <i class="fi fi-sr-brain text-[10px]"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('nav.patterns') }}</span>
-          </router-link>
+        <div class="flex flex-col">
+          <span class="text-xl font-black tracking-tighter uppercase italic leading-none">Glice<span class="text-primary">Chart</span></span>
+          <span class="text-[8px] font-black uppercase tracking-[0.4em] opacity-30 mt-1 ml-0.5">v1.4.4</span>
         </div>
-      </div>
-
-      <!-- ALTRE FUNZIONALITÀ -->
-      <router-link 
-        to="/dietometer" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/dietometer' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-wheat text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.dietometer') }}</span>
       </router-link>
+    </div>
 
-      <router-link 
-        to="/settings" 
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-        :class="$route.path === '/settings' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-        @click="$emit('close-drawer')"
-      >
-        <i class="fi fi-sr-settings text-sm"></i>
-        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.settings') }}</span>
-      </router-link>
+    <!-- Navigation Menu: DaisyUI 5 Menu -->
+    <nav class="flex-1 px-4 overflow-y-auto custom-scrollbar relative z-10">
+      <ul class="menu menu-md w-full p-0 gap-1">
+        <!-- Dashboard -->
+        <li>
+          <router-link to="/dashboard" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-primary/10 hover:text-primary group" :class="{ 'bg-primary text-primary-content shadow-lg shadow-primary/20 hover:bg-primary hover:text-primary-content': $route.path === '/dashboard' }">
+            <i class="fi fi-sr-apps text-lg opacity-40 group-hover:opacity-100 transition-opacity" :class="{ 'opacity-100': $route.path === '/dashboard' }"></i>
+            {{ $t('nav.home') }}
+          </router-link>
+        </li>
 
-      <!-- Admin Section -->
-      <div v-if="auth.isAdmin" class="pt-4 border-t border-base-content/5 mt-4">
-        <div class="px-4 mb-2 text-[8px] font-black uppercase tracking-[0.3em] opacity-30">{{ $t('nav.admin_header') }}</div>
-        <router-link 
-          to="/admin/users" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-          :class="$route.path === '/admin/users' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-          @click="$emit('close-drawer')"
-        >
-          <i class="fi fi-sr-users-gear text-sm"></i>
-          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.admin') }}</span>
-        </router-link>
-      </div>
+        <div class="divider opacity-5 my-4 px-4 font-black text-[9px] uppercase tracking-[0.3em]">{{ $t('nav.history_section') }}</div>
+
+        <!-- History Items -->
+        <li v-for="item in navItems" :key="item.path">
+          <router-link :to="item.path" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-base-content/5 group" :class="{ 'bg-base-content text-base-100 shadow-xl': $route.path === item.path }">
+            <i :class="[item.icon, { 'opacity-100': $route.path === item.path, 'opacity-40 group-hover:opacity-100': $route.path !== item.path }]" class="text-lg transition-opacity"></i>
+            {{ $t(`nav.${item.key}`) }}
+          </router-link>
+        </li>
+
+        <div class="divider opacity-5 my-4 px-4 font-black text-[9px] uppercase tracking-[0.3em]">{{ $t('nav.ai_section') }}</div>
+
+        <!-- AI Tools -->
+        <li v-for="item in aiItems" :key="item.path">
+          <router-link :to="item.path" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-base-content/5 group" :class="{ 'bg-base-content text-base-100 shadow-xl': $route.path === item.path }">
+            <i :class="[item.icon, { 'opacity-100': $route.path === item.path, 'opacity-40 group-hover:opacity-100': $route.path !== item.path }]" class="text-lg transition-opacity"></i>
+            {{ $t(`nav.${item.key}`) }}
+          </router-link>
+        </li>
+      </ul>
     </nav>
 
-    <!-- Language Selector & Footer -->
-    <div class="p-6 mt-auto border-t border-base-content/5 space-y-4 relative z-10">
+    <!-- Admin Section -->
+    <div v-if="auth.isAdmin" class="px-4 mb-4 relative z-10">
+      <router-link to="/admin" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-secondary/10 text-secondary hover:bg-secondary hover:text-secondary-content transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-secondary/20 group">
+        <i class="fi fi-sr-settings-sliders text-lg opacity-60 group-hover:opacity-100 transition-opacity"></i>
+        {{ $t('nav.admin') }}
+      </router-link>
+    </div>
+
+    <!-- Bottom Actions: DaisyUI 5 List / Menu -->
+    <div class="p-4 bg-base-300/30 border-t border-base-content/5 relative z-10 space-y-2">
+      <!-- Settings -->
+      <router-link to="/settings" class="flex items-center gap-4 py-3 px-5 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-base-content/5 transition-all group" :class="{ 'bg-base-content/10': $route.path === '/settings' }">
+        <i class="fi fi-sr-settings text-md opacity-40 group-hover:opacity-100 transition-opacity"></i>
+        {{ $t('nav.settings') }}
+      </router-link>
+
       <!-- Language Selector Dropdown -->
       <div class="dropdown dropdown-top w-full">
         <div tabindex="0" role="button" class="btn btn-ghost btn-sm w-full flex items-center justify-between px-4 rounded-xl border border-base-content/5 hover:bg-base-200">
@@ -174,78 +92,64 @@
         </ul>
       </div>
 
-      <div v-if="auth.user" class="p-4 bg-base-200/50 rounded-2xl flex flex-col gap-3 border border-base-content/5">
-        <div class="flex items-center gap-3">
-          <div class="avatar avatar-placeholder">
-            <div class="bg-primary/10 text-primary rounded-xl w-8 h-8 border border-primary/20">
-              <span class="text-xs font-black uppercase">{{ auth.user.username.charAt(0) }}</span>
-            </div>
-          </div>
-          <div class="flex flex-col overflow-hidden">
-            <span class="text-[10px] font-black uppercase tracking-tight truncate leading-none">{{ auth.user.username }}</span>
-            <span v-if="auth.user.isAdmin" class="text-[7px] font-black uppercase text-primary tracking-widest mt-1">{{ $t('nav.user_type_admin') }}</span>
-            <span v-else class="text-[7px] font-black uppercase opacity-40 tracking-widest mt-1">{{ $t('nav.user_type_standard') }}</span>
-          </div>
-        </div>
-        <button @click="handleLogout" class="btn btn-ghost btn-xs w-full font-black uppercase tracking-widest opacity-40 hover:opacity-100 hover:text-error transition-all">
-          <i class="fi fi-sr-exit mr-2 text-[10px]"></i>
-          {{ $t('nav.logout') }}
-        </button>
+      <!-- Logout -->
+      <button @click="handleLogout" class="flex items-center gap-4 py-3 px-5 rounded-xl font-black uppercase tracking-widest text-[9px] text-error hover:bg-error/10 transition-all w-full group">
+        <i class="fi fi-sr-exit text-md opacity-60 group-hover:opacity-100 transition-opacity"></i>
+        {{ $t('nav.logout') }}
+      </button>
+
+      <!-- Footer Info -->
+      <div class="flex flex-col items-center gap-2 pt-4 opacity-20">
+        <div class="text-[7px] font-black uppercase tracking-[0.4em]">GliceChart Multiuser</div>
+        <div class="text-[7px] font-black uppercase tracking-[0.2em] italic">Made with ❤️ by Ghibiri</div>
       </div>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { APP_VERSION_LABEL } from '../appVersion'
 import { useAuthStore } from '../stores/auth'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-const $route = useRoute()
-const router = useRouter()
 const auth = useAuthStore()
+const router = useRouter()
 const { locale } = useI18n()
 
-// Stato per le sezioni collassabili
-const isAiExpanded = ref(false)
-const isHistoryExpanded = ref(false)
+const navItems = [
+  { path: '/calendar', key: 'calendar', icon: 'fi fi-sr-calendar' },
+  { path: '/summary', key: 'summary', icon: 'fi fi-sr-document-signed' },
+  { path: '/comparison', key: 'comparison', icon: 'fi fi-sr-stats' }
+]
 
-// Verifica se una rotta nelle sezioni è attiva
-const isAiActive = computed(() => {
-  return ['/prediction', '/patterns'].includes($route.path)
-})
-
-const isHistoryActive = computed(() => {
-  return ['/calendar', '/comparison', '/summary'].includes($route.path)
-})
-
-// Espandi automaticamente se la rotta è attiva all'avvio o al cambio rotta
-watch(() => $route.path, (newPath) => {
-  if (['/prediction', '/patterns'].includes(newPath)) {
-    isAiExpanded.value = true
-  }
-  if (['/calendar', '/comparison', '/summary'].includes(newPath)) {
-    isHistoryExpanded.value = true
-  }
-}, { immediate: true })
-
-defineEmits(['close-drawer'])
-
-async function handleLogout() {
-  await auth.logout()
-  router.push('/login')
-}
+const aiItems = [
+  { path: '/dietometer', key: 'dietometer', icon: 'fi fi-sr-wheat' },
+  { path: '/patterns', key: 'patterns', icon: 'fi fi-sr-brain' }
+]
 
 function changeLang(lang: string) {
   locale.value = lang
   localStorage.setItem('lang', lang)
 }
+
+function handleLogout() {
+  auth.logout()
+  router.push('/login')
+}
 </script>
 
 <style scoped>
-.router-link-active {
-  /* Classi gestite dinamicamente nel template */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(var(--tw-color-primary), 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--tw-color-primary), 0.2);
 }
 </style>

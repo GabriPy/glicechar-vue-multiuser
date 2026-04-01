@@ -1,317 +1,205 @@
 <template>
-  <div class="min-h-screen bg-base-100 overflow-x-hidden selection:bg-primary selection:text-white">
-    
-    <!-- Navbar -->
+  <div class="min-h-screen bg-base-100 flex flex-col font-sans selection:bg-primary selection:text-white overflow-x-hidden">
     <PublicNavbar />
 
-    <!-- Hero Section -->
-    <section class="relative pt-24 pb-16 md:pt-32 md:pb-24 px-4 overflow-hidden">
-      <!-- Decor -->
-      <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full animate-pulse"></div>
-      <div class="absolute top-[40%] -right-[10%] w-[30%] h-[50%] bg-secondary/10 blur-[100px] rounded-full animate-pulse" style="animation-delay: 1s;"></div>
-      
-      <div class="max-w-4xl mx-auto text-center relative z-10">
-        <div class="badge badge-outline badge-primary font-black text-[10px] uppercase tracking-[0.3em] py-3 px-5 mb-6">
-          v1.4.4
-        </div>
-        <h1 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none mb-4">
-          {{ $t('landing.hero_title') }} <br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
-            {{ $t('landing.hero_subtitle') }}
-          </span>
-        </h1>
-        <p class="text-base md:text-lg font-bold opacity-40 max-w-xl mx-auto mb-8 leading-relaxed">
-          {{ $t('landing.hero_description') }}
-        </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <router-link to="/register" class="btn btn-primary rounded-xl px-10 font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/30 group">
-            {{ $t('landing.get_started') }}
-            <i class="fi fi-sr-arrow-right group-hover:translate-x-1 transition-transform ml-2"></i>
-          </router-link>
-          <router-link to="/login" class="btn btn-ghost rounded-xl px-10 font-black uppercase tracking-widest text-xs opacity-60 hover:opacity-100">
-            {{ $t('landing.login') }}
-          </router-link>
-        </div>
+    <!-- Hero Section: DaisyUI 5 Hero with glass effect and radial gradient -->
+    <section class="hero min-h-[90vh] relative overflow-hidden bg-base-100">
+      <!-- Background Decorations -->
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 blur-[120px] rounded-full animate-pulse"></div>
+        <div class="absolute top-1/2 -right-24 w-80 h-80 bg-secondary/10 blur-[100px] rounded-full"></div>
       </div>
-    </section>
 
-    <!-- Features Section -->
-    <section class="py-16 px-4 bg-base-200/30">
-      <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-12">
-          <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 block">{{ $t('landing.features_title') }}</span>
-          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 italic italic-primary">{{ $t('landing.smart_tools').split(' ')[0] }} <span class="text-primary">{{ $t('landing.smart_tools').split(' ')[1] }}</span></h2>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Features loop -->
-          <div v-for="n in 6" :key="n" class="card bg-base-100 shadow-lg border border-base-content/5 hover:border-primary/20 transition-all group overflow-hidden">
-            <div class="card-body p-6 items-center text-center relative">
-              <div class="w-12 h-12 bg-base-200 rounded-xl flex items-center justify-center text-primary text-xl mb-4 group-hover:bg-primary/10 transition-colors">
-                <i :class="getFeatureIcon(n)"></i>
-              </div>
-              <h3 class="text-lg font-black uppercase tracking-tight mb-1">{{ $t(`landing.feature_${n}_title`) }}</h3>
-              <p class="text-xs font-bold opacity-40 leading-relaxed">
-                {{ $t(`landing.feature_${n}_desc`) }}
-              </p>
-            </div>
+      <div class="hero-content text-center z-10 px-4 max-w-5xl">
+        <div class="flex flex-col items-center">
+          <!-- Badge v1.4.4 -->
+          <div class="badge badge-primary badge-outline badge-md mb-8 font-black uppercase tracking-widest animate-bounce px-6 py-4 rounded-full border-2">
+            {{ $t('common.current_version') }}
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Deep Tech Section (Ex About Content) -->
-    <section class="py-20 px-4 bg-base-100 relative overflow-hidden">
-      <!-- Background Decor -->
-      <div class="absolute top-[20%] left-0 w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
-      <div class="absolute bottom-0 right-0 w-[40%] h-[40%] bg-secondary/5 blur-[100px] rounded-full pointer-events-none"></div>
+          <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.9] mb-8 group">
+            <span class="block transition-transform duration-500 group-hover:-translate-y-1">{{ $t('landing.hero_title') }}</span>
+            <span class="text-primary relative inline-block transition-transform duration-500 group-hover:translate-y-1">
+              {{ $t('landing.hero_subtitle') }}
+              <div class="absolute -bottom-2 left-0 w-full h-3 bg-primary/20 -rotate-1 -z-10 rounded-full"></div>
+            </span>
+          </h1>
 
-      <div class="max-w-6xl mx-auto relative z-10">
-        <!-- Intro Section -->
-        <div class="max-w-3xl mx-auto text-center mb-24">
-          <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 block">{{ $t('about.what_is') }}</span>
-          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 mb-8 italic italic-primary">{{ $t('landing.total_control').split(' ')[0] }} <span class="text-primary">{{ $t('landing.total_control').split(' ')[1] }}</span></h2>
-          <p class="text-base md:text-lg font-bold opacity-40 leading-relaxed">
-            {{ $t('about.what_is_desc') }}
+          <p class="text-lg md:text-xl font-bold opacity-60 mb-12 max-w-2xl leading-relaxed">
+            {{ $t('landing.hero_description') }}
           </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <router-link to="/register" class="btn btn-primary btn-lg rounded-2xl px-12 font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/30 group border-none">
+              {{ $t('landing.get_started') }}
+              <i class="fi fi-sr-arrow-right group-hover:translate-x-2 transition-transform ml-2"></i>
+            </router-link>
+            <router-link to="/login" class="btn btn-ghost btn-lg rounded-2xl px-12 font-black uppercase tracking-widest text-xs opacity-60 hover:opacity-100 border border-base-content/10 hover:border-primary/30">
+              {{ $t('landing.login') }}
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Features Grid: Modern Layout -->
+    <section class="py-24 px-4 bg-base-200/30">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-20 space-y-4">
+          <span class="badge badge-secondary badge-outline font-black uppercase tracking-[0.3em] px-4 py-3">{{ $t('landing.features_title') }}</span>
+          <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter italic">{{ $t('landing.smart_tools') }}</h2>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-6 grid-rows-2 gap-6 min-h-[600px]">
+          <!-- Feature 1: Real-time Sync (Large) -->
+          <div class="md:col-span-3 md:row-span-1 card bg-base-100 shadow-xl border border-base-content/5 group hover:border-primary/30 transition-all duration-500 overflow-hidden">
+            <div class="card-body p-8 relative">
+              <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-2xl mb-6 group-hover:scale-110 transition-transform duration-500">
+                <i :class="getFeatureIcon(1)"></i>
+              </div>
+              <h3 class="card-title text-2xl font-black uppercase tracking-tight italic mb-2">{{ $t('landing.feature_1_title') }}</h3>
+              <p class="font-bold opacity-50 leading-relaxed">{{ $t('landing.feature_1_desc') }}</p>
+              <!-- Decorative background icon -->
+              <i :class="getFeatureIcon(1)" class="absolute -bottom-10 -right-10 text-9xl opacity-[0.02] -rotate-12 group-hover:rotate-0 transition-transform duration-700"></i>
+            </div>
+          </div>
+
+          <!-- Feature 2: AI Prediction (Accent) -->
+          <div class="md:col-span-3 md:row-span-1 card bg-primary text-primary-content shadow-xl border-none group hover:scale-[1.02] transition-all duration-500 overflow-hidden">
+            <div class="card-body p-8 relative">
+              <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 group-hover:rotate-12 transition-transform">
+                <i :class="getFeatureIcon(2)"></i>
+              </div>
+              <h3 class="card-title text-2xl font-black uppercase tracking-tight italic mb-2">{{ $t('landing.feature_2_title') }}</h3>
+              <p class="font-bold opacity-80 leading-relaxed">{{ $t('landing.feature_2_desc') }}</p>
+              <i :class="getFeatureIcon(2)" class="absolute -bottom-10 -right-10 text-9xl opacity-10 -rotate-12 group-hover:rotate-0 transition-transform duration-700"></i>
+            </div>
+          </div>
+
+          <!-- Feature 3: Dietometro -->
+          <div class="md:col-span-2 md:row-span-1 card bg-base-100 shadow-xl border border-base-content/5 group hover:border-secondary/30 transition-all duration-500">
+            <div class="card-body p-8">
+              <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary text-xl mb-4 group-hover:scale-110 transition-transform">
+                <i :class="getFeatureIcon(3)"></i>
+              </div>
+              <h3 class="text-xl font-black uppercase tracking-tight italic mb-2">{{ $t('landing.feature_3_title') }}</h3>
+              <p class="text-sm font-bold opacity-50">{{ $t('landing.feature_3_desc') }}</p>
+            </div>
+          </div>
+
+          <!-- Feature 4: Smart Patterns -->
+          <div class="md:col-span-2 md:row-span-1 card bg-base-100 shadow-xl border border-base-content/5 group hover:border-accent/30 transition-all duration-500">
+            <div class="card-body p-8">
+              <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center text-accent text-xl mb-4 group-hover:scale-110 transition-transform">
+                <i :class="getFeatureIcon(4)"></i>
+              </div>
+              <h3 class="text-xl font-black uppercase tracking-tight italic mb-2">{{ $t('landing.feature_4_title') }}</h3>
+              <p class="text-sm font-bold opacity-50">{{ $t('landing.feature_4_desc') }}</p>
+            </div>
+          </div>
+
+          <!-- Feature 5: Multiutente -->
+          <div class="md:col-span-2 md:row-span-1 card bg-base-100 shadow-xl border border-base-content/5 group hover:border-primary/30 transition-all duration-500">
+            <div class="card-body p-8">
+              <div class="w-12 h-12 bg-info/10 rounded-xl flex items-center justify-center text-info text-xl mb-4 group-hover:scale-110 transition-transform">
+                <i :class="getFeatureIcon(6)"></i>
+              </div>
+              <h3 class="text-xl font-black uppercase tracking-tight italic mb-2">{{ $t('landing.feature_6_title') }}</h3>
+              <p class="text-sm font-bold opacity-50">{{ $t('landing.feature_6_desc') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats / Trust Section -->
+    <section class="py-20 px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="stats stats-vertical lg:stats-horizontal shadow-2xl w-full bg-base-300/50 backdrop-blur-xl border border-white/5 rounded-[40px] p-8 overflow-hidden relative">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+          
+          <div class="stat place-items-center py-10">
+            <div class="stat-title font-black uppercase tracking-widest text-[10px] opacity-40 mb-2">Performance</div>
+            <div class="stat-value text-primary font-black italic tracking-tighter text-5xl">99.9%</div>
+            <div class="stat-desc font-bold opacity-30 mt-2">System Uptime</div>
+          </div>
+          
+          <div class="stat place-items-center py-10 border-base-content/5">
+            <div class="stat-title font-black uppercase tracking-widest text-[10px] opacity-40 mb-2">Accuracy</div>
+            <div class="stat-value text-secondary font-black italic tracking-tighter text-5xl">v3.1</div>
+            <div class="stat-desc font-bold opacity-30 mt-2">GliceForecast™ Core</div>
+          </div>
+          
+          <div class="stat place-items-center py-10 border-base-content/5">
+            <div class="stat-title font-black uppercase tracking-widest text-[10px] opacity-40 mb-2">Privacy</div>
+            <div class="stat-value text-accent font-black italic tracking-tighter text-5xl">E2EE</div>
+            <div class="stat-desc font-bold opacity-30 mt-2">Data Protection</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section: Modern Accordion -->
+    <section class="py-24 px-4 bg-base-200/50">
+      <div class="max-w-3xl mx-auto">
         <div class="text-center mb-16">
-          <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 block">{{ $t('about.subtitle') }}</span>
-          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 italic italic-secondary">{{ $t('landing.prediction_heart').split(' ')[0] }} {{ $t('landing.prediction_heart').split(' ')[1] }} <span class="text-secondary">{{ $t('landing.prediction_heart').split(' ')[2] }}</span></h2>
+          <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tighter italic mb-4">{{ $t('landing.faq_title') }}</h2>
+          <div class="w-20 h-1.5 bg-primary mx-auto rounded-full"></div>
         </div>
 
-        <!-- Featured Prediction Section -->
-        <div class="card bg-base-200/50 shadow-2xl border border-base-content/5 overflow-hidden mb-12">
-          <div class="card-body p-8 md:p-12 relative">
-            <div class="absolute -top-20 -right-20 w-64 h-64 bg-secondary/10 blur-[100px] rounded-full pointer-events-none"></div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-12">
-              <!-- Left: Description -->
-              <div class="lg:col-span-5">
-                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-secondary flex items-center gap-3 mb-6 italic">
-                  <i class="fi fi-sr-chart-line-up"></i> {{ $t('about.prediction_title') }}
-                </h3>
-                <p class="text-base font-bold opacity-50 leading-relaxed">
-                  {{ $t('about.prediction_desc') }}
-                </p>
-              </div>
-
-              <!-- Right: Steps Grid -->
-              <div class="lg:col-span-7">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div v-for="n in 4" :key="n" class="p-6 bg-base-100 rounded-2xl border border-base-content/5 hover:border-secondary/30 transition-all hover:shadow-lg group">
-                    <div class="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary text-xs font-black mb-4 group-hover:bg-secondary group-hover:text-secondary-content transition-colors">
-                      {{ n }}
-                    </div>
-                    <span class="text-[10px] font-black text-secondary uppercase block mb-2">{{ $t(`about.sim_step_${n}`) }}</span>
-                    <p class="text-[11px] font-bold opacity-40 leading-relaxed">{{ $t(`about.sim_step_${n}_desc`) }}</p>
-                  </div>
-                </div>
-              </div>
+        <div class="space-y-4">
+          <div v-for="i in 3" :key="i" class="collapse collapse-plus bg-base-100 shadow-md rounded-3xl border border-base-content/5 transition-all hover:border-primary/20">
+            <input type="radio" name="my-accordion-3" :checked="i === 1" /> 
+            <div class="collapse-title text-lg font-black uppercase tracking-tight italic p-6">
+              {{ $t(`landing.faq_${i}_q`) }}
             </div>
-
-            <!-- Full Width Formula -->
-            <div class="bg-base-100 p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-base-content/5 shadow-inner overflow-x-auto relative group custom-scrollbar-hide">
-              <div class="absolute inset-0 bg-gradient-to-r from-secondary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[2.5rem]"></div>
-              <span class="text-[8px] md:text-[10px] font-black uppercase opacity-30 block mb-6 md:mb-8 tracking-[0.3em] text-center whitespace-nowrap relative z-10">{{ $t('about.formula_label') }}</span>
-              <div class="flex items-center justify-center gap-2 md:gap-8 font-black tracking-tighter whitespace-nowrap px-2 relative z-10 min-w-fit">
-                <div class="flex flex-col items-center">
-                  <span class="text-2xl md:text-5xl text-secondary">G<sub>pred</sub></span>
-                </div>
-                <span class="text-xl md:text-4xl opacity-20">=</span>
-                <div class="flex flex-col items-center">
-                  <span class="text-lg md:text-4xl opacity-70">G<sub>base</sub></span>
-                </div>
-                <span class="text-lg md:text-4xl opacity-20">+</span>
-                <div class="flex flex-col items-center">
-                  <span class="text-lg md:text-4xl text-primary">&Delta;<sub>trend</sub></span>
-                </div>
-                <span class="text-lg md:text-4xl opacity-20">&minus;</span>
-                <div class="flex flex-col items-center">
-                  <span class="text-lg md:text-4xl text-error">&Delta;<sub>ins</sub></span>
-                </div>
-                <span class="text-lg md:text-4xl opacity-20">+</span>
-                <div class="flex flex-col items-center">
-                  <span class="text-lg md:text-4xl text-success">&Delta;<sub>cho</sub></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Secondary Features Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <!-- Smart Patterns card -->
-          <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden flex flex-col">
-            <div class="card-body p-8 relative flex-1">
-              <div class="absolute -top-10 -left-10 w-32 h-32 bg-accent/5 blur-3xl rounded-full"></div>
-              <h3 class="text-xs font-black uppercase tracking-[0.2em] text-accent flex items-center gap-3 mb-6">
-                <i class="fi fi-sr-brain"></i> {{ $t('about.patterns_title') }}
-              </h3>
-              <p class="text-[11px] font-bold opacity-40 leading-relaxed mb-8 flex-1">
-                {{ $t('about.patterns_desc') }}
-              </p>
-              <div class="space-y-3 mt-auto">
-                <div v-for="n in 2" :key="n" class="flex items-start gap-4 p-4 bg-base-200/30 rounded-xl border border-base-content/5">
-                  <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center text-accent shrink-0 text-xs">
-                    <i :class="n === 1 ? 'fi fi-sr-apps-sort' : 'fi fi-sr-chart-line-up'"></i>
-                  </div>
-                  <div>
-                    <h4 class="text-[9px] font-black uppercase tracking-tight">{{ $t(`about.pattern_logic_${n}`) }}</h4>
-                    <p class="text-[9px] font-bold opacity-40 mt-0.5 leading-tight">{{ $t(`about.pattern_logic_${n}_desc`) }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- IOB / COB card -->
-          <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden flex flex-col">
-            <div class="card-body p-8 relative flex-1">
-              <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
-              <h3 class="text-xs font-black uppercase tracking-[0.2em] text-primary flex items-center gap-3 mb-6">
-                <i class="fi fi-sr-calculator"></i> {{ $t('about.iob_cob_title') }}
-              </h3>
-              <div class="space-y-4 flex-1">
-                <div class="p-5 bg-base-200/30 rounded-2xl border border-base-content/5 h-[45%] flex flex-col justify-center">
-                  <span class="text-[9px] font-black uppercase opacity-30 block mb-2 tracking-widest">IOB (Insulin On Board)</span>
-                  <p class="text-[11px] font-bold opacity-50 leading-relaxed">
-                    {{ $t('about.iob_desc', { n: 3, isf: 60 }) }}
-                  </p>
-                </div>
-                <div class="p-5 bg-base-200/30 rounded-2xl border border-base-content/5 h-[45%] flex flex-col justify-center">
-                  <span class="text-[9px] font-black uppercase opacity-30 block mb-2 tracking-widest">COB (Carbs On Board)</span>
-                  <p class="text-[11px] font-bold opacity-50 leading-relaxed">
-                    {{ $t('about.cob_desc', { n: 4, cr: 15 }) }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tools & Legend Column -->
-          <div class="space-y-8 flex flex-col">
-            <!-- Dietometro -->
-            <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden flex-1">
-              <div class="card-body p-8 relative">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-warning/5 blur-3xl rounded-full"></div>
-                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-warning flex items-center gap-3 mb-4">
-                  <i class="fi fi-sr-wheat"></i> {{ $t('about.dietometer_title') }}
-                </h3>
-                <p class="text-[11px] font-bold opacity-50 leading-relaxed">
-                  {{ $t('about.dietometer_desc') }}
-                </p>
-              </div>
-            </div>
-
-            <!-- Chart Legend -->
-            <div class="card bg-base-100 shadow-xl border border-base-content/5 overflow-hidden">
-              <div class="card-body p-8">
-                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-info flex items-center gap-3 mb-6">
-                  <i class="fi fi-sr-interrogation"></i> {{ $t('about.chart_interpretation') }}
-                </h3>
-                <div class="space-y-4">
-                  <div class="flex items-start gap-4">
-                    <div class="w-5 h-5 rounded bg-slate-600/40 mt-1 shrink-0 shadow-sm"></div>
-                    <div>
-                      <span class="text-[10px] font-black uppercase block leading-none tracking-tight">{{ $t('about.data_gap') }}</span>
-                      <p class="text-[10px] font-bold opacity-40 mt-1 leading-tight">{{ $t('about.data_gap_desc') }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-4">
-                    <div class="w-5 h-5 rounded border-2 border-dashed border-slate-500 mt-1 shrink-0"></div>
-                    <div>
-                      <span class="text-[10px] font-black uppercase block leading-none tracking-tight">{{ $t('about.now_line') }}</span>
-                      <p class="text-[10px] font-bold opacity-40 mt-1 leading-tight">{{ $t('about.now_line_desc') }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="collapse-content px-6 pb-6"> 
+              <p class="font-bold opacity-50 leading-relaxed">{{ $t(`landing.faq_${i}_a`) }}</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section class="py-20 px-4 max-w-3xl mx-auto">
-      <div class="text-center mb-12">
-        <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 block">{{ $t('landing.faq_title') }}</span>
-        <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 italic">FAQ</h2>
-      </div>
-
-      <div class="space-y-4">
-        <div v-for="n in 3" :key="n" class="collapse collapse-plus bg-base-200/50 border border-base-content/5 rounded-2xl">
-          <input type="radio" name="my-accordion-3" :checked="n === 1" /> 
-          <div class="collapse-title text-sm font-black uppercase tracking-tight">
-            {{ $t(`landing.faq_${n}_q`) }}
-          </div>
-          <div class="collapse-content"> 
-            <p class="text-xs font-bold opacity-50 leading-relaxed">
-              {{ $t(`landing.faq_${n}_a`) }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Secure Management (Final CTA) -->
-    <!-- <section class="py-20 px-4">
-      <div class="max-w-4xl mx-auto text-center bg-primary text-primary-content rounded-[3rem] p-12 md:p-20 shadow-2xl relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 pointer-events-none">
-          <div class="absolute -top-20 -left-20 w-64 h-64 bg-white blur-[100px] rounded-full"></div>
-          <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-white blur-[100px] rounded-full"></div>
-        </div>
-        
-        <i class="fi fi-sr-shield-check text-6xl opacity-30 mb-8"></i>
-        <h2 class="text-3xl md:text-4xl font-black tracking-tighter uppercase mb-6 italic leading-none">
-          {{ $t('about.secure_management') }}
-        </h2>
-        <p class="text-sm md:text-base font-bold opacity-80 max-w-xl mx-auto mb-10 leading-relaxed">
-          {{ $t('about.secure_management_desc') }}
-        </p>
-        <router-link to="/register" class="btn bg-white text-primary border-none hover:bg-white/90 btn-lg rounded-2xl px-16 font-black uppercase tracking-widest text-xs shadow-xl">
-          {{ $t('landing.get_started') }}
-        </router-link>
-      </div>
-    </section> -->
-
-
-    
     <!-- Footer -->
-    <footer class="py-16 px-4 border-t border-base-content/5 text-center bg-base-200/20">
-      <!-- Disclaimer row -->
-      <div class="max-w-3xl mx-auto mb-12">
-        <span class="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 block leading-relaxed px-8">
-          {{ $t('app.disclaimer') }}
-        </span>
-      </div>
-
-      <!-- Brand row -->
-      <div class="flex items-center justify-center gap-3 mb-6">
-        <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center text-white text-sm shadow-lg shadow-primary/20">
-          <i class="fi fi-sr-chart-line-up"></i>
-        </div>
-        <span class="text-xl font-black tracking-tighter uppercase italic">Glice<span class="text-primary">Chart</span></span>
-      </div>
+    <footer class="footer footer-center py-20 px-4 bg-base-300 text-base-content rounded-t-[60px] relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-50"></div>
       
-      <p class="text-[10px] font-black uppercase tracking-widest opacity-30 mb-4">
-        {{ $t('landing.footer_tagline') }}
-      </p>
+      <div class="max-w-4xl mx-auto relative z-10">
+        <div class="mb-12">
+          <span class="text-[9px] font-black uppercase tracking-[0.3em] opacity-30 block leading-relaxed px-12 max-w-2xl mx-auto">
+            {{ $t('app.disclaimer') }}
+          </span>
+        </div>
 
-      <!-- Legal Links -->
-      <div class="flex items-center justify-center gap-6 mb-6">
-        <router-link to="/legal" class="text-[9px] font-black uppercase tracking-widest opacity-30 hover:opacity-100 transition-opacity hover:text-primary underline decoration-primary/20 underline-offset-4">
-          {{ $t('app.cookie_privacy') }}
-        </router-link>
-      </div>
+        <div class="flex items-center justify-center gap-4 mb-10">
+          <div class="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white text-xl shadow-2xl shadow-primary/20 hover:scale-110 transition-transform">
+            <i class="fi fi-sr-chart-line-up"></i>
+          </div>
+          <span class="text-3xl font-black tracking-tighter uppercase italic">Glice<span class="text-primary">Chart</span></span>
+        </div>
 
-      <div class="text-[9px] font-bold opacity-20 uppercase tracking-[0.3em]">
-        © 2026 GliceChart Multiuser - Developed by Ghibiri
+        <nav class="flex flex-wrap justify-center gap-8 mb-12">
+          <router-link to="/legal" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all underline decoration-primary/20 underline-offset-8">
+            {{ $t('app.cookie_privacy') }}
+          </router-link>
+          <a href="#" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all underline decoration-primary/20 underline-offset-8">
+            Support
+          </a>
+          <a href="#" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all underline decoration-primary/20 underline-offset-8">
+            Github
+          </a>
+        </nav>
+
+        <p class="text-[11px] font-black uppercase tracking-widest opacity-20 mb-2">
+          {{ $t('landing.footer_tagline') }}
+        </p>
+        
+        <div class="text-[10px] font-bold opacity-10 uppercase tracking-[0.4em]">
+          © 2026 GliceChart Multiuser - Crafted with passion by Ghibiri
+        </div>
       </div>
     </footer>
-
   </div>
 </template>
 
@@ -332,14 +220,7 @@ function getFeatureIcon(n) {
 </script>
 
 <style scoped>
-.collapse-title::after {
-  top: 1.2rem;
-}
-.custom-scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.custom-scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.hero {
+  background-image: radial-gradient(circle at 50% 50%, var(--tw-color-base-200) 0%, var(--tw-color-base-100) 100%);
 }
 </style>
