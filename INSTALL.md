@@ -1,95 +1,113 @@
-# 📥 Guida all'Installazione - GliceChart Multiuser v1.3.0
+# 📥 Guida all'Installazione - GliceChart v1.4.4
 
-Segui questi passaggi per configurare GliceChart sul tuo server Linux/Windows.
-
----
-
-## 1. Prerequisiti
-
-- **Node.js** (v18 o superiore)
-- **MySQL** (v8.0 o superiore)
-- **Git**
-- Una chiave API di **Resend** (gratuita su [resend.com](https://resend.com))
+Questa guida ti accompagnerà nel processo di installazione e configurazione di GliceChart sul tuo server (Linux o Windows).
 
 ---
 
-## 2. Configurazione Database MySQL
+## 1. Requisiti di Sistema
 
-Crea il database dedicato e un utente con i privilegi necessari. È fondamentale che l'utente abbia i permessi di `CREATE`, `ALTER` e `INDEX` per consentire l'auto-migrazione dello schema al primo avvio.
+Prima di iniziare, assicurati di avere installato:
+- **Node.js**: v18.x o superiore (LTS raccomandata)
+- **MySQL**: v8.0 o superiore
+- **Package Manager**: npm (incluso con Node.js)
+- **Git**: Per la clonazione del repository
+
+---
+
+## 2. Preparazione del Database
+
+Accedi alla tua istanza MySQL e crea il database e l'utente dedicato:
 
 ```sql
--- Creazione Database
-CREATE DATABASE IF NOT EXISTS `glicechart-multiutente` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- 1. Crea il database con codifica corretta
+CREATE DATABASE IF NOT EXISTS `glicechart` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Creazione Utente (Sostituisci 'TUA_PASSWORD_SICURA')
-CREATE USER IF NOT EXISTS 'glucoview'@'localhost' IDENTIFIED BY 'TUA_PASSWORD_SICURA';
+-- 2. Crea l'utente (cambia 'PASSWORD_SICURA' con una tua scelta)
+CREATE USER IF NOT EXISTS 'glice_user'@'localhost' IDENTIFIED BY 'PASSWORD_SICURA';
 
--- Assegnazione Privilegi
-GRANT ALL PRIVILEGES ON `glicechart-multiutente`.* TO 'glucoview'@'localhost';
+-- 3. Assegna i privilegi necessari
+GRANT ALL PRIVILEGES ON `glicechart`.* TO 'glice_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
 ---
 
-## 3. Configurazione Ambiente (.env)
+## 3. Configurazione del Backend
 
-Nella cartella `backend/`, rinomina il file `.env.example` in `.env` (o crealo) e configura i seguenti parametri critici:
+Spostati nella cartella `backend/` e crea il file `.env`:
+
+```bash
+cd backend
+cp .env.example .env # Se presente, altrimenti crealo manualmente
+```
+
+Modifica il file `.env` con i tuoi parametri:
 
 ```env
-# URL Pubblico dell'app
-FRONTEND_URL=https://glicechart.ghibiri.it
+PORT=3002
+FRONTEND_URL=https://tua-app.it
 
-# MySQL
+# MySQL Configuration
 DB_HOST=localhost
-DB_USER=glucoview
-DB_PASSWORD=TUA_PASSWORD_SICURA
-DB_NAME=glicechart-multiutente
+DB_USER=glice_user
+DB_PASSWORD=PASSWORD_SICURA
+DB_NAME=glicechart
 
-# SICUREZZA JWT (Genera chiavi casuali!)
-# Puoi usare: openssl rand -base64 32
-JWT_SECRET=inserisci_qui_una_chiave_molto_lunga
-REFRESH_TOKEN_SECRET=inserisci_qui_un_altra_chiave_molto_lunga
+# Security (Genera chiavi uniche!)
+JWT_SECRET=usa_un_codice_random_molto_lungo
+REFRESH_TOKEN_SECRET=usa_un_altro_codice_random
 
-# EMAIL (Resend API)
-RESEND_API_KEY=re_tua_chiave
-RESEND_PASSWORDRECOVERY_TEMPLATE_ID=password-reset
-RESEND_WELCOME_TEMPLATE_ID=welcome-newuser
-EMAIL_FROM="GliceChart" <noreply@glicechart.ghibiri.it>
+# Email (Resend.com)
+RESEND_API_KEY=re_xxxxxxxxxxxx
+EMAIL_FROM="GliceChart" <noreply@tua-app.it>
+```
+
+Installa le dipendenze:
+```bash
+npm install
 ```
 
 ---
 
-## 4. Installazione e Build
+## 4. Configurazione del Frontend
 
-### Backend
+Spostati nella cartella `frontend/`:
+
 ```bash
-cd backend
+cd ../frontend
 npm install
-# Per avviare in sviluppo: npm run dev
-# Per avviare in produzione: npm start
 ```
 
-### Frontend
+Se necessario, configura l'URL del backend nel file di configurazione (solitamente gestito tramite variabili d'ambiente Vite).
+
+Compila il progetto per la produzione:
 ```bash
-cd frontend
-npm install
 npm run build
 ```
 
 ---
 
-## 5. Messa in Produzione
+## 5. Deployment (Produzione)
 
-Per mantenere il server sempre attivo su un VPS, si consiglia l'uso di **PM2**:
+Si raccomanda l'uso di **PM2** per gestire il processo del backend:
 
 ```bash
-cd backend
 npm install -g pm2
-pm2 start server.ts --name "glicechart" --interpreter tsx
+cd ../backend
+pm2 start server.ts --name "glicechart-api" --interpreter tsx
 ```
 
-Assicurati di configurare un reverse proxy come **Nginx** per gestire il certificato SSL (HTTPS) e puntare al backend sulla porta 3002.
+### Reverse Proxy (Nginx)
+Configura Nginx per puntare alla porta `3002` e servire i file statici della cartella `frontend/dist`. Assicurati di abilitare **HTTPS** tramite Certbot/Let's Encrypt.
 
 ---
 
-© 2024 GliceChart Team - [glicechart.ghibiri.it](https://glicechart.ghibiri.it)
+## 6. Risoluzione Problemi Comune
+
+- **Errore di connessione DB**: Verifica che il servizio MySQL sia attivo e che le credenziali nel file `.env` siano corrette.
+- **Token scaduti**: Il sistema gestisce automaticamente il refresh, ma assicurati che le chiavi segrete siano consistenti.
+- **Email non inviate**: Controlla la validità della chiave API di Resend e che il dominio mittente sia verificato sul pannello Resend.
+
+---
+
+© 2026 GliceChart Project - [glicechart.ghibiri.it](https://glicechart.ghibiri.it)

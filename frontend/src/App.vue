@@ -1,6 +1,7 @@
 <template>
   <!-- Layout per utenti autenticati -->
-  <div v-if="auth.isAuthenticated" class="drawer lg:drawer-open min-h-screen bg-base-100 selection:bg-primary selection:text-white">
+  <CookieBanner />
+  <div v-if="auth.isAuthenticated && !$route.meta.public" class="drawer lg:drawer-open min-h-screen bg-base-100 selection:bg-primary selection:text-white">
     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
 
     <div class="drawer-content flex flex-col min-w-0">
@@ -109,16 +110,25 @@
         </router-view>
 
         <!-- Footer / Legenda Globale -->
-        <div class="flex flex-col items-center gap-2 pt-2 border-t border-base-content/5 mt-4">
-          <div class="flex flex-wrap justify-center gap-x-6 gap-y-1">
-            <div class="flex items-center gap-2">
-              <span class="text-[9px] font-black uppercase tracking-widest opacity-30 text-center px-4">{{ $t('app.disclaimer') }}</span>
+        <div class="flex flex-col items-center gap-4 pt-8 border-t border-base-content/5 mt-12 mb-8">
+          <div class="max-w-2xl text-center">
+            <span class="text-[9px] font-black uppercase tracking-[0.2em] opacity-20 block leading-relaxed px-4">
+              {{ $t('app.disclaimer') }}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <router-link to="/legal" class="text-[9px] font-black uppercase tracking-widest opacity-30 hover:opacity-100 transition-opacity hover:text-primary underline decoration-primary/20 underline-offset-4">
+              {{ $t('app.cookie_privacy') }}
+            </router-link>
+          </div>
+
+          <div class="flex flex-col items-center gap-1">
+            <div class="text-[8px] font-bold opacity-10 uppercase tracking-[0.3em]">
+              GliceChart-multiuser {{ APP_VERSION_LABEL }}
             </div>
+            <span class="text-[9px] font-black uppercase tracking-widest opacity-20">Made with ❤️ by Ghibiri</span>
           </div>
-          <div class="text-[8px] font-bold opacity-20 uppercase tracking-[0.3em]">
-            GliceChart-multiuser {{ APP_VERSION_LABEL }}
-          </div>
-          <span class="text-[9px] font-black uppercase tracking-widest opacity-30">Made with ❤️ by Ghibiri</span>
         </div>
       </main>
     </div>
@@ -142,6 +152,7 @@ import { useRouter } from 'vue-router'
 import { useGlucoseStore } from './stores/glucose'
 import { useAuthStore } from './stores/auth'
 import Sidebar from './components/Sidebar.vue'
+import CookieBanner from './components/CookieBanner.vue'
 import { APP_VERSION_LABEL } from './appVersion'
 
 const store = useGlucoseStore()

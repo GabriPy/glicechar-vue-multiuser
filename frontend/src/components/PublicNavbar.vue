@@ -38,18 +38,26 @@
         </ul>
       </div>
 
-      <!-- Language Selector -->
-      <div class="flex items-center gap-1 bg-base-200/50 p-1 rounded-xl mr-2 border border-base-content/5">
-        <button 
-          @click="changeLang('it')" 
-          class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] px-2 rounded-lg"
-          :class="{ 'bg-primary text-primary-content shadow-sm': locale === 'it', 'opacity-40': locale !== 'it' }"
-        >IT</button>
-        <button 
-          @click="changeLang('en')" 
-          class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] px-2 rounded-lg"
-          :class="{ 'bg-primary text-primary-content shadow-sm': locale === 'en', 'opacity-40': locale !== 'en' }"
-        >EN</button>
+      <!-- Language Selector Dropdown -->
+      <div class="dropdown dropdown-end mr-2">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2 normal-case hover:bg-base-200 rounded-xl px-3 border border-base-content/5 flex items-center">
+          <span :class="`flag-icon flag-icon-${locale === 'it' ? 'it' : 'gb'} rounded-sm`" style="width: 1.2rem; height: 0.9rem;"></span>
+          <span class="font-black text-[10px] uppercase tracking-widest opacity-60">{{ locale.toUpperCase() }}</span>
+        </div>
+        <ul tabindex="0" class="dropdown-content z-[110] menu p-2 shadow-2xl bg-base-300/90 backdrop-blur-xl rounded-box w-32 mt-4 border border-white/10">
+          <li class="mb-1">
+            <button @click="changeLang('it')" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-base-100/50" :class="{ 'bg-primary/20 text-primary': locale === 'it' }">
+              <span class="flag-icon flag-icon-it rounded-sm"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest">IT</span>
+            </button>
+          </li>
+          <li>
+            <button @click="changeLang('en')" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-base-100/50" :class="{ 'bg-primary/20 text-primary': locale === 'en' }">
+              <span class="flag-icon flag-icon-gb rounded-sm"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest">EN</span>
+            </button>
+          </li>
+        </ul>
       </div>
 
       <router-link v-if="$route.path !== '/login'" to="/login" class="btn btn-ghost btn-sm font-black uppercase text-[10px] tracking-widest opacity-60 hover:opacity-100">

@@ -193,6 +193,11 @@ const generateTokens = async (user: any) => {
 const FRONTEND_DIST = path.join(__dirname, '..', 'frontend', 'dist');
 const FRONTEND_PUBLIC = path.join(__dirname, '..', 'frontend', 'public');
 
+// Rotta per la versione
+app.get('/api/version', (req, res) => {
+  res.json({ version: '1.4.4' });
+});
+
 // Rotta specifica per robots.txt (per evitare il fallback HTML)
 app.get('/robots.txt', (req, res) => {
   const robotsPath = path.join(FRONTEND_PUBLIC, 'robots.txt');

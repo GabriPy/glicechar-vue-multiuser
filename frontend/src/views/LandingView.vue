@@ -280,20 +280,34 @@
 
     
     <!-- Footer -->
-    <footer class="py-12 px-4 border-t border-base-content/5 text-center">
-      <div class="flex items-center justify-center gap-2 mb-6">
-        <div class="flex items-center gap-2">
-              <span class="text-[9px] font-black uppercase tracking-widest opacity-30 text-center px-4">{{ $t('app.disclaimer') }}</span>
-            </div>
-        <div class="w-6 h-6 bg-primary rounded flex items-center justify-center text-white text-xs">
+    <footer class="py-16 px-4 border-t border-base-content/5 text-center bg-base-200/20">
+      <!-- Disclaimer row -->
+      <div class="max-w-3xl mx-auto mb-12">
+        <span class="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 block leading-relaxed px-8">
+          {{ $t('app.disclaimer') }}
+        </span>
+      </div>
+
+      <!-- Brand row -->
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center text-white text-sm shadow-lg shadow-primary/20">
           <i class="fi fi-sr-chart-line-up"></i>
         </div>
-        <span class="text-lg font-black tracking-tighter uppercase italic">Glice<span class="text-primary">Chart</span></span>
+        <span class="text-xl font-black tracking-tighter uppercase italic">Glice<span class="text-primary">Chart</span></span>
       </div>
-      <p class="text-[10px] font-black uppercase tracking-widest opacity-30 mb-2">
+      
+      <p class="text-[10px] font-black uppercase tracking-widest opacity-30 mb-4">
         {{ $t('landing.footer_tagline') }}
       </p>
-      <div class="text-[8px] font-bold opacity-20 uppercase tracking-[0.3em]">
+
+      <!-- Legal Links -->
+      <div class="flex items-center justify-center gap-6 mb-6">
+        <router-link to="/legal" class="text-[9px] font-black uppercase tracking-widest opacity-30 hover:opacity-100 transition-opacity hover:text-primary underline decoration-primary/20 underline-offset-4">
+          {{ $t('app.cookie_privacy') }}
+        </router-link>
+      </div>
+
+      <div class="text-[9px] font-bold opacity-20 uppercase tracking-[0.3em]">
         © 2026 GliceChart Multiuser - Developed by Ghibiri
       </div>
     </footer>

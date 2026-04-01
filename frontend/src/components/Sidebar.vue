@@ -149,17 +149,29 @@
 
     <!-- Language Selector & Footer -->
     <div class="p-6 mt-auto border-t border-base-content/5 space-y-4 relative z-10">
-      <div class="flex items-center justify-around bg-base-200/50 p-1 rounded-xl border border-base-content/5">
-        <button 
-          @click="changeLang('it')" 
-          class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] flex-1 rounded-lg"
-          :class="{ 'bg-primary text-primary-content shadow-sm': locale === 'it', 'opacity-40': locale !== 'it' }"
-        >IT</button>
-        <button 
-          @click="changeLang('en')" 
-          class="btn btn-ghost btn-xs font-black uppercase tracking-widest text-[9px] flex-1 rounded-lg"
-          :class="{ 'bg-primary text-primary-content shadow-sm': locale === 'en', 'opacity-40': locale !== 'en' }"
-        >EN</button>
+      <!-- Language Selector Dropdown -->
+      <div class="dropdown dropdown-top w-full">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-sm w-full flex items-center justify-between px-4 rounded-xl border border-base-content/5 hover:bg-base-200">
+          <div class="flex items-center gap-3">
+            <span :class="`flag-icon flag-icon-${locale === 'it' ? 'it' : 'gb'} rounded-sm`" style="width: 1.2rem; height: 0.9rem;"></span>
+            <span class="text-[10px] font-black uppercase tracking-widest opacity-60">{{ locale.toUpperCase() }}</span>
+          </div>
+          <i class="fi fi-sr-angle-small-up opacity-40"></i>
+        </div>
+        <ul tabindex="0" class="dropdown-content z-[110] menu p-2 shadow-2xl bg-base-300/90 backdrop-blur-xl rounded-box w-full mb-2 border border-white/10">
+          <li class="mb-1">
+            <button @click="changeLang('it')" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-base-100/50" :class="{ 'bg-primary/20 text-primary': locale === 'it' }">
+              <span class="flag-icon flag-icon-it rounded-sm"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest">IT</span>
+            </button>
+          </li>
+          <li>
+            <button @click="changeLang('en')" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-base-100/50" :class="{ 'bg-primary/20 text-primary': locale === 'en' }">
+              <span class="flag-icon flag-icon-gb rounded-sm"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest">EN</span>
+            </button>
+          </li>
+        </ul>
       </div>
 
       <div v-if="auth.user" class="p-4 bg-base-200/50 rounded-2xl flex flex-col gap-3 border border-base-content/5">

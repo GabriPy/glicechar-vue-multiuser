@@ -16,9 +16,16 @@ const RegisterView = () => import('../views/RegisterView.vue')
 const UserManagementView = () => import('../views/UserManagementView.vue')
 const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue')
 const ResetPasswordView = () => import('../views/ResetPasswordView.vue')
+const LegalView = () => import('../views/LegalView.vue')
 const NotFoundView = () => import('../views/NotFoundView.vue')
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/legal',
+    name: 'legal',
+    component: LegalView,
+    meta: { public: true }
+  },
   {
     path: '/login',
     name: 'login',
@@ -118,7 +125,7 @@ router.beforeEach(async (to, from, next) => {
   
   if (!auth.isAuthenticated && !to.meta.public) {
     next('/login')
-  } else if (auth.isAuthenticated && to.meta.public && to.name !== 'not-found') {
+  } else if (auth.isAuthenticated && to.meta.public && !['not-found', 'legal'].includes(to.name as string)) {
     next('/dashboard')
   } else if (to.meta.adminOnly && !auth.isAdmin) {
     next('/dashboard')
