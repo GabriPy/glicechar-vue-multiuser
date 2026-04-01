@@ -29,14 +29,14 @@
     <div class="stat place-items-center gap-1 py-4 border-base-content/5">
       <div class="stat-title text-[10px] uppercase font-extrabold tracking-[0.2em] opacity-50 flex items-center gap-2">
         <i class="fi fi-sr-arrows-v text-[10px]"></i>
-        Range
+        {{ $t('common.range') }}
       </div>
       <div class="stat-value text-xl font-extrabold tracking-tight flex items-baseline gap-1">
         <span class="text-error">{{ displayStats.min }}</span>
         <span class="text-xs opacity-20">/</span>
         <span class="text-info">{{ displayStats.max }}</span>
       </div>
-      <div class="stat-desc text-[9px] font-bold opacity-30 uppercase tracking-widest mt-1">Min / Max</div>
+      <div class="stat-desc text-[9px] font-bold opacity-30 uppercase tracking-widest mt-1">{{ $t('common.min_max') }}</div>
     </div>
 
     <!-- GMI -->
@@ -46,7 +46,7 @@
         GMI
       </div>
       <div class="stat-value text-2xl font-extrabold tracking-tight text-primary">{{ displayStats.gmi }}%</div>
-      <div class="stat-desc text-[9px] font-bold opacity-30 uppercase tracking-widest mt-1">Gestione</div>
+      <div class="stat-desc text-[9px] font-bold opacity-30 uppercase tracking-widest mt-1">{{ $t('common.management') }}</div>
     </div>
 
     <!-- eA1c -->
@@ -56,7 +56,7 @@
         eA1c
       </div>
       <div class="stat-value text-2xl font-extrabold tracking-tight text-secondary">{{ displayStats.eA1c }}%</div>
-      <div class="stat-desc text-[9px] font-bold opacity-30 uppercase tracking-widest mt-1">HbA1c stim.</div>
+      <div class="stat-desc text-[9px] font-bold opacity-30 uppercase tracking-widest mt-1">{{ $t('common.hba1c_stim') }}</div>
     </div>
 
   </div>
@@ -65,6 +65,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useGlucoseStore } from '../stores/glucose'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   stats: {
@@ -73,9 +74,18 @@ const props = defineProps({
   }
 })
 
+const { t } = useI18n()
 const store = useGlucoseStore()
 
 const displayStats = computed(() => {
   return props.stats || store.stats
+})
+
+const qualityText = computed(() => {
+  const g = parseFloat(displayStats.value.gmi)
+  if (g < 6.5) return t('common.excellent')
+  if (g < 7.5) return t('common.good')
+  if (g < 8.5) return t('common.intermediate')
+  return t('common.high')
 })
 </script>

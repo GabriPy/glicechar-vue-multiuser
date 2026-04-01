@@ -9,6 +9,7 @@ export interface User {
   username: string;
   email?: string;
   isAdmin: boolean;
+  timezone?: string;
   gluroo?: {
     link?: string;
     token?: string;
@@ -74,11 +75,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async register(username, password, email = '') {
+    async register(username, password, email = '', timezone = 'Europe/Rome') {
       this.loading = true;
       this.error = null;
       try {
-        await axios.post(`${API_BASE}/auth/register`, { username, password, email });
+        await axios.post(`${API_BASE}/auth/register`, { username, password, email, timezone });
         return true;
       } catch (e: any) {
         if (e.response?.data?.details && Array.isArray(e.response.data.details)) {
@@ -121,7 +122,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async updateAccount(data: { username: string, email?: string, password?: string, oldPassword?: string }) {
+    async updateAccount(data: { username: string, email?: string, password?: string, oldPassword?: string, timezone?: string }) {
       this.loading = true;
       this.error = null;
       try {
@@ -131,6 +132,7 @@ export const useAuthStore = defineStore('auth', {
         if (this.user) {
           this.user.username = data.username;
           this.user.email = data.email;
+          this.user.timezone = data.timezone;
           localStorage.setItem('user', JSON.stringify(this.user));
         }
         return true;

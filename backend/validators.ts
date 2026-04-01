@@ -9,6 +9,7 @@ export const registerSchema = z.object({
   username: z.string().min(3).max(50),
   password: z.string().min(6),
   email: z.string().transform(v => v === '' ? undefined : v).pipe(z.string().email().optional()),
+  timezone: z.string().min(1).optional().default('Europe/Rome'),
 });
 
 export const updateAccountSchema = z.object({
@@ -16,6 +17,7 @@ export const updateAccountSchema = z.object({
   email: z.string().email().optional().or(z.literal('')),
   password: z.string().min(6).optional().or(z.literal('')),
   oldPassword: z.string().optional().or(z.literal('')),
+  timezone: z.string().min(1).optional().default('Europe/Rome'),
 });
 
 export const forgotPasswordSchema = z.object({

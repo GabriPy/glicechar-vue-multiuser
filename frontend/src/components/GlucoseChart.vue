@@ -6,7 +6,14 @@
 
       <!-- Header -->
       <div class="flex items-center justify-between flex-wrap gap-2 relative z-10">
-        <span class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ title }}</span>
+        <div v-if="isHistory" class="flex items-center gap-2 px-3 py-1 bg-base-300 rounded-lg">
+          <div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+          <span class="text-[9px] font-black uppercase tracking-widest opacity-60">{{ $t('common.history') }}</span>
+        </div>
+        <div v-else class="flex items-center gap-2 px-3 py-1 bg-success/10 text-success rounded-lg">
+          <div class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
+          <span class="text-[9px] font-black uppercase tracking-widest">{{ $t('home.live_monitoring') }}</span>
+        </div>
         <div v-if="!isHistory" class="bg-base-200 p-1 rounded-xl border border-base-content/5 flex items-center gap-1">
           <button
             v-for="opt in ranges" :key="opt.v"
@@ -28,30 +35,30 @@
         <div v-if="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-base-100/50 backdrop-blur-[1px] transition-all rounded-xl">
           <span class="loading loading-spinner loading-md text-primary"></span>
         </div>
-        <Line :data="chartData" :options="chartOptions" />
+        <Line ref="chartRef" :data="chartData" :options="chartOptions" />
       </div>
 
       <!-- Legenda Insuline e Carboidrati -->
       <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-2 relative z-10 border-t border-base-content/5 pt-4">
-        <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-sm bg-[#6366f1] opacity-40"></div>
-          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Rapida</span>
+        <div class="flex items-center gap-2"> 
+          <div class="w-3 h-0.5 bg-[#6366f1]"></div>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ t('common.rapid') }}</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-sm bg-[#ec4899] opacity-40"></div>
-          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Lenta</span>
+          <div class="w-3 h-0.5 bg-[#ec4899]"></div>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ t('common.slow') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-[#d97706]"></div>
-          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">CHO</span>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ t('common.cho') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-[#0ea5e9]"></div>
-          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Note</span>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ t('common.notes') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-sm bg-[#94a3b8] opacity-20"></div>
-          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">Gap</span>
+          <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ t('common.gap') }}</span>
         </div>
       </div>
 
@@ -60,7 +67,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, defineExpose } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS, CategoryScale, LinearScale,
@@ -68,6 +75,7 @@ import {
 } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { useGlucoseStore } from '../stores/glucose'
+import { useAuthStore } from '../stores/auth'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler, annotationPlugin)
 
@@ -82,7 +90,25 @@ const props = defineProps({
   date: { type: String, default: null }
 })
 
+const chartRef = ref(null)
+
+const getImage = () => {
+  if (chartRef.value && chartRef.value.chart) {
+    // Chart.js instance method to get base64 image
+    return chartRef.value.chart.toBase64Image()
+  }
+  return null
+}
+
+defineExpose({ getImage })
+
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const store = useGlucoseStore()
+const auth = useAuthStore()
+
+const timezone = computed(() => auth.user?.timezone || 'Europe/Rome')
 
 const isHistory = computed(() => props.readings !== null)
 const displayReadings = computed(() => props.readings || store.readings)
@@ -99,7 +125,35 @@ const ranges = [
 ]
 
 function fmtLabel(iso) {
-  return new Date(iso).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+  return new Intl.DateTimeFormat('it-IT', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    timeZone: timezone.value
+  }).format(new Date(iso))
+}
+
+function getTzTimestamp(dateStr, timeStr, tz) {
+  const parts = dateStr.split('-').map(Number);
+  const timeParts = timeStr.split(':').map(Number);
+  // Creiamo una data UTC "finta" con i componenti locali
+  const d = new Date(Date.UTC(parts[0], parts[1]-1, parts[2], timeParts[0], timeParts[1], timeParts[2] || 0));
+  
+  // Formattiamo questa data UTC nel fuso orario target
+  const formatter = new Intl.DateTimeFormat('en-US', { 
+    timeZone: tz, 
+    hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+  
+  const partsArr = formatter.formatToParts(d);
+  const getPart = (type) => parseInt(partsArr.find(p => p.type === type).value);
+  
+  // Ricreiamo la data che Intl dice che sia in quel fuso
+  const tzD = Date.UTC(getPart('year'), getPart('month')-1, getPart('day'), getPart('hour') === 24 ? 0 : getPart('hour'), getPart('minute'), getPart('second'));
+  
+  const diff = tzD - d.getTime();
+  return d.getTime() - diff;
 }
 
 function ptColor(g) {
@@ -115,14 +169,22 @@ const chartData = computed(() => ({
       x: new Date(r.timestamp).getTime(),
       y: r.glucose
     })),
-    borderColor:        'rgba(99,102,241,0.3)',
+    borderColor:        'rgba(99,102,241,0.8)',
+    borderWidth:        2.5,
     backgroundColor:    'rgba(99,102,241,0.06)',
-    pointBackgroundColor: displayReadings.value.map(r => ptColor(r.glucose)),
-    pointBorderColor:   displayReadings.value.map(r => ptColor(r.glucose)),
-    pointRadius:        displayReadings.value.length > 150 ? 2 : 3,
-    pointHoverRadius:   6,
-    tension:            0.35,
-    fill:               true,
+    pointRadius:        0,
+    pointHoverRadius:   0,
+    tension:            0.4,
+    fill:               false,
+    spanGaps:           true,
+    segment: {
+      borderColor: ctx => {
+        const y = ctx.p1.parsed.y
+        if (y < store.settings.tir_min) return '#f59e0b' // Giallo/Arancio per basso
+        if (y > store.settings.tir_max) return '#ef4444' // Rosso per alto
+        return '#22c55e' // Verde per in range
+      }
+    }
   }]
 }))
 
@@ -145,8 +207,8 @@ const isToday = computed(() => {
     let xMin, xMax
     const nowTs = new Date().getTime()
     if (props.fullDay && props.date) {
-      xMin = new Date(`${props.date}T00:00:00`).getTime()
-      xMax = new Date(`${props.date}T23:59:59`).getTime()
+      xMin = getTzTimestamp(props.date, '00:00:00', timezone.value)
+      xMax = getTzTimestamp(props.date, '23:59:59', timezone.value)
     } else {
       // Homepage: ultimi N minuti fino ad ora
       xMax = nowTs
@@ -195,7 +257,7 @@ const isToday = computed(() => {
         borderDash: [2, 4],
         label: {
           display: true,
-          content: 'ADESSO',
+          content: t('common.now_label'),
           position: 'start',
           backgroundColor: '#475569',
           color: 'white',
@@ -262,27 +324,20 @@ const isToday = computed(() => {
           xMin: startTime,
           xMax: startTime,
           borderColor: color,
-          borderWidth: 2,
-          borderDash: [2, 2],
+          borderWidth: 1.5, // Leggermente più sottile
+          borderDash: [4, 4],
           label: {
             display: true,
             content: `${ins.units.toString().replace(',', '.')}U`,
-            position: 'start',
+            position: 'end', // Posizionato in alto
             backgroundColor: color,
             color: 'white',
             font: { size: 9, weight: 'bold' },
             padding: 3,
-            borderRadius: 4
+            borderRadius: 4,
+            yAdjust: 15 // Spostato un po' più in basso rispetto al bordo superiore
           }
         }
-      }
-
-      annotations[`insulin-box-${idx}`] = {
-        type: 'box',
-        xMin: Math.max(xMin, startTime),
-        xMax: Math.min(xMax, endTime),
-        backgroundColor: ins.type === 'rapid' ? 'rgba(99, 102, 241, 0.12)' : 'rgba(236, 72, 153, 0.12)',
-        borderWidth: 0,
       }
     })
 
@@ -382,7 +437,11 @@ const isToday = computed(() => {
         callbacks: { 
           title: (items) => {
             if (!items.length) return ''
-            return new Date(items[0].parsed.x).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+            return new Intl.DateTimeFormat('it-IT', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              timeZone: timezone.value
+            }).format(new Date(items[0].parsed.x))
           },
           label: ctx => ` ${ctx.parsed.y} mg/dL` 
         },
@@ -401,7 +460,11 @@ const isToday = computed(() => {
           maxTicksLimit: 8, 
           font: { family: 'DM Mono', size: 10 },
           callback: (value) => {
-            return new Date(value).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+            return new Intl.DateTimeFormat('it-IT', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              timeZone: timezone.value
+            }).format(new Date(value))
           }
         },
         grid:  { color: 'rgba(255,255,255,0.04)' },

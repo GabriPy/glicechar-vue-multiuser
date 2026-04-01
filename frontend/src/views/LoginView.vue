@@ -14,8 +14,8 @@ const loading = ref(false);
 
 async function handleLogin() {
   if (!username.value || !password.value) {
-    error.value = 'Inserisci username e password';
-    return;
+    error.value = t('login.error_missing_credentials')
+    return
   }
   loading.value = true;
   error.value = '';
@@ -75,11 +75,13 @@ async function handleLogin() {
         </div>
         
         <div class="flex flex-col gap-4 text-center">
-          <router-link to="/forgot-password" class="text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-all">
-            {{ $t('login.forgot_password') || 'Hai dimenticato la password?' }}
-          </router-link>
+          <div class="divider text-[10px] font-black opacity-30 tracking-[0.3em] my-6">{{ $t('login.or') }}</div>
           
-          <div class="divider text-[9px] font-black uppercase tracking-[0.2em] opacity-20">OR</div>
+          <div class="text-center">
+            <router-link to="/forgot-password" class="link link-hover text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100">
+              {{ $t('login.forgot_password') }}
+            </router-link>
+          </div>
 
           <div class="text-[10px] font-bold">
             <span class="opacity-40 uppercase tracking-widest">{{ $t('login.no_account') || 'Non hai un account?' }} </span>

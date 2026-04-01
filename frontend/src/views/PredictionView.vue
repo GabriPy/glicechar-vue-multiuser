@@ -180,6 +180,7 @@
 <script setup>
 import { onMounted, onUnmounted, computed } from 'vue'
 import { useGlucoseStore } from '../stores/glucose'
+import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
 import { Line } from 'vue-chartjs'
 import {
@@ -192,6 +193,9 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 
 const { t } = useI18n()
 const store = useGlucoseStore()
+const auth = useAuthStore()
+
+const timezone = computed(() => auth.user?.timezone || 'Europe/Rome')
 
 // ── Auto-refresh ogni 60s ─────────────────────────────────────────────────────
 let interval = null
@@ -235,9 +239,13 @@ const chartData = computed(() => {
     y: r.glucose
   }))
 
-  // Punti predizione (15, 30, 60 min)
+  const lastReading = store.readings[store.readings.length - 1]
+  const lastTs = lastReading ? new Date(lastReading.timestamp).getTime() : new Date().getTime()
   const nowTs = new Date().getTime()
+
+  // Punti predizione (colleghiamo all'ultima lettura per continuità)
   const predictionData = [
+    { x: lastTs, y: lastReading?.glucose },
     { x: nowTs, y: store.prediction?.current },
     { x: nowTs + 15 * 60000, y: store.prediction?.t15 },
     { x: nowTs + 30 * 60000, y: store.prediction?.t30 },
@@ -246,43 +254,43 @@ const chartData = computed(() => {
 
   // Dataset per l'intervallo di confidenza (min/max a 60 min)
   const rangeData = [
-    { x: nowTs + 60 * 60000, y: store.prediction?.maxExpected },
-    { x: nowTs + 60 * 60000, y: store.prediction?.minExpected }
+    { x: nowTs + 60 * 60000, y: store.prediction?.minExpected },
+    { x: nowTs + 60 * 60000, y: store.prediction?.maxExpected }
   ]
 
   return {
     datasets: [
       {
-        label: 'Glicemia Reale',
+        label: t('prediction.current_status'),
         data: pastData,
         borderColor: '#6366f1',
         backgroundColor: 'rgba(99, 102, 241, 0.05)',
         fill: true,
         tension: 0.3,
-        pointRadius: 1
+        pointRadius: 1,
+        borderWidth: 2
       },
       {
-        label: 'Intervallo Atteso',
-        data: [
-          { x: nowTs + 60 * 60000, y: store.prediction?.minExpected },
-          { x: nowTs + 60 * 60000, y: store.prediction?.maxExpected }
-        ],
+        label: t('prediction.expected_interval'),
+        data: rangeData,
         borderColor: 'transparent',
         backgroundColor: 'rgba(244, 63, 94, 0.1)',
         fill: true,
         pointRadius: 0,
-        tension: 0
+        tension: 0,
+        showLine: false // Solo punti per definire l'area se necessario, ma Chart.js Filler ha bisogno di linee
       },
       {
-        label: 'Predizione',
+        label: t('prediction.live_forecast'),
         data: predictionData,
         borderColor: '#f43f5e',
         borderWidth: 3,
         borderDash: [5, 5],
         pointBackgroundColor: '#f43f5e',
-        pointRadius: 5,
-        pointHoverRadius: 8,
-        tension: 0.4
+        pointRadius: (ctx) => ctx.dataIndex === 0 ? 0 : 4,
+        pointHoverRadius: 6,
+        tension: 0.4,
+        fill: false
       }
     ]
   }
@@ -303,7 +311,11 @@ const chartOptions = computed(() => {
         min: xMin,
         max: xMax,
         ticks: {
-          callback: (val) => new Date(val).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
+          callback: (val) => new Intl.DateTimeFormat('it-IT', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            timeZone: timezone.value
+          }).format(new Date(val)),
           font: { size: 9, family: 'DM Mono' },
           maxTicksLimit: 10
         },
@@ -311,7 +323,7 @@ const chartOptions = computed(() => {
       },
       y: {
         min: 40,
-        max: Math.max(250, store.prediction?.t60 + 50 || 250),
+        max: Math.max(250, (store.prediction?.t60 || 0) + 50),
         ticks: { font: { size: 9, family: 'DM Mono' } },
         grid: { color: 'rgba(255,255,255,0.03)' }
       }
@@ -323,7 +335,11 @@ const chartOptions = computed(() => {
         padding: 12,
         titleFont: { size: 12, weight: 'bold' },
         callbacks: {
-          title: (items) => new Date(items[0].parsed.x).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
+          title: (items) => new Intl.DateTimeFormat('it-IT', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            timeZone: timezone.value
+          }).format(new Date(items[0].parsed.x)),
           label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y} mg/dL`
         }
       },

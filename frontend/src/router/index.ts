@@ -16,6 +16,7 @@ const RegisterView = () => import('../views/RegisterView.vue')
 const UserManagementView = () => import('../views/UserManagementView.vue')
 const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue')
 const ResetPasswordView = () => import('../views/ResetPasswordView.vue')
+const NotFoundView = () => import('../views/NotFoundView.vue')
 
 const routes: RouteRecordRaw[] = [
   {
@@ -62,22 +63,26 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/calendar',
     name: 'calendar',
-    component: CalendarView
+    component: CalendarView,
+    meta: { requiresGluroo: true }
   },
   {
     path: '/prediction',
     name: 'prediction',
-    component: PredictionView
+    component: PredictionView,
+    meta: { requiresGluroo: true }
   },
   {
     path: '/patterns',
     name: 'patterns',
-    component: PatternsView
+    component: PatternsView,
+    meta: { requiresGluroo: true }
   },
   {
     path: '/comparison',
     name: 'comparison',
-    component: ComparativeAnalysisView
+    component: ComparativeAnalysisView,
+    meta: { requiresGluroo: true }
   },
   {
     path: '/dietometer',
@@ -87,12 +92,19 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/summary',
     name: 'summary',
-    component: PeriodicSummaryView
+    component: PeriodicSummaryView,
+    meta: { requiresGluroo: true }
   },
   {
     path: '/settings',
     name: 'settings',
     component: SettingsView
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: NotFoundView,
+    meta: { public: true }
   }
 ]
 
@@ -106,9 +118,12 @@ router.beforeEach(async (to, from, next) => {
   
   if (!auth.isAuthenticated && !to.meta.public) {
     next('/login')
-  } else if (auth.isAuthenticated && to.meta.public) {
+  } else if (auth.isAuthenticated && to.meta.public && to.name !== 'not-found') {
     next('/dashboard')
   } else if (to.meta.adminOnly && !auth.isAdmin) {
+    next('/dashboard')
+  } else if (to.meta.requiresGluroo && !auth.user?.gluroo?.link) {
+    // Se la rotta richiede Gluroo e non è configurato, rimandiamo alla dashboard (che mostra l'alert)
     next('/dashboard')
   } else {
     next()

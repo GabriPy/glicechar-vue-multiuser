@@ -8,7 +8,7 @@
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
           <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-success"></span>
         </div>
-        <span class="text-[11px] uppercase font-extrabold tracking-[0.2em] opacity-50">Live Monitoring</span>
+        <span class="text-[11px] uppercase font-extrabold tracking-[0.2em] opacity-50">{{ $t('home.live_monitoring') }}</span>
       </div>
 
       <!-- Valore + freccia -->
@@ -41,7 +41,7 @@
               <div class="w-2 h-2 rounded-full bg-primary"></div>
               <span class="text-xl font-extrabold tracking-tight">{{ store.iob.toFixed(1) }} <span class="text-xs opacity-40">U</span></span>
             </div>
-            <span class="text-[10px] font-bold uppercase opacity-30 tracking-widest">Insulina Attiva</span>
+            <span class="text-[10px] font-bold uppercase opacity-30 tracking-widest">{{ $t('home.active_insulin') }}</span>
           </div>
           
           <div class="divider divider-horizontal mx-0 h-6 opacity-10"></div>
@@ -51,7 +51,7 @@
               <div class="w-2 h-2 rounded-full bg-accent"></div>
               <span class="text-xl font-extrabold tracking-tight">{{ Math.round(store.cob) }} <span class="text-xs opacity-40">g</span></span>
             </div>
-            <span class="text-[10px] font-bold uppercase opacity-30 tracking-widest">CHO da assorbire</span>
+            <span class="text-[10px] font-bold uppercase opacity-30 tracking-widest">{{ $t('home.cho_to_absorb') }}</span>
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@
       <!-- Footer Info -->
       <div v-if="store.minutesAgo !== null" class="mt-2 px-4 py-1 rounded-full bg-base-300/50 border border-base-content/5">
         <span class="text-[11px] font-bold opacity-40 uppercase tracking-wider">
-          {{ store.minutesAgo === 0 ? 'adesso' : $t('home.ago', { n: store.minutesAgo }) }}
+          {{ store.minutesAgo === 0 ? $t('home.now') : $t('home.ago', { n: store.minutesAgo }) }}
         </span>
       </div>
 
@@ -71,8 +71,10 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { useGlucoseStore } from '../stores/glucose'
 import TrendArrow from './TrendArrow.vue'
 
+const { t } = useI18n()
 const store = useGlucoseStore()
 </script>

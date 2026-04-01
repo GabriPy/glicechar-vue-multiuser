@@ -6,13 +6,13 @@
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
         
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-primary/10 rounded-2xl text-primary flex items-center justify-center text-xl">
-              <i class="fi fi-sr-chart-pie-alt"></i>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-primary/10 rounded-3xl text-primary flex items-center justify-center text-2xl shadow-inner border border-primary/5">
+              <i class="fi fi-sr-document-signed"></i>
             </div>
             <div>
-              <h2 class="text-lg font-black uppercase tracking-tight leading-none">{{ $t('summary.title') }}</h2>
-              <span class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">{{ $t('summary.subtitle', { n: ranges.join(' / ') }) }}</span>
+              <h1 class="text-3xl font-black uppercase tracking-tight italic">{{ $t('summary.title').split(' ')[0] }} <span class="text-primary">{{ $t('summary.title').split(' ')[1] }}</span></h1>
+              <p class="text-[10px] font-black opacity-40 uppercase tracking-[0.3em]">{{ $t('summary.subtitle', { n: days }) }}</p>
             </div>
           </div>
 
@@ -35,7 +35,7 @@
               <button 
                 class="btn btn-square btn-sm btn-ghost hover:bg-success/10 hover:text-success"
                 @click="exportCSV"
-                title="Esporta CSV"
+                :title="$t('common.export') + ' CSV'"
                 :disabled="!hasData || loading"
               >
                 <i class="fi fi-sr-file-csv text-lg"></i>
@@ -43,7 +43,7 @@
               <button 
                 class="btn btn-square btn-sm btn-ghost hover:bg-error/10 hover:text-error"
                 @click="exportPDF"
-                title="Esporta PDF"
+                :title="$t('common.export') + ' PDF'"
                 :disabled="!hasData || loading"
               >
                 <i class="fi fi-sr-file-pdf text-lg"></i>
@@ -58,6 +58,16 @@
       <!-- Loading Overlay -->
       <div v-if="loading" class="absolute inset-0 z-10 bg-base-100/40 backdrop-blur-[2px] rounded-2xl flex items-center justify-center">
         <span class="loading loading-dots loading-md text-primary"></span>
+      </div>
+
+      <!-- Trend Chart -->
+      <div class="mb-6">
+        <GlucoseChart 
+          ref="chartRef"
+          :readings="readings"
+          :title="$t('summary.glucose_summary')"
+          :loading="loading"
+        />
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
@@ -117,15 +127,15 @@
                 <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-[9px] font-black uppercase tracking-widest opacity-50">
                   <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-warning"></span>
-                    <span>Below {{ belowPct }}%</span>
+                    <span>{{ $t('summary.below') }} {{ belowPct }}%</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-success"></span>
-                    <span>In range {{ inRangePct }}%</span>
+                    <span>{{ $t('summary.in_range') }} {{ inRangePct }}%</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-error"></span>
-                    <span>Above {{ abovePct }}%</span>
+                    <span>{{ $t('summary.above') }} {{ abovePct }}%</span>
                   </div>
                 </div>
               </div>
@@ -170,7 +180,7 @@
                     <div
                       class="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-base-100 bg-base-content"
                       :style="{ left: `calc(${gmiMarkerLeft}% - 6px)` }"
-                      title="GMI stimata"
+                      :title="$t('summary.gmi_estimated')"
                     ></div>
                   </div>
                   <div class="mt-2 flex justify-between text-[9px] font-black uppercase tracking-widest opacity-40">
@@ -213,13 +223,14 @@ import axios from 'axios'
 import { useGlucoseStore, type Reading } from '../stores/glucose'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
-import { jsPDF } from 'jspdf'
-import autoTable from 'jspdf-autotable'
+import { reportService } from '../services/reportService'
+import GlucoseChart from '../components/GlucoseChart.vue'
 
 const { t } = useI18n()
 const store = useGlucoseStore()
 const auth = useAuthStore()
 
+const chartRef = ref(null)
 const ranges = [7, 14, 30, 90]
 const days = ref(14)
 const readings = ref<Reading[]>([])
@@ -390,71 +401,36 @@ function exportCSV() {
 function exportPDF() {
   if (!readings.value.length) return
   
-  const doc = new jsPDF() as any
-  const pageWidth = doc.internal.pageSize.getWidth()
-  
   const currentLocale = t('common.mgdl').includes('mg/dL') ? 'it' : 'en'
-  const lang = currentLocale === 'it' ? 'it-IT' : 'en-US'
-  
-  // Header
-  doc.setFontSize(22)
-  doc.setTextColor(30, 41, 59)
-  doc.text('GliceChart', 14, 20)
-  
-  doc.setFontSize(14)
-  doc.setTextColor(100, 116, 139)
-  doc.text(t('summary.export.report_title', { n: days.value }), 14, 30)
-  
-  doc.setFontSize(10)
-  doc.text(`${t('summary.export.user')}: ${auth.user?.username || 'N/A'}`, 14, 40)
-  doc.text(`${t('summary.export.export_date')}: ${new Date().toLocaleString(lang)}`, 14, 45)
-  
-  // Sintesi Glicemica
-  doc.setDrawColor(226, 232, 240)
-  doc.line(14, 55, pageWidth - 14, 55)
-  
-  doc.setFontSize(12)
-  doc.setTextColor(30, 41, 59)
-  doc.text(t('summary.glucose_summary'), 14, 65)
-  
-  const statsData = [
-    [t('summary.avg_glucose'), `${avg.value} mg/dL`],
-    [t('summary.variability'), `${sd.value} mg/dL`],
-    [`In Range (TIR)`, `${inRangePct.value}%`],
-    [`Below Range`, `${belowPct.value}%`],
-    [`Above Range`, `${abovePct.value}%`],
-    [t('summary.hba1c_estimate'), `${gmi.value.toFixed(1)}%`]
-  ]
-  
-  autoTable(doc, {
-    startY: 70,
-    head: [[t('summary.export.indicator'), t('summary.export.value')]],
-    body: statsData,
-    theme: 'striped',
-    headStyles: { fillColor: [79, 70, 229] },
-    margin: { left: 14, right: 14 }
-  })
-  
-  // Tabella Letture (ultime 100 per non appesantire il PDF, o tutte se poche)
-  const lastY = (doc as any).lastAutoTable.finalY || 130
-  doc.text(t('summary.export.recent_readings'), 14, lastY + 15)
-  
-  const tableData = readings.value.slice(-100).reverse().map(r => [
-    new Date(r.timestamp).toLocaleString(lang),
-    `${r.glucose} mg/dL`,
-    r.trend || 'N/A'
-  ])
-  
-  autoTable(doc, {
-    startY: lastY + 20,
-    head: [[t('summary.export.date_time'), t('summary.export.glucose'), t('summary.export.trend')]],
-    body: tableData,
-    theme: 'grid',
-    headStyles: { fillColor: [51, 65, 85] },
-    margin: { left: 14, right: 14 }
-  })
-  
-  doc.save(`glicechart_report_${days.value}d.pdf`)
+  const filename = `glicechart-summary-${days.value}d-${new Date().toISOString().split('T')[0]}.pdf`
+
+  const chartImage = chartRef.value?.getImage()
+
+  reportService.generateReport({
+    title: t('summary.export.report_title', { n: days.value }),
+    subtitle: t('summary.subtitle', { n: days.value }),
+    username: auth.user?.username || 'N/A',
+    lang: currentLocale,
+    avg: avg.value,
+    tir: inRangePct.value,
+    sd: sd.value,
+    gmi: gmi.value,
+    chartImage,
+    tirDetails: {
+      below: belowPct.value,
+      inRange: inRangePct.value,
+      above: abovePct.value,
+      min: store.settings.tir_min,
+      max: store.settings.tir_max
+    },
+    quality: {
+      daysUsed: daysUsed.value,
+      totalDays: days.value,
+      samples: sampleCount.value,
+      gaps: gapCount.value,
+      avgInterval: avgIntervalMin.value
+    }
+  }, filename)
 }
 
 onMounted(() => {

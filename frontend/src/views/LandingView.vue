@@ -12,7 +12,7 @@
       
       <div class="max-w-4xl mx-auto text-center relative z-10">
         <div class="badge badge-outline badge-primary font-black text-[10px] uppercase tracking-[0.3em] py-3 px-5 mb-6">
-          v1.4.0
+          v1.4.4
         </div>
         <h1 class="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none mb-4">
           {{ $t('landing.hero_title') }} <br/>
@@ -40,7 +40,7 @@
       <div class="max-w-6xl mx-auto">
         <div class="text-center mb-12">
           <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 block">{{ $t('landing.features_title') }}</span>
-          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 italic italic-primary">Strumenti <span class="text-primary">Intelligenti</span></h2>
+          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 italic italic-primary">{{ $t('landing.smart_tools').split(' ')[0] }} <span class="text-primary">{{ $t('landing.smart_tools').split(' ')[1] }}</span></h2>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -70,7 +70,7 @@
         <!-- Intro Section -->
         <div class="max-w-3xl mx-auto text-center mb-24">
           <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 block">{{ $t('about.what_is') }}</span>
-          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 mb-8 italic italic-primary">Controllo <span class="text-primary">Totale</span></h2>
+          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 mb-8 italic italic-primary">{{ $t('landing.total_control').split(' ')[0] }} <span class="text-primary">{{ $t('landing.total_control').split(' ')[1] }}</span></h2>
           <p class="text-base md:text-lg font-bold opacity-40 leading-relaxed">
             {{ $t('about.what_is_desc') }}
           </p>
@@ -78,7 +78,7 @@
 
         <div class="text-center mb-16">
           <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 block">{{ $t('about.subtitle') }}</span>
-          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 italic italic-secondary">Il Cuore della <span class="text-secondary">Predizione</span></h2>
+          <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 italic italic-secondary">{{ $t('landing.prediction_heart').split(' ')[0] }} {{ $t('landing.prediction_heart').split(' ')[1] }} <span class="text-secondary">{{ $t('landing.prediction_heart').split(' ')[2] }}</span></h2>
         </div>
 
         <!-- Featured Prediction Section -->
@@ -112,28 +112,28 @@
             </div>
 
             <!-- Full Width Formula -->
-            <div class="bg-base-100 p-10 rounded-[2.5rem] border border-base-content/5 shadow-inner overflow-x-auto relative group">
+            <div class="bg-base-100 p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-base-content/5 shadow-inner overflow-x-auto relative group custom-scrollbar-hide">
               <div class="absolute inset-0 bg-gradient-to-r from-secondary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[2.5rem]"></div>
-              <span class="text-[10px] font-black uppercase opacity-30 block mb-8 tracking-[0.3em] text-center whitespace-nowrap relative z-10">{{ $t('about.formula_label') }}</span>
-              <div class="flex items-center justify-center gap-4 md:gap-8 font-black tracking-tighter whitespace-nowrap px-4 relative z-10">
+              <span class="text-[8px] md:text-[10px] font-black uppercase opacity-30 block mb-6 md:mb-8 tracking-[0.3em] text-center whitespace-nowrap relative z-10">{{ $t('about.formula_label') }}</span>
+              <div class="flex items-center justify-center gap-2 md:gap-8 font-black tracking-tighter whitespace-nowrap px-2 relative z-10 min-w-fit">
                 <div class="flex flex-col items-center">
-                  <span class="text-3xl md:text-5xl text-secondary">G<sub>pred</sub></span>
+                  <span class="text-2xl md:text-5xl text-secondary">G<sub>pred</sub></span>
                 </div>
-                <span class="text-2xl md:text-4xl opacity-20">=</span>
+                <span class="text-xl md:text-4xl opacity-20">=</span>
                 <div class="flex flex-col items-center">
-                  <span class="text-2xl md:text-4xl opacity-70">G<sub>base</sub></span>
+                  <span class="text-lg md:text-4xl opacity-70">G<sub>base</sub></span>
                 </div>
-                <span class="text-2xl md:text-4xl opacity-20">+</span>
+                <span class="text-lg md:text-4xl opacity-20">+</span>
                 <div class="flex flex-col items-center">
-                  <span class="text-2xl md:text-4xl text-primary">&Delta;<sub>trend</sub></span>
+                  <span class="text-lg md:text-4xl text-primary">&Delta;<sub>trend</sub></span>
                 </div>
-                <span class="text-2xl md:text-4xl opacity-20">&minus;</span>
+                <span class="text-lg md:text-4xl opacity-20">&minus;</span>
                 <div class="flex flex-col items-center">
-                  <span class="text-2xl md:text-4xl text-error">&Delta;<sub>ins</sub></span>
+                  <span class="text-lg md:text-4xl text-error">&Delta;<sub>ins</sub></span>
                 </div>
-                <span class="text-2xl md:text-4xl opacity-20">+</span>
+                <span class="text-lg md:text-4xl opacity-20">+</span>
                 <div class="flex flex-col items-center">
-                  <span class="text-2xl md:text-4xl text-success">&Delta;<sub>cho</sub></span>
+                  <span class="text-lg md:text-4xl text-success">&Delta;<sub>cho</sub></span>
                 </div>
               </div>
             </div>
@@ -257,7 +257,7 @@
     </section>
 
     <!-- Secure Management (Final CTA) -->
-    <section class="py-20 px-4">
+    <!-- <section class="py-20 px-4">
       <div class="max-w-4xl mx-auto text-center bg-primary text-primary-content rounded-[3rem] p-12 md:p-20 shadow-2xl relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 pointer-events-none">
           <div class="absolute -top-20 -left-20 w-64 h-64 bg-white blur-[100px] rounded-full"></div>
@@ -275,11 +275,16 @@
           {{ $t('landing.get_started') }}
         </router-link>
       </div>
-    </section>
+    </section> -->
 
+
+    
     <!-- Footer -->
     <footer class="py-12 px-4 border-t border-base-content/5 text-center">
       <div class="flex items-center justify-center gap-2 mb-6">
+        <div class="flex items-center gap-2">
+              <span class="text-[9px] font-black uppercase tracking-widest opacity-30 text-center px-4">{{ $t('app.disclaimer') }}</span>
+            </div>
         <div class="w-6 h-6 bg-primary rounded flex items-center justify-center text-white text-xs">
           <i class="fi fi-sr-chart-line-up"></i>
         </div>
@@ -315,5 +320,12 @@ function getFeatureIcon(n) {
 <style scoped>
 .collapse-title::after {
   top: 1.2rem;
+}
+.custom-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

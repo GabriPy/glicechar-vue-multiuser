@@ -5,25 +5,25 @@
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-accent/5 blur-3xl rounded-full"></div>
         
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-accent/10 rounded-2xl text-accent flex items-center justify-center text-xl">
-              <i class="fi fi-sr-wheat"></i>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-primary/10 rounded-3xl text-primary flex items-center justify-center text-2xl shadow-inner border border-primary/5">
+              <i class="fi fi-sr-calculator"></i>
             </div>
             <div>
-              <h2 class="text-lg font-black uppercase tracking-tight leading-none">{{ $t('dietometer.title') }}</h2>
-              <span class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">{{ $t('dietometer.subtitle') }}</span>
+              <h1 class="text-3xl font-black uppercase tracking-tight italic">{{ $t('dietometer.title').split(' ')[0] }} <span class="text-primary">{{ $t('dietometer.title').split(' ')[1] }}</span></h1>
+              <p class="text-[10px] font-black opacity-40 uppercase tracking-[0.3em]">{{ $t('dietometer.subtitle') }}</p>
             </div>
           </div>
 
           <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <!-- Ricerca -->
             <div class="relative w-full sm:w-64">
-              <i class="fi fi-sr-search absolute left-3 top-1/2 -translate-y-1/2 text-[10px] opacity-30"></i>
-              <input
-                v-model="searchQuery"
-                type="text"
-                class="input input-sm bg-base-200/60 rounded-xl font-black tracking-widest text-[10px] w-full pl-9 h-10 border-none focus:outline-none"
+              <i class="fi fi-sr-search absolute left-4 top-1/2 -translate-y-1/2 opacity-30"></i>
+              <input 
+                type="text" 
+                v-model="searchQuery" 
                 :placeholder="$t('dietometer.search_placeholder')"
+                class="input input-bordered w-full pl-12 font-black bg-base-200/30 rounded-2xl" 
               />
             </div>
 
@@ -148,9 +148,13 @@
       </div>
 
       <template v-else>
-        <div v-for="(categoryFoods, category) in groupedFoods" :key="category" class="flex flex-col gap-4">
+        <div 
+          v-for="(categoryFoods, category) in groupedFoods" 
+          :key="category" 
+          v-show="categoryFoods.length > 0"
+          class="flex flex-col gap-4"
+        >
           <div 
-            v-if="categoryFoods.length"
             class="flex items-center gap-3 cursor-pointer group w-fit"
             @click="collapsedCategories[category] = !collapsedCategories[category]"
           >
@@ -166,7 +170,7 @@
           </div>
 
           <div 
-            v-if="categoryFoods.length && !collapsedCategories[category]" 
+            v-if="!collapsedCategories[category]" 
             class="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             <div
@@ -195,25 +199,15 @@
                 <!-- Info Peso (Grande) -->
                 <div class="flex items-center justify-between bg-base-300/30 rounded-xl px-4 py-3 border border-base-content/5">
                   <span class="text-[9px] font-black uppercase opacity-30 tracking-widest">{{ $t('dietometer.weight') }}</span>
-                  <span class="text-2xl font-black text-base-content leading-none">
-                    {{ grams[food.id] }}<span class="text-[10px] ml-1 opacity-40 uppercase tracking-widest">{{ $t('dietometer.grams') }}</span>
-                  </span>
-                </div>
-
-                <!-- Slider Ultra-Sottile -->
-                <div class="px-1">
-                  <input
-                    v-model.number="grams[food.id]"
-                    type="range"
-                    min="0"
-                    max="300"
-                    step="5"
-                    class="range range-accent range-xs"
-                  />
-                  <div class="flex justify-between text-[8px] font-black opacity-20 uppercase tracking-[0.2em] mt-2">
-                    <span>0g</span>
-                    <span>150g</span>
-                    <span>300g</span>
+                  <div class="flex items-center gap-2">
+                    <input
+                      v-model.number="grams[food.id]"
+                      type="number"
+                      min="0"
+                      max="1000"
+                      class="bg-transparent border-none text-2xl font-black text-base-content leading-none w-20 text-right focus:ring-0 no-spinner"
+                    />
+                    <span class="text-[10px] opacity-40 uppercase tracking-widest">{{ $t('dietometer.grams') }}</span>
                   </div>
                 </div>
 
@@ -242,7 +236,7 @@
             </div>
             <div>
               <div class="text-sm font-black uppercase tracking-widest">{{ $t('dietometer.total_cho') }}</div>
-              <div class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">Totale {{ Math.round(cartTotal) }}g</div>
+              <div class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">{{ $t('dietometer.total') }} {{ Math.round(cartTotal) }}g</div>
             </div>
           </div>
           <form method="dialog">
@@ -251,7 +245,8 @@
         </div>
 
         <div class="mt-4">
-          <div v-if="!cartItems.length" class="py-10 text-center opacity-30">
+          <div v-if="!cartItems.length" class="py-12 text-center opacity-30">
+            <i class="fi fi-sr-box-open text-4xl mb-4 block"></i>
             <div class="text-[10px] font-black uppercase tracking-widest">{{ $t('dietometer.empty_cart') }}</div>
           </div>
 
@@ -407,7 +402,7 @@ async function fetchFoods() {
     })
     foods.value = uniqueFoods
     foods.value.forEach(f => {
-      if (grams[f.id] === undefined) grams[f.id] = 100
+      if (grams[f.id] === undefined || grams[f.id] === 0) grams[f.id] = 100
     })
   } catch (e) {
     foodsError.value = e?.response?.data?.error || 'Errore caricamento alimenti'

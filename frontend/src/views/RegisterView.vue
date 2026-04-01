@@ -2,8 +2,11 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import PublicNavbar from '../components/PublicNavbar.vue';
+import TimezoneSelector from '../components/TimezoneSelector.vue';
 
+const { t } = useI18n();
 const auth = useAuthStore();
 const router = useRouter();
 
@@ -11,6 +14,7 @@ const username = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const email = ref('');
+const timezone = ref('Europe/Rome');
 const error = ref<string | null>('');
 const loading = ref(false);
 const showEmailWarning = ref(false);
@@ -45,7 +49,7 @@ async function handleRegister(skipWarning = false) {
 
   loading.value = true;
   error.value = '';
-  const success = await auth.register(username.value, password.value, email.value);
+  const success = await auth.register(username.value, password.value, email.value, timezone.value);
   if (success) {
     router.push('/login');
   } else {
@@ -69,30 +73,36 @@ async function handleRegister(skipWarning = false) {
     <div class="max-w-md w-full space-y-8 bg-base-100 p-8 rounded-2xl shadow-xl relative z-10 border border-base-content/5">
       <div class="text-center">
         <h2 class="mt-6 text-3xl font-black uppercase tracking-tight text-primary italic">Glice<span class="text-base-content">Chart</span></h2>
-        <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Registrazione Multiutente</p>
+        <p class="mt-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">{{ $t('login.register') }} {{ $t('about.multiuser') }}</p>
       </div>
       
       <div class="mt-8 space-y-4" @keyup.enter="handleRegister(false)">
         <div class="form-control">
-          <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Username</span></label>
-          <input v-model="username" type="text" required class="input input-bordered w-full font-black" placeholder="Il tuo username" />
+          <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('login.username') }}</span></label>
+          <input v-model="username" type="text" required class="input input-bordered w-full font-black" :placeholder="$t('login.username_placeholder')" />
         </div>
 
         <div class="form-control">
           <label class="label py-1">
-            <span class="label-text text-[10px] font-black uppercase opacity-40">Email (Consigliata)</span>
+            <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.email') }}</span>
           </label>
           <input v-model="email" type="email" class="input input-bordered w-full font-black" placeholder="tua@email.it" />
-          <p class="text-[9px] opacity-40 italic px-1">Necessaria per il recupero password</p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="label py-1">
+            <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.timezone') }}</span>
+          </label>
+          <TimezoneSelector v-model="timezone" />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="form-control">
-            <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Password</span></label>
+            <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('login.password') }}</span></label>
             <input v-model="password" type="password" required class="input input-bordered w-full font-black" placeholder="••••••••" />
           </div>
           <div class="form-control">
-            <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">Conferma</span></label>
+            <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('settings.confirm_new_password') }}</span></label>
             <input v-model="confirmPassword" type="password" required class="input input-bordered w-full font-black" placeholder="••••••••" />
           </div>
         </div>
@@ -105,14 +115,14 @@ async function handleRegister(skipWarning = false) {
         <div class="pt-4">
           <button type="button" @click="handleRegister(false)" :disabled="loading" class="btn btn-primary w-full font-black uppercase tracking-widest shadow-lg shadow-primary/20">
             <span v-if="loading" class="loading loading-spinner"></span>
-            Registrati
+            {{ $t('login.register') }}
           </button>
         </div>
 
         <div class="text-center">
           <div class="text-[10px] font-bold">
-            <span class="opacity-40 uppercase tracking-widest">Hai già un account? </span>
-            <router-link to="/login" class="link link-primary font-black uppercase tracking-widest">Accedi</router-link>
+            <span class="opacity-40 uppercase tracking-widest">{{ $t('login.no_account').includes('?') ? 'Hai già un account?' : 'Already have an account?' }} </span>
+            <router-link to="/login" class="link link-primary font-black uppercase tracking-widest">{{ $t('landing.login') }}</router-link>
           </div>
         </div>
       </div>

@@ -17,20 +17,18 @@
     <!-- Navigazione -->
     <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar pb-6">
       <!-- DASHBOARD -->
-      <div class="mb-4">
-        <router-link 
-          to="/dashboard" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-          :class="$route.path === '/dashboard' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-          @click="$emit('close-drawer')"
-        >
-          <i class="fi fi-sr-bolt text-sm"></i>
-          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.home') }}</span>
-        </router-link>
-      </div>
+      <router-link 
+        to="/dashboard" 
+        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
+        :class="$route.path === '/dashboard' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+        @click="$emit('close-drawer')"
+      >
+        <i class="fi fi-sr-bolt text-sm"></i>
+        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.home') }}</span>
+      </router-link>
 
       <!-- SEZIONE STORICO -->
-      <div class="mb-2">
+      <div v-if="auth.user?.gluroo?.link" class="pt-2">
         <button 
           @click="isHistoryExpanded = !isHistoryExpanded"
           class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer"
@@ -77,7 +75,7 @@
       </div>
 
       <!-- SEZIONE AI -->
-      <div class="mb-2">
+      <div v-if="auth.user?.gluroo?.link" class="pt-1">
         <button 
           @click="isAiExpanded = !isAiExpanded"
           class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer"
@@ -114,27 +112,25 @@
       </div>
 
       <!-- ALTRE FUNZIONALITÀ -->
-      <div class="pt-2 space-y-1">
-        <router-link 
-          to="/dietometer" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-          :class="$route.path === '/dietometer' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-          @click="$emit('close-drawer')"
-        >
-          <i class="fi fi-sr-wheat text-sm"></i>
-          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.dietometer') }}</span>
-        </router-link>
+      <router-link 
+        to="/dietometer" 
+        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
+        :class="$route.path === '/dietometer' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+        @click="$emit('close-drawer')"
+      >
+        <i class="fi fi-sr-wheat text-sm"></i>
+        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.dietometer') }}</span>
+      </router-link>
 
-        <router-link 
-          to="/settings" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
-          :class="$route.path === '/settings' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
-          @click="$emit('close-drawer')"
-        >
-          <i class="fi fi-sr-settings text-sm"></i>
-          <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.settings') }}</span>
-        </router-link>
-      </div>
+      <router-link 
+        to="/settings" 
+        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group"
+        :class="$route.path === '/settings' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-base-300 opacity-60 hover:opacity-100'"
+        @click="$emit('close-drawer')"
+      >
+        <i class="fi fi-sr-settings text-sm"></i>
+        <span class="text-[11px] font-black uppercase tracking-widest">{{ $t('nav.settings') }}</span>
+      </router-link>
 
       <!-- Admin Section -->
       <div v-if="auth.isAdmin" class="pt-4 border-t border-base-content/5 mt-4">

@@ -8,13 +8,13 @@
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
         
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-primary/10 rounded-2xl text-primary flex items-center justify-center text-xl">
-              <i class="fi fi-sr-calendar"></i>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-primary/10 rounded-3xl text-primary flex items-center justify-center text-2xl shadow-inner border border-primary/5">
+              <i class="fi fi-sr-calendar-clock"></i>
             </div>
             <div>
-              <h2 class="text-lg font-black uppercase tracking-tight leading-none">{{ $t('calendar.title') }}</h2>
-              <span class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">{{ $t('calendar.subtitle') }}</span>
+              <h1 class="text-3xl font-black uppercase tracking-tight italic">{{ $t('calendar.title').split(' ')[0] }} <span class="text-primary">{{ $t('calendar.title').split(' ')[1] }}</span></h1>
+              <p class="text-[10px] font-black opacity-40 uppercase tracking-[0.3em]">{{ $t('calendar.subtitle') }}</p>
             </div>
           </div>
           
@@ -60,7 +60,7 @@
         <div class="card-body p-0">
           <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-primary/5">
             <div class="flex items-center gap-2">
-              <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.insulin') }}</span>
+              <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.insulin_short') }}</span>
               <span class="px-2 py-0.5 rounded-md bg-primary/10 text-[9px] font-black text-primary">{{ store.historyInsulin.length }}</span>
             </div>
             <button @click="startAdd('insulin')" class="btn btn-ghost btn-xs btn-circle text-primary">
@@ -74,7 +74,8 @@
             </div>
             <div v-else class="space-y-2">
               <div v-if="!store.historyInsulin.length" class="py-8 text-center opacity-20">
-                <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_data') }}</span>
+                <i class="fi fi-sr-box-open text-3xl mb-2 block"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_records') }}</span>
               </div>
               <div 
                 v-for="ins in sortedHistoryInsulin" 
@@ -116,7 +117,7 @@
         <div class="card-body p-0">
           <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-accent/5">
             <div class="flex items-center gap-2">
-              <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.carbs') }}</span>
+              <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.carbs_short') }}</span>
               <span class="px-2 py-0.5 rounded-md bg-accent/10 text-[9px] font-black text-accent">{{ store.historyCarbs.length }}</span>
             </div>
             <button @click="startAdd('carb')" class="btn btn-ghost btn-xs btn-circle text-accent">
@@ -130,7 +131,8 @@
             </div>
             <div v-else class="space-y-2">
               <div v-if="!store.historyCarbs.length" class="py-8 text-center opacity-20">
-                <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_data') }}</span>
+                <i class="fi fi-sr-box-open text-3xl mb-2 block"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_records') }}</span>
               </div>
               <div 
                 v-for="c in sortedHistoryCarbs" 
@@ -169,7 +171,7 @@
         <div class="card-body p-0">
           <div class="p-4 border-b border-base-content/5 flex items-center justify-between bg-secondary/5">
             <div class="flex items-center gap-2">
-              <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.notes') }}</span>
+              <span class="text-[10px] uppercase font-black tracking-widest opacity-60">{{ $t('calendar.notes_short') }}</span>
               <span class="px-2 py-0.5 rounded-md bg-secondary/10 text-[9px] font-black text-secondary">{{ store.historyNotes.length }}</span>
             </div>
             <button @click="startAdd('note')" class="btn btn-ghost btn-xs btn-circle text-secondary">
@@ -183,7 +185,8 @@
             </div>
             <div v-else class="space-y-2">
               <div v-if="!store.historyNotes.length" class="py-8 text-center opacity-20">
-                <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_data') }}</span>
+                <i class="fi fi-sr-box-open text-3xl mb-2 block"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest">{{ $t('calendar.no_records') }}</span>
               </div>
               <div 
                 v-for="n in sortedHistoryNotes" 
@@ -219,92 +222,102 @@
 
     <!-- Modal Modifica / Aggiunta -->
     <dialog id="edit_modal" class="modal">
-      <div class="modal-box bg-base-200 border border-base-content/10 shadow-2xl rounded-3xl p-6">
-        <h3 class="font-black text-lg uppercase italic tracking-tight mb-4 flex items-center gap-2">
-          <i class="fi" :class="isEditing ? 'fi-sr-pencil text-primary' : 'fi-sr-plus text-success'"></i> 
-          {{ isEditing ? $t('common.edit') : $t('common.add') }} {{ $t('calendar.record') }}
+      <div class="modal-box bg-base-100 border border-base-content/10 p-8 rounded-3xl shadow-2xl relative overflow-visible">
+        <h3 class="text-xl font-black uppercase italic tracking-tight mb-8">
+          {{ isEditing ? $t('calendar.edit_title') : $t('calendar.add_record') }}
         </h3>
-        
-        <div v-if="editingItem" class="space-y-4">
+
+        <div v-if="editingItem" class="space-y-6">
+          <!-- Orario -->
+          <div class="form-control">
+            <label class="label py-1 flex justify-between items-end">
+              <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('calendar.time_label') }}</span>
+              <span class="text-[10px] font-black text-base-content opacity-20 tracking-widest">FORMATO 24H</span>
+            </label>
+            <input type="time" v-model="editForm.time" class="input input-bordered w-full font-black text-2xl bg-base-200/30 focus:border-base-content/20 focus:ring-2 focus:ring-base-content/5 transition-all" />
+          </div>
+
           <!-- Modifica Insulina -->
-          <template v-if="editingItem.type === 'insulin'">
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black uppercase opacity-40">{{ $t('calendar.units_label') }}</label>
-              <input 
-                type="number" 
-                step="0.5" 
-                v-model="editForm.units" 
-                class="input bg-base-300/50 font-black text-xl"
-              />
+          <template v-if="editingItem.itemType === 'insulin'">
+            <div class="form-control">
+              <label class="label py-1 flex justify-between items-end">
+                <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('calendar.units_label') }}</span>
+                <span class="text-[10px] font-black text-primary opacity-40 tracking-widest">UNITÀ (U)</span>
+              </label>
+              <input type="number" step="0.5" v-model.number="editForm.units" class="input input-bordered w-full font-black text-2xl bg-base-200/30 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
             </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black uppercase opacity-40">{{ $t('calendar.type_label') }}</label>
-              <select v-model="editForm.insulinType" class="select bg-base-300/50 font-black">
-                <option value="rapid">{{ $t('calendar.rapid') }}</option>
-                <option value="slow">{{ $t('calendar.slow') }}</option>
-              </select>
+            <div class="form-control mt-4">
+              <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('calendar.type_label') }}</span></label>
+              <div class="grid grid-cols-2 gap-2">
+                <button 
+                  @click="editForm.insulinType = 'rapid'"
+                  class="btn btn-sm h-12 rounded-xl font-black uppercase tracking-widest transition-all"
+                  :class="editForm.insulinType === 'rapid' ? 'btn-primary border-2' : 'btn-ghost bg-base-200/50 opacity-40'"
+                >
+                  {{ $t('common.rapid') }}
+                </button>
+                <button 
+                  @click="editForm.insulinType = 'slow'"
+                  class="btn btn-sm h-12 rounded-xl font-black uppercase tracking-widest transition-all"
+                  :class="editForm.insulinType === 'slow' ? 'btn-secondary border-2' : 'btn-ghost bg-base-200/50 opacity-40'"
+                >
+                  {{ $t('common.slow') }}
+                </button>
+              </div>
             </div>
           </template>
 
           <!-- Modifica Carboidrati -->
-          <template v-else-if="editingItem.type === 'carb'">
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black uppercase opacity-40">{{ $t('calendar.amount_label') }}</label>
-              <input 
-                type="number" 
-                v-model="editForm.amount" 
-                class="input bg-base-300/50 font-black text-xl"
-              />
+          <template v-else-if="editingItem.itemType === 'carb'">
+            <div class="form-control">
+              <label class="label py-1 flex justify-between items-end">
+                <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('calendar.amount_label') }}</span>
+                <span class="text-[10px] font-black text-accent opacity-40 tracking-widest">GRAMMI (g)</span>
+              </label>
+              <input type="number" v-model.number="editForm.amount" class="input input-bordered w-full font-black text-2xl bg-base-200/30 focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all" />
             </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black uppercase opacity-40">{{ $t('calendar.absorption_speed') }}</label>
-              <div class="flex items-center gap-1 bg-base-300 p-1 rounded-xl">
+            <div class="form-control mt-4">
+              <label class="label py-1"><span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('calendar.absorption_label') }}</span></label>
+              <div class="grid grid-cols-3 gap-2">
                 <button 
                   v-for="s in ['fast', 'normal', 'slow']" 
                   :key="s"
                   @click="editForm.speed = s"
-                  class="btn btn-xs flex-1 rounded-lg border-none font-black text-[9px] uppercase tracking-tighter h-8 transition-all"
-                  :class="editForm.speed === s ? 'bg-accent text-accent-content shadow-md' : 'btn-ghost opacity-40 hover:opacity-100'"
+                  class="btn btn-xs h-10 rounded-xl font-black uppercase text-[9px] tracking-widest transition-all"
+                  :class="editForm.speed === s ? 'btn-accent border-2' : 'btn-ghost bg-base-200/50 opacity-40'"
                 >
-                  {{ s === 'fast' ? $t('calendar.fast') : s === 'normal' ? $t('calendar.medium') : $t('calendar.slow') }}
+                  {{ $t(`calendar.${s}`) }}
                 </button>
               </div>
             </div>
           </template>
 
           <!-- Modifica Nota -->
-          <template v-else-if="editingItem.type === 'note'">
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black uppercase opacity-40">{{ $t('calendar.note_text_label') }}</label>
-              <textarea 
-                v-model="editForm.text" 
-                class="textarea bg-base-300/50 font-bold h-24"
-              ></textarea>
+          <template v-else-if="editingItem.itemType === 'note'">
+            <div class="form-control">
+              <label class="label py-1 flex justify-between items-end">
+                <span class="label-text text-[10px] font-black uppercase opacity-40">{{ $t('common.notes') }}</span>
+                <span class="text-[10px] font-black text-secondary opacity-40 tracking-widest">TESTO LIBERO</span>
+              </label>
+              <textarea v-model="editForm.text" class="textarea textarea-bordered font-bold h-24 bg-base-200/30 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"></textarea>
             </div>
           </template>
-
-          <!-- Modifica Ora (comune) -->
-          <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-black uppercase opacity-40">{{ $t('calendar.time_label') }}</label>
-            <input 
-              type="time" 
-              v-model="editForm.time" 
-              class="input bg-base-300/50 font-black"
-            />
-          </div>
         </div>
 
-        <div class="modal-action gap-2">
-          <form method="dialog">
-            <button class="btn btn-ghost uppercase font-black text-xs">{{ $t('common.cancel') }}</button>
-          </form>
-          <button 
-            @click="handleSave" 
-            class="btn btn-primary uppercase font-black text-xs px-8"
-            :disabled="store.loading"
-          >
-            {{ $t('common.save') }}
+        <div class="modal-action flex justify-between mt-10">
+          <button v-if="isEditing" @click="handleDelete(editingItem.itemType, editForm.id)" class="btn btn-error btn-ghost font-black uppercase tracking-widest px-6">
+            {{ $t('calendar.delete_button') }}
           </button>
+          <div v-else></div>
+          
+          <div class="flex gap-2">
+            <form method="dialog">
+              <button class="btn btn-ghost font-black uppercase tracking-widest">{{ $t('common.cancel') }}</button>
+            </form>
+            <button @click="handleSave" class="btn btn-primary font-black uppercase tracking-widest px-8 shadow-xl shadow-primary/20">
+              {{ $t('calendar.save_button') }}
+            </button>
+          </div>
         </div>
       </div>
       <form method="dialog" class="modal-backdrop">
@@ -315,21 +328,27 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, computed, reactive } from 'vue'
 import { useGlucoseStore } from '../stores/glucose'
+import { useAuthStore } from '../stores/auth'
 import GlucoseChart from '../components/GlucoseChart.vue'
 import DailyStats from '../components/DailyStats.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const store = useGlucoseStore()
+const auth = useAuthStore()
+
+const timezone = computed(() => auth.user?.timezone || 'Europe/Rome')
+
+
 
 // ── Gestione Modifica / Aggiunta ───────────────────────────────────────────
-const editingItem = ref(null)
+const editingItem = ref<any>(null)
 const isEditing = ref(false)
 const editForm = reactive({
-  id: null,
+  id: null as number | null,
   units: 1,
   insulinType: 'rapid',
   amount: 10,
@@ -339,9 +358,9 @@ const editForm = reactive({
   originalTimestamp: ''
 })
 
-function startEdit(type, item) {
+function startEdit(type: string, item: any) {
   isEditing.value = true
-  editingItem.value = { type, ...item }
+  editingItem.value = { itemType: type, ...item }
   editForm.id = item.id
   editForm.time = formatTime24h(item.timestamp)
   editForm.originalTimestamp = item.timestamp
@@ -356,12 +375,13 @@ function startEdit(type, item) {
     editForm.text = item.text
   }
   
-  document.getElementById('edit_modal').showModal()
+  const modal = document.getElementById('edit_modal') as HTMLDialogElement
+  if (modal) modal.showModal()
 }
 
-function startAdd(type) {
+function startAdd(type: string) {
   isEditing.value = false
-  editingItem.value = { type }
+  editingItem.value = { itemType: type }
   editForm.id = null
   
   // Imposta l'orario attuale se è oggi, altrimenti le 12:00 del giorno selezionato
@@ -383,7 +403,8 @@ function startAdd(type) {
     editForm.text = ''
   }
   
-  document.getElementById('edit_modal').showModal()
+  const modal = document.getElementById('edit_modal') as HTMLDialogElement
+  if (modal) modal.showModal()
 }
 
 async function handleSave() {
@@ -395,29 +416,29 @@ async function handleSave() {
   const timestamp = newDate.toISOString()
   
   try {
-    if (editingItem.value.type === 'insulin') {
+    if (editingItem.value.itemType === 'insulin') {
       if (isEditing.value) {
-        await store.editInsulin(editForm.id, { 
+        await store.editInsulin(editForm.id!, { 
           timestamp, 
           type: editForm.insulinType, 
-          units: parseFloat(editForm.units) 
+          units: parseFloat(editForm.units.toString()) 
         })
       } else {
-        await store.addInsulin(editForm.insulinType, parseFloat(editForm.units), timestamp)
+        await store.addInsulin(editForm.insulinType, parseFloat(editForm.units.toString()), timestamp)
       }
-    } else if (editingItem.value.type === 'carb') {
+    } else if (editingItem.value.itemType === 'carb') {
       if (isEditing.value) {
-        await store.editCarb(editForm.id, { 
+        await store.editCarb(editForm.id!, { 
           timestamp, 
-          amount: parseInt(editForm.amount),
+          amount: parseInt(editForm.amount.toString()),
           speed: editForm.speed
         })
       } else {
-        await store.addCarb(parseInt(editForm.amount), timestamp, editForm.speed)
+        await store.addCarb(parseInt(editForm.amount.toString()), timestamp, editForm.speed)
       }
-    } else if (editingItem.value.type === 'note') {
+    } else if (editingItem.value.itemType === 'note') {
       if (isEditing.value) {
-        await store.editNote(editForm.id, { 
+        await store.editNote(editForm.id!, { 
           timestamp, 
           text: editForm.text 
         })
@@ -426,14 +447,15 @@ async function handleSave() {
       }
     }
     
-    document.getElementById('edit_modal').close()
+    const modal = document.getElementById('edit_modal') as HTMLDialogElement
+    if (modal) modal.close()
     await fetchDayData() // Rinfresca il calendario
   } catch (err) {
     console.error('Errore durante il salvataggio:', err)
   }
 }
 
-async function handleDelete(type, id) {
+async function handleDelete(type: string, id: number) {
   if (!confirm(t('common.confirm_delete'))) return
   
   try {
@@ -447,41 +469,54 @@ async function handleDelete(type, id) {
   }
 }
 
-function formatTime24h(iso) {
-  const d = new Date(iso)
-  return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+function formatTime24h(iso: string) {
+  return new Intl.DateTimeFormat('it-IT', { 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    hour12: false,
+    timeZone: timezone.value 
+  }).format(new Date(iso))
 }
 
 function getLocalDateString(date = new Date()) {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+  // Use user's timezone to get the current date string
+  const d = new Intl.DateTimeFormat('en-CA', { 
+    timeZone: timezone.value,
+    year: 'numeric', month: '2-digit', day: '2-digit'
+  }).format(date)
+  return d
 }
 
 const selectedDate = ref(getLocalDateString())
 
 const sortedHistoryInsulin = computed(() => {
-  return [...store.historyInsulin].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+  return [...store.historyInsulin].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 })
 
 const sortedHistoryCarbs = computed(() => {
-  return [...store.historyCarbs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+  return [...store.historyCarbs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 })
 
 const sortedHistoryNotes = computed(() => {
-  return [...store.historyNotes].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+  return [...store.historyNotes].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 })
 
-function formatTime(iso) {
-  return new Date(iso).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+function formatTime(iso: string) {
+  return new Intl.DateTimeFormat('it-IT', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    timeZone: timezone.value
+  }).format(new Date(iso))
 }
 
-function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
+function formatDate(dateStr: string) {
+  // dateStr is "YYYY-MM-DD", we want to format it nicely.
+  // We can create a date at noon in that timezone to avoid issues.
+  const d = new Date(dateStr + 'T12:00:00')
+  return d.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
-function changeDate(days) {
+function changeDate(days: number) {
   const d = new Date(selectedDate.value)
   d.setDate(d.getDate() + days)
   selectedDate.value = getLocalDateString(d)
@@ -500,4 +535,6 @@ async function fetchDayData() {
 onMounted(() => {
   fetchDayData()
 })
+
+// ── Funzioni ──────────────────────────────────────────────────────────
 </script>

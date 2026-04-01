@@ -15,7 +15,7 @@ export async function getPool(): Promise<Pool> {
       database: process.env.DB_NAME     || 'glicechart-multiutente',
       waitForConnections: true,
       connectionLimit: 10,
-      timezone: 'local', // Forza il driver a usare il fuso orario del sistema
+      timezone: '+00:00', // Forza l'uso di UTC nel driver
     });
 
     await initDB();
@@ -28,8 +28,8 @@ async function initDB() {
   if (!pool) return;
   const conn = await pool.getConnection();
   try {
-    // Sincronizza il fuso orario della sessione con quello del sistema
-    await conn.execute(`SET time_zone = 'SYSTEM'`);
+    // Sincronizza il fuso orario della sessione con UTC
+    await conn.execute(`SET time_zone = '+00:00'`);
     
     // Tabella Utenti
     await conn.execute(`
@@ -44,6 +44,7 @@ async function initDB() {
         gluroo_token  VARCHAR(255),
         gluroo_header VARCHAR(255),
         gluroo_link   VARCHAR(255),
+        timezone      VARCHAR(50) DEFAULT 'Europe/Rome',
         last_sync_error VARCHAR(255),
         created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -54,6 +55,7 @@ async function initDB() {
     try { await conn.execute(`ALTER TABLE users ADD COLUMN reset_token VARCHAR(255) AFTER email`); } catch (e) {}
     try { await conn.execute(`ALTER TABLE users ADD COLUMN reset_expires DATETIME AFTER reset_token`); } catch (e) {}
     try { await conn.execute(`ALTER TABLE users ADD COLUMN last_sync_error VARCHAR(255) AFTER gluroo_link`); } catch (e) {}
+    try { await conn.execute(`ALTER TABLE users ADD COLUMN timezone VARCHAR(50) DEFAULT 'Europe/Rome' AFTER gluroo_link`); } catch (e) {}
 
     await conn.execute(`
       CREATE TABLE IF NOT EXISTS readings (
@@ -197,11 +199,11 @@ async function initDB() {
 
 // ── Funzioni Utente ──────────────────────────────────────────────────────────
 
-export async function createUser({ username, password, email, isAdmin = false }: any) {
+export async function createUser({ username, password, email, timezone, isAdmin = false }: any) {
   const p = await getPool();
   const [result] = await p.execute<ResultSetHeader>(
-    `INSERT INTO users (username, password, email, isAdmin) VALUES (?, ?, ?, ?)`,
-    [username, password, email || null, isAdmin]
+    `INSERT INTO users (username, password, email, timezone, isAdmin) VALUES (?, ?, ?, ?, ?)`,
+    [username, password, email || null, timezone || 'Europe/Rome', isAdmin]
   );
   const userId = result.insertId;
   
@@ -240,16 +242,16 @@ export async function countUsers() {
 export async function getUserById(id: number) {
   const p = await getPool();
   const [rows] = await p.execute<RowDataPacket[]>(
-    `SELECT id, username, email, isAdmin, gluroo_token, gluroo_header, gluroo_link, last_sync_error FROM users WHERE id = ?`,
+    `SELECT id, username, email, isAdmin, gluroo_token, gluroo_header, gluroo_link, timezone, last_sync_error FROM users WHERE id = ?`,
     [id]
   );
   return rows[0];
 }
 
-export async function updateUserAccount(userId: number, { username, email, password }: any) {
+export async function updateUserAccount(userId: number, { username, email, password, timezone }: any) {
   const p = await getPool();
-  let query = `UPDATE users SET username = ?, email = ?`;
-  const params: any[] = [username, email || null];
+  let query = `UPDATE users SET username = ?, email = ?, timezone = ?`;
+  const params: any[] = [username, email || null, timezone || 'Europe/Rome'];
 
   if (password) {
     query += `, password = ?, reset_token = NULL, reset_expires = NULL`;
@@ -346,7 +348,7 @@ export async function getReadingsByMinutes(userId: number, minutes: number) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, glucose, trend
      FROM readings
-     WHERE user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+     WHERE user_id = ? AND timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? MINUTE)
      ORDER BY timestamp ASC`,
     [userId, minutes]
   );
@@ -388,7 +390,7 @@ export async function getInsulinByMinutes(userId: number, minutes: number) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, type, units
      FROM insulin_records
-     WHERE user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+     WHERE user_id = ? AND timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? MINUTE)
      ORDER BY timestamp ASC`,
     [userId, minutes]
   );
@@ -420,12 +422,15 @@ export async function updateInsulin(userId: number, id: number, { timestamp, typ
 
 export async function getReadingsByDate(userId: number, date: string) {
   const p = await getPool();
+  const [user] = await p.execute<RowDataPacket[]>(`SELECT timezone FROM users WHERE id = ?`, [userId]);
+  const tz = user[0]?.timezone || 'Europe/Rome';
+
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, glucose, trend
      FROM readings
-     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', ?)) = ?
      ORDER BY timestamp ASC`,
-    [userId, date]
+    [userId, tz, date]
   );
   return rows.map(r => ({
     ...r,
@@ -435,12 +440,15 @@ export async function getReadingsByDate(userId: number, date: string) {
 
 export async function getInsulinByDate(userId: number, date: string) {
   const p = await getPool();
+  const [user] = await p.execute<RowDataPacket[]>(`SELECT timezone FROM users WHERE id = ?`, [userId]);
+  const tz = user[0]?.timezone || 'Europe/Rome';
+
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, type, units
      FROM insulin_records
-     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', ?)) = ?
      ORDER BY timestamp ASC`,
-    [userId, date]
+    [userId, tz, date]
   );
   return rows.map(r => ({
     ...r,
@@ -462,7 +470,7 @@ export async function getCarbsByMinutes(userId: number, minutes: number) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, amount, absorption_speed as speed
      FROM carb_records
-     WHERE user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+     WHERE user_id = ? AND timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? MINUTE)
      ORDER BY timestamp ASC`,
     [userId, minutes]
   );
@@ -489,12 +497,15 @@ export async function updateCarb(userId: number, id: number, { timestamp, amount
 
 export async function getCarbsByDate(userId: number, date: string) {
   const p = await getPool();
+  const [user] = await p.execute<RowDataPacket[]>(`SELECT timezone FROM users WHERE id = ?`, [userId]);
+  const tz = user[0]?.timezone || 'Europe/Rome';
+
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, amount, absorption_speed as speed
      FROM carb_records
-     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', ?)) = ?
      ORDER BY timestamp ASC`,
-    [userId, date]
+    [userId, tz, date]
   );
   return rows.map(r => ({
     ...r,
@@ -516,7 +527,7 @@ export async function getNotesByMinutes(userId: number, minutes: number) {
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, text
      FROM notes
-     WHERE user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+     WHERE user_id = ? AND timestamp >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? MINUTE)
      ORDER BY timestamp ASC`,
     [userId, minutes]
   );
@@ -543,12 +554,15 @@ export async function updateNote(userId: number, id: number, { timestamp, text }
 
 export async function getNotesByDate(userId: number, date: string) {
   const p = await getPool();
+  const [user] = await p.execute<RowDataPacket[]>(`SELECT timezone FROM users WHERE id = ?`, [userId]);
+  const tz = user[0]?.timezone || 'Europe/Rome';
+
   const [rows] = await p.execute<RowDataPacket[]>(
     `SELECT id, timestamp, text
      FROM notes
-     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', 'Europe/Rome')) = ?
+     WHERE user_id = ? AND DATE(CONVERT_TZ(timestamp, 'UTC', ?)) = ?
      ORDER BY timestamp ASC`,
-    [userId, date]
+    [userId, tz, date]
   );
   return rows.map(r => ({
     ...r,
@@ -624,7 +638,7 @@ export async function updateSettings(userId: number, { tir_min, tir_max, red_und
 export async function getAllUsers() {
   const p = await getPool();
   const [rows] = await p.execute<RowDataPacket[]>(
-    `SELECT id, username, email, isAdmin, gluroo_token, gluroo_header, gluroo_link, last_sync_error, created_at FROM users ORDER BY id ASC`
+    `SELECT id, username, email, isAdmin, gluroo_token, gluroo_header, gluroo_link, timezone, last_sync_error, created_at FROM users ORDER BY id ASC`
   );
   return rows;
 }

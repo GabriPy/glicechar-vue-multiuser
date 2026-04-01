@@ -6,13 +6,13 @@
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-secondary/5 blur-3xl rounded-full"></div>
         
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-secondary/10 rounded-2xl text-secondary flex items-center justify-center text-xl">
-              <i class="fi fi-sr-apps-sort"></i>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-primary/10 rounded-3xl text-primary flex items-center justify-center text-2xl shadow-inner border border-primary/5">
+              <i class="fi fi-sr-chart-connected"></i>
             </div>
             <div>
-              <h2 class="text-lg font-black uppercase tracking-tight leading-none">{{ $t('comparison.title') }}</h2>
-              <span class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">{{ $t('comparison.subtitle') }}</span>
+              <h1 class="text-3xl font-black uppercase tracking-tight italic">{{ $t('comparison.title').split(' ')[0] }} <span class="text-primary">{{ $t('comparison.title').split(' ')[1] }}</span></h1>
+              <p class="text-[10px] font-black opacity-40 uppercase tracking-[0.3em]">{{ $t('comparison.subtitle') }}</p>
             </div>
           </div>
 
@@ -45,7 +45,7 @@
                 <div class="w-2 h-2 rounded-full bg-primary"></div>
                 <span class="text-[10px] font-black uppercase tracking-widest opacity-50">{{ $t('comparison.current_period') }}</span>
               </div>
-              <span class="text-[9px] font-bold opacity-30 italic">{{ periodALabel }}</span>
+              <span class="text-[9px] font-bold opacity-30 italic">{{ $t('comparison.last_n_days', { n: selectedPeriod }) }}</span>
             </div>
             
             <div v-if="statsA" class="grid grid-cols-2 gap-3 relative z-10">
@@ -71,7 +71,7 @@
                 <div class="w-2 h-2 rounded-full bg-base-content/20"></div>
                 <span class="text-[10px] font-black uppercase tracking-widest opacity-50">{{ $t('comparison.previous_period') }}</span>
               </div>
-              <span class="text-[9px] font-bold opacity-30 italic">{{ periodBLabel }}</span>
+              <span class="text-[9px] font-bold opacity-30 italic">{{ $t('comparison.previous_n_days', { n: selectedPeriod }) }}</span>
             </div>
             
             <div v-if="statsB" class="grid grid-cols-2 gap-3 relative z-10">
@@ -116,8 +116,8 @@
               <span class="text-xs font-black uppercase tracking-widest opacity-50">{{ $t('comparison.distribution') }}</span>
             </div>
             <div class="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest">
-              <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary"></span> Attuale</div>
-              <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-base-content/20"></span> Precedente</div>
+              <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary"></span> {{ $t('comparison.actual') }}</div>
+              <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-base-content/20"></span> {{ $t('comparison.previous') }}</div>
             </div>
           </div>
 
@@ -139,16 +139,18 @@ import axios from 'axios'
 import { useAuthStore } from '../stores/auth'
 import { useGlucoseStore } from '../stores/glucose'
 import type { Reading } from '../stores/glucose'
+import { useI18n } from 'vue-i18n'
 import Chart from 'chart.js/auto'
 
 const auth = useAuthStore()
 const store = useGlucoseStore()
+const { t } = useI18n()
 
-const periods = [
-  { label: '7 Giorni', value: 7 },
-  { label: '14 Giorni', value: 14 },
-  { label: '30 Giorni', value: 30 }
-]
+const periods = computed(() => [
+  { label: `7 ${t('common.days')}`, value: 7 },
+  { label: `14 ${t('common.days')}`, value: 14 },
+  { label: `30 ${t('common.days')}`, value: 30 }
+])
 
 const selectedPeriod = ref(7)
 const loading = ref(false)

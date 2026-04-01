@@ -274,8 +274,15 @@ export const useGlucoseStore = defineStore('glucose', () => {
           carbEffect += (Number(carb.amount) * activity * CR * 0.013)
         })
 
-        // 4. Bias Notturno (00:00 - 06:00)
-        const currentHour = new Date(nowTs + m * 60000).getHours()
+        // 4. Bias Notturno (00:00 - 06:00) basato sul fuso orario dell'utente
+        const userTz = auth.user?.timezone || 'Europe/Rome'
+        const hourStr = new Intl.DateTimeFormat('en-US', {
+          timeZone: userTz,
+          hour: 'numeric',
+          hour12: false
+        }).format(new Date(nowTs + m * 60000))
+        const currentHour = parseInt(hourStr)
+        
         let nightBias = 0
         if (currentHour >= 0 && currentHour <= 6) {
           nightBias = 0.08 // ~5 mg/dL all'ora
@@ -328,12 +335,19 @@ export const useGlucoseStore = defineStore('glucose', () => {
 
     const discoveredPatterns: any[] = []
 
+    const userTz = auth.user?.timezone || 'Europe/Rome'
     const hourlyTrends = Array.from({ length: 24 }, () => ({ slopes: [] as number[], values: [] as number[] }))
     
     allHistoryReadings.forEach((r, idx) => {
       if (idx === 0) return
       const date = new Date(r.timestamp)
-      const hour = date.getHours()
+      const hourStr = new Intl.DateTimeFormat('en-US', {
+        timeZone: userTz,
+        hour: 'numeric',
+        hour12: false
+      }).format(date)
+      const hour = parseInt(hourStr)
+      
       const prevG = allHistoryReadings[idx-1].glucose
       const currentG = r.glucose
       const dt = (date.getTime() - new Date(allHistoryReadings[idx-1].timestamp).getTime()) / 60000

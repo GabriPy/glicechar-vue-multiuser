@@ -217,6 +217,7 @@ app.post('/api/auth/register', async (req, res) => {
       username: data.username, 
       password: hashedPassword, 
       email: data.email,
+      timezone: data.timezone,
       isAdmin: isAdminUser 
     });
     
@@ -251,6 +252,7 @@ app.post('/api/auth/login', async (req, res) => {
         id: user.id, 
         username: user.username, 
         isAdmin: !!user.isAdmin,
+        timezone: user.timezone,
         last_sync_error: user.last_sync_error,
         gluroo: {
           token: user.gluroo_token,
@@ -320,6 +322,7 @@ app.get('/api/auth/me', authenticateToken, async (req: AuthenticatedRequest, res
         username: user.username,
         email: user.email,
         isAdmin: !!user.isAdmin,
+        timezone: user.timezone,
         last_sync_error: user.last_sync_error,
         gluroo: {
           token: user.gluroo_token,
@@ -418,7 +421,8 @@ app.put('/api/auth/account', authenticateToken, async (req: AuthenticatedRequest
     const ok = await updateUserAccount(req.user.id, {
       username: data.username,
       email: data.email,
-      password: hashedPassword
+      password: hashedPassword,
+      timezone: data.timezone
     });
 
     res.json({ ok });
