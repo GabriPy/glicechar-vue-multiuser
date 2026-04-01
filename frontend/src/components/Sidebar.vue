@@ -1,5 +1,5 @@
 <template>
-  <aside class="flex flex-col h-full bg-base-200/50 backdrop-blur-xl border-r border-base-content/5 relative overflow-hidden group/sidebar">
+  <aside class="flex flex-col h-full bg-base-100 border-r border-base-content/5 relative overflow-hidden group/sidebar">
     <!-- Background Decor -->
     <div class="absolute inset-0 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-1000 pointer-events-none">
       <div class="absolute -top-24 -left-24 w-64 h-64 bg-primary/5 blur-[80px] rounded-full"></div>
@@ -18,37 +18,31 @@
       </router-link>
     </div>
 
-    <!-- Navigation Menu: DaisyUI 5 Menu -->
+    <!-- Navigation Menu -->
     <nav class="flex-1 px-4 overflow-y-auto custom-scrollbar relative z-10">
-      <ul class="menu menu-md w-full p-0 gap-1">
+      <div class="space-y-1">
         <!-- Dashboard -->
-        <li>
-          <router-link to="/dashboard" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-primary/10 hover:text-primary group" :class="{ 'bg-primary text-primary-content shadow-lg shadow-primary/20 hover:bg-primary hover:text-primary-content': $route.path === '/dashboard' }">
-            <i class="fi fi-sr-apps text-lg opacity-40 group-hover:opacity-100 transition-opacity" :class="{ 'opacity-100': $route.path === '/dashboard' }"></i>
-            {{ $t('nav.home') }}
-          </router-link>
-        </li>
+        <router-link to="/dashboard" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-primary/10 hover:text-primary group" :class="{ 'bg-primary text-primary-content shadow-lg shadow-primary/20 hover:bg-primary hover:text-primary-content': $route.path === '/dashboard' }">
+          <i class="fi fi-sr-apps text-lg opacity-40 group-hover:opacity-100 transition-opacity" :class="{ 'opacity-100': $route.path === '/dashboard' }"></i>
+          {{ $t('nav.home') }}
+        </router-link>
 
         <div class="divider opacity-5 my-4 px-4 font-black text-[9px] uppercase tracking-[0.3em]">{{ $t('nav.history_section') }}</div>
 
         <!-- History Items -->
-        <li v-for="item in navItems" :key="item.path">
-          <router-link :to="item.path" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-base-content/5 group" :class="{ 'bg-base-content text-base-100 shadow-xl': $route.path === item.path }">
-            <i :class="[item.icon, { 'opacity-100': $route.path === item.path, 'opacity-40 group-hover:opacity-100': $route.path !== item.path }]" class="text-lg transition-opacity"></i>
-            {{ $t(`nav.${item.key}`) }}
-          </router-link>
-        </li>
+        <router-link v-for="item in navItems" :key="item.path" :to="item.path" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-base-content/5 group" :class="{ 'bg-base-content text-base-100 shadow-xl': $route.path === item.path }">
+          <i :class="[item.icon, { 'opacity-100': $route.path === item.path, 'opacity-40 group-hover:opacity-100': $route.path !== item.path }]" class="text-lg transition-opacity"></i>
+          {{ $t(`nav.${item.key}`) }}
+        </router-link>
 
         <div class="divider opacity-5 my-4 px-4 font-black text-[9px] uppercase tracking-[0.3em]">{{ $t('nav.ai_section') }}</div>
 
         <!-- AI Tools -->
-        <li v-for="item in aiItems" :key="item.path">
-          <router-link :to="item.path" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-base-content/5 group" :class="{ 'bg-base-content text-base-100 shadow-xl': $route.path === item.path }">
-            <i :class="[item.icon, { 'opacity-100': $route.path === item.path, 'opacity-40 group-hover:opacity-100': $route.path !== item.path }]" class="text-lg transition-opacity"></i>
-            {{ $t(`nav.${item.key}`) }}
-          </router-link>
-        </li>
-      </ul>
+        <router-link v-for="item in aiItems" :key="item.path" :to="item.path" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all duration-300 hover:bg-base-content/5 group" :class="{ 'bg-base-content text-base-100 shadow-xl': $route.path === item.path }">
+          <i :class="[item.icon, { 'opacity-100': $route.path === item.path, 'opacity-40 group-hover:opacity-100': $route.path !== item.path }]" class="text-lg transition-opacity"></i>
+          {{ $t(`nav.${item.key}`) }}
+        </router-link>
+      </div>
     </nav>
 
     <!-- Admin Section -->
@@ -63,14 +57,8 @@
       </router-link>
     </div>
 
-    <!-- Bottom Actions: DaisyUI 5 List / Menu -->
-    <div class="p-4 bg-base-300/30 border-t border-base-content/5 relative z-10 space-y-2">
-      <!-- Settings -->
-      <router-link to="/settings" class="flex items-center gap-4 py-3 px-5 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-base-content/5 transition-all group" :class="{ 'bg-base-content/10': $route.path === '/settings' }">
-        <i class="fi fi-sr-settings text-md opacity-40 group-hover:opacity-100 transition-opacity"></i>
-        {{ $t('nav.settings') }}
-      </router-link>
-
+    <!-- Language Selector & Footer -->
+    <div class="p-6 mt-auto border-t border-base-content/5 space-y-4 relative z-10">
       <!-- Language Selector Dropdown -->
       <div class="dropdown dropdown-top w-full">
         <div tabindex="0" role="button" class="btn btn-ghost btn-sm w-full flex items-center justify-between px-4 rounded-xl border border-base-content/5 hover:bg-base-200">
@@ -96,13 +84,18 @@
         </ul>
       </div>
 
-      <!-- Logout -->
-      <button @click="handleLogout" class="flex items-center gap-4 py-3 px-5 rounded-xl font-black uppercase tracking-widest text-[9px] text-error hover:bg-error/10 transition-all w-full group">
-        <i class="fi fi-sr-exit text-md opacity-60 group-hover:opacity-100 transition-opacity"></i>
-        {{ $t('nav.logout') }}
-      </button>
+      <div class="flex flex-col gap-2">
+        <router-link to="/settings" class="flex items-center gap-4 py-3 px-5 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-base-content/5 transition-all group" :class="{ 'bg-base-content/10': $route.path === '/settings' }">
+          <i class="fi fi-sr-settings text-md opacity-40 group-hover:opacity-100 transition-opacity"></i>
+          {{ $t('nav.settings') }}
+        </router-link>
 
-      <!-- Footer Info -->
+        <button @click="handleLogout" class="flex items-center gap-4 py-3 px-5 rounded-xl font-black uppercase tracking-widest text-[9px] text-error hover:bg-error/10 transition-all w-full group text-left">
+          <i class="fi fi-sr-exit text-md opacity-60 group-hover:opacity-100 transition-opacity"></i>
+          {{ $t('nav.logout') }}
+        </button>
+      </div>
+
       <div class="flex flex-col items-center gap-2 pt-4 opacity-20">
         <div class="text-[7px] font-black uppercase tracking-[0.4em]">GliceChart Multiuser</div>
         <div class="text-[7px] font-black uppercase tracking-[0.2em] italic">Made with ❤️ by Ghibiri</div>

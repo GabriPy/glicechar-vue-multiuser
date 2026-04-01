@@ -139,7 +139,7 @@ router.beforeEach(async (to, from, next) => {
   
   if (!auth.isAuthenticated && !to.meta.public) {
     next('/login')
-  } else if (auth.isAuthenticated && to.meta.public && !['not-found', 'legal'].includes(to.name as string)) {
+  } else if (auth.isAuthenticated && to.meta.public && !['not-found', 'legal', 'support'].includes(to.name as string)) {
     next('/dashboard')
   } else if (to.meta.adminOnly && !auth.isAdmin) {
     next('/dashboard')
