@@ -158,6 +158,9 @@
           <router-link to="/legal" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all">
             {{ $t('app.cookie_privacy') }}
           </router-link>
+          <router-link to="/support" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all">
+            {{ $t('app.support') }}
+          </router-link>
         </nav>
 
         <p class="text-[11px] font-black uppercase tracking-widest opacity-20 mb-2">

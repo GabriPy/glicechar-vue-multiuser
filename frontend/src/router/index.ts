@@ -17,6 +17,8 @@ const UserManagementView = () => import('../views/UserManagementView.vue')
 const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue')
 const ResetPasswordView = () => import('../views/ResetPasswordView.vue')
 const LegalView = () => import('../views/LegalView.vue')
+const SupportView = () => import('../views/SupportView.vue')
+const AdminSupportMessagesView = () => import('../views/AdminSupportMessagesView.vue')
 const NotFoundView = () => import('../views/NotFoundView.vue')
 
 const routes: RouteRecordRaw[] = [
@@ -24,6 +26,12 @@ const routes: RouteRecordRaw[] = [
     path: '/legal',
     name: 'legal',
     component: LegalView,
+    meta: { public: true }
+  },
+  {
+    path: '/support',
+    name: 'support',
+    component: SupportView,
     meta: { public: true }
   },
   {
@@ -65,6 +73,12 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/users',
     name: 'admin-users',
     component: UserManagementView,
+    meta: { adminOnly: true }
+  },
+  {
+    path: '/admin/support',
+    name: 'admin-support',
+    component: AdminSupportMessagesView,
     meta: { adminOnly: true }
   },
   {

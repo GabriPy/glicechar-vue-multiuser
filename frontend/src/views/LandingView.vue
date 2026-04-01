@@ -183,9 +183,9 @@
           <router-link to="/legal" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all underline decoration-primary/20 underline-offset-8">
             {{ $t('app.cookie_privacy') }}
           </router-link>
-          <a href="#" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all underline decoration-primary/20 underline-offset-8">
-            Support
-          </a>
+          <router-link to="/support" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all underline decoration-primary/20 underline-offset-8">
+            {{ $t('app.support') }}
+          </router-link>
           <a href="#" class="link link-hover text-[10px] font-black uppercase tracking-[0.2em] opacity-40 hover:opacity-100 hover:text-primary transition-all underline decoration-primary/20 underline-offset-8">
             Github
           </a>

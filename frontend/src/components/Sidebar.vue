@@ -52,10 +52,14 @@
     </nav>
 
     <!-- Admin Section -->
-    <div v-if="auth.isAdmin" class="px-4 mb-4 relative z-10">
-      <router-link to="/admin" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-secondary/10 text-secondary hover:bg-secondary hover:text-secondary-content transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-secondary/20 group">
-        <i class="fi fi-sr-settings-sliders text-lg opacity-60 group-hover:opacity-100 transition-opacity"></i>
+    <div v-if="auth.isAdmin" class="px-4 mb-4 relative z-10 space-y-1">
+      <router-link to="/admin" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-secondary/10 text-secondary hover:bg-secondary hover:text-secondary-content transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-secondary/20 group" :class="{ 'bg-secondary text-secondary-content': $route.path === '/admin' }">
+        <i class="fi fi-sr-settings-sliders text-lg opacity-60 group-hover:opacity-100 transition-opacity" :class="{ 'opacity-100': $route.path === '/admin' }"></i>
         {{ $t('nav.admin') }}
+      </router-link>
+      <router-link to="/admin/support" class="flex items-center gap-4 py-4 px-5 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-accent/10 text-accent hover:bg-accent hover:text-accent-content transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-accent/20 group" :class="{ 'bg-accent text-accent-content': $route.path === '/admin/support' }">
+        <i class="fi fi-sr-envelope-dot text-lg opacity-60 group-hover:opacity-100 transition-opacity" :class="{ 'opacity-100': $route.path === '/admin/support' }"></i>
+        {{ $t('support.admin_title') }}
       </router-link>
     </div>
 
